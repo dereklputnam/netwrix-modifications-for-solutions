@@ -1,19 +1,30 @@
-// Hide navigation elements that break the list view - PRIORITY: hide immediately
-#navigation-bar .nav-item_categories,
-#navigation-bar .nav-item_latest, 
-#navigation-bar .nav-item_new,
-#navigation-bar .nav-item_top,
-#navigation-bar .nav-item_unread {
+// Hide navigation elements only on /lists/ pages - PRIORITY: hide immediately
+body[class*="/lists/"] #navigation-bar .nav-item_categories,
+body[class*="/lists/"] #navigation-bar .nav-item_latest, 
+body[class*="/lists/"] #navigation-bar .nav-item_new,
+body[class*="/lists/"] #navigation-bar .nav-item_top,
+body[class*="/lists/"] #navigation-bar .nav-item_unread,
+body[class*="lists-"] #navigation-bar .nav-item_categories,
+body[class*="lists-"] #navigation-bar .nav-item_latest, 
+body[class*="lists-"] #navigation-bar .nav-item_new,
+body[class*="lists-"] #navigation-bar .nav-item_top,
+body[class*="lists-"] #navigation-bar .nav-item_unread {
   display: none !important;
 }
 
-// Hide category and tag filter dropdowns that break the solution list view
-.category-breadcrumb .category-drop,
-.category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
-.category-breadcrumb li:has(.category-drop),
-.category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
-.navigation-container .category-breadcrumb li:first-child,
-.navigation-container .category-breadcrumb li:nth-child(2) {
+// Hide category and tag filter dropdowns only on /lists/ pages
+body[class*="/lists/"] .category-breadcrumb .category-drop,
+body[class*="/lists/"] .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
+body[class*="/lists/"] .category-breadcrumb li:has(.category-drop),
+body[class*="/lists/"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
+body[class*="/lists/"] .navigation-container .category-breadcrumb li:first-child,
+body[class*="/lists/"] .navigation-container .category-breadcrumb li:nth-child(2),
+body[class*="lists-"] .category-breadcrumb .category-drop,
+body[class*="lists-"] .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
+body[class*="lists-"] .category-breadcrumb li:has(.category-drop),
+body[class*="lists-"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
+body[class*="lists-"] .navigation-container .category-breadcrumb li:first-child,
+body[class*="lists-"] .navigation-container .category-breadcrumb li:nth-child(2) {
   display: none !important;
 }
 

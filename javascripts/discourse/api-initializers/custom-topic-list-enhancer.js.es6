@@ -2,18 +2,15 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // PRIORITY: Hide navigation elements immediately to prevent flash
+  // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
   const hideNavElements = () => {
+    // Only run on /lists/ pages
+    if (!window.location.pathname.includes('/lists/')) {
+      return;
+    }
+    
     const style = document.createElement('style');
     style.textContent = `
-      #navigation-bar .nav-item_categories,
-      #navigation-bar .nav-item_latest, 
-      #navigation-bar .nav-item_new,
-      #navigation-bar .nav-item_top,
-      #navigation-bar .nav-item_unread {
-        display: none !important;
-      }
-      
       /* Hide responsive line breaks by default */
       .category-title .break-medium,
       .category-title .break-small {
@@ -36,7 +33,7 @@ export default apiInitializer("0.11.1", (api) => {
     `;
     document.head.appendChild(style);
     
-    // Also hide immediately with JavaScript
+    // Also hide navigation elements immediately with JavaScript on /lists/ pages only
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => item.style.display = 'none');
     
