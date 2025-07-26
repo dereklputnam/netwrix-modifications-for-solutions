@@ -3,6 +3,7 @@ import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
   // Note: Element hiding is now handled by CSS files for zero-flash experience
+  // Text replacement back to simple approach to avoid global interference
 
   // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
   const hideNavElements = () => {
@@ -67,76 +68,15 @@ export default apiInitializer("0.11.1", (api) => {
     });
   };
   
-  // Global function to update dropdown text from "Custom lists" to "Solutions" 
-  const updateDropdownTextGlobal = () => {
-    // Update all select-kit headers with "Custom lists" data-name or aria-label
-    const headers = document.querySelectorAll('.select-kit-header');
-    headers.forEach(header => {
-      const ariaLabel = header.getAttribute('aria-label');
-      const dataName = header.getAttribute('data-name');
-      const summaryName = header.getAttribute('name');
-      
-      if (ariaLabel && ariaLabel.includes('Custom lists')) {
-        header.setAttribute('aria-label', ariaLabel.replace(/Custom lists/g, 'Solutions'));
-      }
-      if (dataName === 'Custom lists') {
-        header.setAttribute('data-name', 'Solutions');
-      }
-      if (summaryName && summaryName.includes('Custom lists')) {
-        header.setAttribute('name', summaryName.replace(/Custom lists/g, 'Solutions'));
-      }
-    });
-    
-    // Update all selected-name elements
-    const selectedNames = document.querySelectorAll('.selected-name');
-    selectedNames.forEach(selected => {
-      const title = selected.getAttribute('title');
-      const dataName = selected.getAttribute('data-name');
-      
-      if (title === 'Custom lists') {
-        selected.setAttribute('title', 'Solutions');
-      }
-      if (dataName === 'Custom lists') {
-        selected.setAttribute('data-name', 'Solutions');
-      }
-    });
-    
-    // Update text content in name spans
-    const nameSpans = document.querySelectorAll('.select-kit-selected-name .name, .selected-name .name');
-    nameSpans.forEach(nameEl => {
-      if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
-        nameEl.textContent = 'Solutions';
-      }
-    });
-    
-    // Also check for any dropdown elements that might contain "Custom lists"
-    const dropdowns = document.querySelectorAll('.custom-list-dropdown .select-kit-selected-name .name');
-    dropdowns.forEach(dropdown => {
-      if (dropdown.textContent && dropdown.textContent.trim() === 'Custom lists') {
-        dropdown.textContent = 'Solutions';
-      }
-    });
-  };
-
   // Execute immediately
   hideNavElements();
-  updateDropdownTextGlobal();
   
-  // Also run on DOM ready and with intervals for persistent hiding and text updates
+  // Also run on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      hideNavElements();
-      updateDropdownTextGlobal();
-    });
+    document.addEventListener('DOMContentLoaded', hideNavElements);
   } else {
     hideNavElements();
-    updateDropdownTextGlobal();
   }
-  
-  // Run text updates frequently to catch dynamic changes
-  const textUpdateInterval = setInterval(() => {
-    updateDropdownTextGlobal();
-  }, 500);
   
 
   // Get current user and environment info for debug logging
@@ -500,7 +440,6 @@ export default apiInitializer("0.11.1", (api) => {
       }
       updateSubscribeButton();
       updateDropdownText();
-      updateDropdownTextGlobal(); // Also run global text updates
     }
 
     // Apply initial styles if we're on a solution page
@@ -525,10 +464,9 @@ export default apiInitializer("0.11.1", (api) => {
     api.onPageChange((url) => {
       const isListsPage = url.includes('/lists/');
       
-      // Always run hideNavElements and global text updates to handle showing/hiding based on page type
+      // Always run hideNavElements to handle showing/hiding based on page type
       setTimeout(() => {
         hideNavElements();
-        updateDropdownTextGlobal();
         
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();
@@ -567,7 +505,6 @@ export default apiInitializer("0.11.1", (api) => {
       if (shouldUpdate) {
         setTimeout(() => {
           applyCurrentPageStyles();
-          updateDropdownTextGlobal(); // Ensure text updates after DOM changes
         }, 50);
       }
     });

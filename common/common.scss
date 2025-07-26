@@ -83,44 +83,6 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
   visibility: visible !important;
 }
 
-// Hide "Custom lists" text initially to prevent flash before JavaScript replacement
-// Only target elements that specifically contain "Custom lists" data
-[aria-label*="Custom lists"],
-[data-name="Custom lists"],
-[name*="Custom lists"],
-[title="Custom lists"] {
-  .name {
-    opacity: 0 !important;
-    transition: opacity 0.1s ease-in-out;
-  }
-  
-  &[data-text-replaced="true"] .name {
-    opacity: 1 !important;
-  }
-}
-
-// More specific targeting for custom-list-dropdown only
-.custom-list-dropdown {
-  .select-kit-selected-name .name,
-  .selected-name .name,
-  .name {
-    &:not([data-text-replaced="true"]) {
-      opacity: 0;
-      transition: opacity 0.1s ease-in-out;
-    }
-    
-    &[data-text-replaced="true"] {
-      opacity: 1;
-    }
-  }
-}
-
-// Ensure all other dropdown text remains visible
-.category-drop,
-.tag-drop:not(.custom-list-dropdown) {
-  .select-kit-selected-name .name,
-  .selected-name .name,
-  .name {
-    opacity: 1 !important;
-  }
-}
+// Note: Text replacement for "Custom lists" -> "Solutions" is now handled
+// by the existing JavaScript in the api-initializer without flash prevention
+// to avoid interfering with other dropdowns globally
