@@ -34,26 +34,59 @@ export default apiInitializer("0.11.1", (api) => {
     document.head.appendChild(style);
     
     // Hide specific navigation elements immediately with JavaScript on /lists/ pages only
-    const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
+    const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_top');
     navItems.forEach(item => item.style.display = 'none');
     
-    // Hide specific category and tag filter headers by data-name attribute
+    // Hide category and tag filter dropdowns with multiple selector approaches
+    // Method 1: Hide by header data-name attribute
     const categoryHeaders = document.querySelectorAll('.category-breadcrumb .category-drop-header[data-name="categories"]');
     const tagHeaders = document.querySelectorAll('.category-breadcrumb .tag-drop-header[data-name="tags"]');
     
     categoryHeaders.forEach(header => {
       const parentLi = header.closest('li');
-      if (parentLi) parentLi.style.display = 'none';
+      if (parentLi) {
+        parentLi.style.display = 'none';
+        parentLi.style.visibility = 'hidden';
+      }
     });
     
     tagHeaders.forEach(header => {
       const parentLi = header.closest('li');
-      if (parentLi) parentLi.style.display = 'none';
+      if (parentLi) {
+        parentLi.style.display = 'none';
+        parentLi.style.visibility = 'hidden';
+      }
     });
     
-    // Fallback: Hide category and tag filter dropdowns by class
-    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown)');
-    filterDropdowns.forEach(item => item.style.display = 'none');
+    // Method 2: Hide by dropdown classes (broader approach)
+    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown), .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
+    filterDropdowns.forEach(item => {
+      item.style.display = 'none';
+      item.style.visibility = 'hidden';
+      const parentLi = item.closest('li');
+      if (parentLi) {
+        parentLi.style.display = 'none';
+        parentLi.style.visibility = 'hidden';
+      }
+    });
+    
+    // Method 3: Hide breadcrumb li elements that contain category/tag dropdowns (but not Solutions)
+    const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
+    breadcrumbItems.forEach((li, index) => {
+      // Skip if it contains the Solutions dropdown
+      if (li.querySelector('.custom-list-dropdown')) {
+        return;
+      }
+      
+      // Hide if it contains category or tag dropdowns
+      const hasCategoryDrop = li.querySelector('.category-drop');
+      const hasTagDrop = li.querySelector('.tag-drop:not(.custom-list-dropdown)');
+      
+      if (hasCategoryDrop || hasTagDrop) {
+        li.style.display = 'none';
+        li.style.visibility = 'hidden';
+      }
+    });
   };
   
   // Execute immediately
@@ -452,7 +485,10 @@ export default apiInitializer("0.11.1", (api) => {
     api.onPageChange((url) => {
       const isListsPage = url.includes('/lists/');
       
+      // Always run hideNavElements to handle showing/hiding based on page type
       setTimeout(() => {
+        hideNavElements();
+        
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();
           if (currentConfig) {
