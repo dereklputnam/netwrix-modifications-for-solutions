@@ -3,6 +3,6 @@
 // Ensure Solutions dropdown remains visible with higher specificity
 .category-breadcrumb .custom-list-dropdown,
 .category-breadcrumb li:has(.custom-list-dropdown) {
-  display: block !important;
+  display: inline-block !important;
   visibility: visible !important;
 }
