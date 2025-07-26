@@ -365,6 +365,12 @@ export default apiInitializer("0.11.1", (api) => {
 
       const wrapper = document.createElement("li");
       wrapper.id = "solution-subscribe-wrapper";
+      
+      // Apply right positioning directly via JavaScript since CSS selectors aren't matching
+      wrapper.style.float = 'right';
+      wrapper.style.marginLeft = 'auto';
+      wrapper.style.position = 'relative';
+      wrapper.style.zIndex = '1000';
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
