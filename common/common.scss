@@ -82,3 +82,37 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
   display: block !important;
   visibility: visible !important;
 }
+
+// Hide "Custom lists" text initially to prevent flash before JavaScript replacement
+.select-kit-selected-name .name,
+.selected-name .name,
+.custom-list-dropdown .name,
+.tag-drop-header .name,
+.select-kit-header .name {
+  // Hide text that contains "Custom lists" until JavaScript can replace it
+  &:not([data-text-replaced="true"]) {
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+  }
+  
+  // Show text after JavaScript replacement
+  &[data-text-replaced="true"] {
+    opacity: 1;
+  }
+}
+
+// Fallback: If specific selectors fail, hide any element with "Custom lists" text
+// This is aggressive but should prevent any flash
+[aria-label*="Custom lists"],
+[data-name="Custom lists"],
+[name*="Custom lists"],
+[title="Custom lists"] {
+  .name {
+    opacity: 0 !important;
+    transition: opacity 0.1s ease-in-out;
+  }
+  
+  &[data-text-replaced="true"] .name {
+    opacity: 1 !important;
+  }
+}
