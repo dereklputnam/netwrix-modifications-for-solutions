@@ -67,64 +67,47 @@ export default apiInitializer("0.11.1", (api) => {
   }
   
 
-  // Log categories for reference only in admin or development mode
+  // Get current user and environment info for debug logging
   const currentUser = api.getCurrentUser();
   const isAdmin = currentUser?.admin || currentUser?.moderator;
   const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname.includes('dev');
-  
-  if (isAdmin || isDevelopment) {
-    ajax("/site.json").then((siteData) => {
-      console.log("=== AVAILABLE CATEGORIES FOR THEME SETTINGS ===");
-      console.log("Copy the 'ID' values into your theme component settings:");
-      
-      const categoryTable = siteData.categories.map(cat => {
-        const parent = siteData.categories.find(p => p.id === cat.parent_category_id);
-        return {
-          name: cat.name,
-          slug: cat.slug,
-          id: cat.id,
-          parent: parent ? parent.name : 'None',
-          full_name: parent ? `${parent.name} > ${cat.name}` : cat.name
-        };
-      }).sort((a, b) => a.full_name.localeCompare(b.full_name));
-      
-      console.table(categoryTable);
-      
-      // Also log as a simple list for easy copying
-      console.log("\n=== CATEGORY IDS FOR COPY/PASTE ===");
-      categoryTable.forEach(cat => {
-        console.log(`${cat.id} (${cat.full_name})`);
-      });
-      
-      console.log("\n=== EXAMPLE USAGE ===");
-      console.log("For comma-separated lists, use:");
-      console.log("5,12,8 (where numbers are category IDs)");
-    });
-  }
 
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
-    const slugMatch = currentPath.match(/^\/community\/lists\/([^\/?#]+)/);
+    const slugMatch = currentPath.match(/^\/lists\/([^\/?#]+)/);
     if (!slugMatch) return null;
 
     const slug = slugMatch[1];
-    const solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
+    
+    // First try to get from site.custom_topic_lists (Custom Topic Lists plugin)
+    const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
+    let solutionConfig = customTopicLists.find(list => list.slug === slug);
+    
+    // Fallback to theme settings if not found in plugin
+    if (!solutionConfig) {
+      solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
+    }
     
     if (!solutionConfig) {
-      console.log(`No solution configuration found for slug: ${slug}`);
-      console.log(`Available solutions:`, settings.netwrix_solutions?.map(s => s.slug));
+      if (isAdmin || isDevelopment) {
+        console.log(`No solution configuration found for slug: ${slug}`);
+        console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
+        console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
+      }
       return null;
     }
 
-    console.log(`Found solution config for: ${solutionConfig.title} (slug: ${slug})`);
+    if (isAdmin || isDevelopment) {
+      console.log(`Found solution config for: ${solutionConfig.title || solutionConfig.name} (slug: ${slug})`);
+    }
     return { slug, solutionConfig };
   }
 
   // Check if we're on a solution page initially
   const initialConfig = getCurrentSolutionConfig();
-  if (!initialConfig) {
-    console.log("Category list logged. Navigate to /community/lists/[slug] to test subscription functionality.");
+  if (!initialConfig && (isAdmin || isDevelopment)) {
+    console.log("Not on a solution page. Navigate to /lists/[slug] to test subscription functionality.");
     // Don't return here - continue to setup page change handlers
   }
 
@@ -156,19 +139,23 @@ export default apiInitializer("0.11.1", (api) => {
       const invalidLevel4 = level4Ids.filter(id => !idToCategory[id]);
       const invalidLevel3 = level3Ids.filter(id => !idToCategory[id]);
       
+      const configTitle = solutionConfig.title || solutionConfig.name || 'Solution';
+      
       if (invalidLevel4.length > 0 && (isAdmin || isDevelopment)) {
-        console.error(`❌ Invalid Level 4 category IDs for ${solutionConfig.title}: ${invalidLevel4.join(', ')}`);
+        console.error(`❌ Invalid Level 4 category IDs for ${configTitle}: ${invalidLevel4.join(', ')}`);
       }
       
       if (invalidLevel3.length > 0 && (isAdmin || isDevelopment)) {
-        console.error(`❌ Invalid Level 3 category IDs for ${solutionConfig.title}: ${invalidLevel3.join(', ')}`);
+        console.error(`❌ Invalid Level 3 category IDs for ${configTitle}: ${invalidLevel3.join(', ')}`);
       }
 
       const validLevel4Names = level4Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
       const validLevel3Names = level3Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
 
-      console.log(`✅ ${solutionConfig.title} Level 4 categories: ${validLevel4Names.join(', ')} (IDs: ${level4Ids.join(', ')})`);
-      console.log(`✅ ${solutionConfig.title} Level 3 categories: ${validLevel3Names.join(', ')} (IDs: ${level3Ids.join(', ')})`);
+      if (isAdmin || isDevelopment) {
+        console.log(`✅ ${configTitle} Level 4 categories: ${validLevel4Names.join(', ')} (IDs: ${level4Ids.join(', ')})`);
+        console.log(`✅ ${configTitle} Level 3 categories: ${validLevel3Names.join(', ')} (IDs: ${level3Ids.join(', ')})`);
+      }
     }
 
     // Validate current solution
@@ -241,12 +228,16 @@ export default apiInitializer("0.11.1", (api) => {
         return; // Same solution, no need to update
       }
       
+      const config = currentConfig.solutionConfig;
+      const title = config.subtitle || config.name || config.title || 'Solution';
+      const desc = config.description || '';
+      
       header.innerHTML = `
         <div class="category-title-contents">
-          <h1 class="category-title">${currentConfig.solutionConfig.subtitle}<br>News & Security Advisories</h1>
+          <h1 class="category-title">${title}<br>News & Security Advisories</h1>
           <div class="category-title-description">
             <div class="solution-subtext">
-              ${currentConfig.solutionConfig.description}
+              ${desc}
             </div>
           </div>
         </div>
@@ -376,7 +367,8 @@ export default apiInitializer("0.11.1", (api) => {
 
         Promise.all(allUpdates)
           .then(() => {
-            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${currentConfig.solutionConfig.title} News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${currentConfig.solutionConfig.title} News & Security Advisories</span>`;
+            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
+            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>`;
             if (subscribing) {
               btn.classList.add("subscribed");
             } else {
@@ -388,7 +380,8 @@ export default apiInitializer("0.11.1", (api) => {
             if (isAdmin || isDevelopment) {
               console.error("Error updating subscription:", error);
             }
-            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${currentConfig.solutionConfig.title} News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${currentConfig.solutionConfig.title} News & Security Advisories</span>`;
+            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
+            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>`;
             btn.disabled = false;
           });
       });
@@ -423,8 +416,11 @@ export default apiInitializer("0.11.1", (api) => {
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();
           if (currentConfig) {
-            console.log(`✅ Navigated to solution: ${currentConfig.solutionConfig.title}`);
-            validateSolutionCategories(currentConfig.solutionConfig);
+            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
+            if (isAdmin || isDevelopment) {
+              console.log(`✅ Navigated to solution: ${configTitle}`);
+              validateSolutionCategories(currentConfig.solutionConfig);
+            }
             applyCurrentPageStyles();
           }
         }
