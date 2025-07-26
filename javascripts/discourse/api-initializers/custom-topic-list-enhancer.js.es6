@@ -442,6 +442,13 @@ export default apiInitializer("0.11.1", (api) => {
 
       wrapper.appendChild(btn);
       breadcrumb.appendChild(wrapper);
+      
+      // Add a clearfix element to ensure proper float layout
+      const clearfix = document.createElement("div");
+      clearfix.style.clear = "both";
+      clearfix.style.height = "0";
+      clearfix.style.visibility = "hidden";
+      breadcrumb.appendChild(clearfix);
     }
 
     // Handler for applying styles to current page

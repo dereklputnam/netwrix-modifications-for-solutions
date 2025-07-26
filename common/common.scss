@@ -6,3 +6,17 @@
   display: inline-block !important;
   visibility: visible !important;
 }
+
+// Ensure breadcrumb container supports float layout for proper button positioning
+body[class*="/lists/"] .category-breadcrumb,
+body[class*="lists-"] .category-breadcrumb {
+  display: block !important;
+  width: 100% !important;
+  overflow: visible !important;
+  
+  // Clear any flex layout that might interfere
+  display: block !important;
+  flex-direction: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+}
