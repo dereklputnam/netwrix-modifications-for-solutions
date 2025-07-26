@@ -2,65 +2,14 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
+  // STAGING APPROACH: Simple navigation hiding with JavaScript fallback
   const hideNavElements = () => {
-    // Only inject CSS and hide elements if we're on a /lists/ page
+    // Only hide elements if we're on a /lists/ page  
     if (!window.location.pathname.includes('/lists/') && !window.location.pathname.includes('/community/lists/')) {
       return;
     }
     
-    const style = document.createElement('style');
-    style.textContent = `
-      body[class*="/lists/"] #navigation-bar .nav-item_categories,
-      body[class*="/lists/"] #navigation-bar .nav-item_latest, 
-      body[class*="/lists/"] #navigation-bar .nav-item_new,
-      body[class*="/lists/"] #navigation-bar .nav-item_top,
-      body[class*="/lists/"] #navigation-bar .nav-item_unread,
-      body[class*="lists-"] #navigation-bar .nav-item_categories,
-      body[class*="lists-"] #navigation-bar .nav-item_latest, 
-      body[class*="lists-"] #navigation-bar .nav-item_new,
-      body[class*="lists-"] #navigation-bar .nav-item_top,
-      body[class*="lists-"] #navigation-bar .nav-item_unread {
-        display: none !important;
-      }
-      
-      body[class*="/lists/"] .category-breadcrumb .category-drop,
-      body[class*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
-      body[class*="lists-"] .category-breadcrumb .category-drop,
-      body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
-        display: none !important;
-      }
-      
-      body[class*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-      body[class*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
-      body[class*="lists-"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-      body[class*="lists-"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
-        display: none !important;
-      }
-      
-      /* Hide responsive line breaks by default */
-      .category-title .break-medium,
-      .category-title .break-small {
-        display: none !important;
-      }
-      
-      /* Show breaks on medium screens */
-      @media (max-width: 1200px) {
-        .category-title .break-medium {
-          display: inline !important;
-        }
-      }
-      
-      /* Show breaks on small screens */
-      @media (max-width: 768px) {
-        .category-title .break-small {
-          display: inline !important;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    
-    // Also hide immediately with JavaScript as fallback
+    // Simple JavaScript hiding as fallback to CSS
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => item.style.display = 'none');
     
@@ -68,7 +17,7 @@ export default apiInitializer("0.11.1", (api) => {
     const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
     filterDropdowns.forEach(item => item.style.display = 'none');
     
-    // Also hide their parent <li> elements
+    // Hide parent <li> elements that contain category/tag dropdowns (but not Solutions)
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
       if (index < 2) { // Hide first two <li> elements (categories and tags)
@@ -80,10 +29,10 @@ export default apiInitializer("0.11.1", (api) => {
     });
   };
   
-  // Execute immediately
+  // Execute immediately 
   hideNavElements();
   
-  // Also run on DOM ready
+  // Also run on DOM ready and with intervals for persistent hiding (staging approach)
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', hideNavElements);
   } else {

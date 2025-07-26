@@ -1,30 +1,22 @@
-// Hide navigation elements immediately on /lists/ pages - PRIORITY: CSS-first approach
+// Hide navigation elements immediately on /lists/ pages - STAGING APPROACH: Simple selectors
 body[class*="/lists/"] #navigation-bar .nav-item_categories,
 body[class*="/lists/"] #navigation-bar .nav-item_latest, 
+body[class*="/lists/"] #navigation-bar .nav-item_new,
 body[class*="/lists/"] #navigation-bar .nav-item_top,
+body[class*="/lists/"] #navigation-bar .nav-item_unread,
 body[class*="lists-"] #navigation-bar .nav-item_categories,
 body[class*="lists-"] #navigation-bar .nav-item_latest, 
-body[class*="lists-"] #navigation-bar .nav-item_top {
+body[class*="lists-"] #navigation-bar .nav-item_new,
+body[class*="lists-"] #navigation-bar .nav-item_top,
+body[class*="lists-"] #navigation-bar .nav-item_unread {
   display: none !important;
 }
 
-// Hide specific category and tag filter headers only on /lists/ pages
-body[class*="/lists/"] .category-breadcrumb .category-drop-header[data-name="categories"],
-body[class*="/lists/"] .category-breadcrumb .tag-drop-header[data-name="tags"],
+// Hide category and tag filter dropdowns only on /lists/ pages - STAGING APPROACH: Simple selectors
 body[class*="/lists/"] .category-breadcrumb .category-drop,
-body[class*="/lists/"] .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
-body[class*="/lists/"] .category-breadcrumb li:has(.category-drop-header[data-name="categories"]),
-body[class*="/lists/"] .category-breadcrumb li:has(.tag-drop-header[data-name="tags"]),
-body[class*="/lists/"] .category-breadcrumb li:has(.category-drop),
-body[class*="/lists/"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
-body[class*="lists-"] .category-breadcrumb .category-drop-header[data-name="categories"],
-body[class*="lists-"] .category-breadcrumb .tag-drop-header[data-name="tags"],
+body[class*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
 body[class*="lists-"] .category-breadcrumb .category-drop,
-body[class*="lists-"] .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
-body[class*="lists-"] .category-breadcrumb li:has(.category-drop-header[data-name="categories"]),
-body[class*="lists-"] .category-breadcrumb li:has(.tag-drop-header[data-name="tags"]),
-body[class*="lists-"] .category-breadcrumb li:has(.category-drop),
-body[class*="lists-"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)) {
+body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
   display: none !important;
 }
 

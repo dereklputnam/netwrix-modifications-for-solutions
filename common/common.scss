@@ -1,80 +1,4 @@
-// IMMEDIATE HIDING CSS - Loaded before JavaScript to prevent flash
-// This is the earliest possible CSS loading point in Discourse themes
-
-// Navigation elements hiding on lists pages - multiple selector approaches
-// for maximum compatibility across different Discourse versions and page states
-
-// Method 1: Using URL-based selectors
-body[data-page*="lists"] #navigation-bar .nav-item_categories,
-body[data-page*="lists"] #navigation-bar .nav-item_latest,
-body[data-page*="lists"] #navigation-bar .nav-item_top {
-  display: none !important;
-}
-
-// Method 2: Using body classes that contain "lists"
-body[class*="lists"] #navigation-bar .nav-item_categories,
-body[class*="lists"] #navigation-bar .nav-item_latest,
-body[class*="lists"] #navigation-bar .nav-item_top {
-  display: none !important;
-}
-
-// Method 3: Specific class-based targeting
-body.lists-show #navigation-bar .nav-item_categories,
-body.lists-show #navigation-bar .nav-item_latest,
-body.lists-show #navigation-bar .nav-item_top,
-body.custom-lists #navigation-bar .nav-item_categories,
-body.custom-lists #navigation-bar .nav-item_latest,
-body.custom-lists #navigation-bar .nav-item_top {
-  display: none !important;
-}
-
-// Method 4: Hide when URL path contains /lists/
-body[data-current-path*="/lists/"] #navigation-bar .nav-item_categories,
-body[data-current-path*="/lists/"] #navigation-bar .nav-item_latest,
-body[data-current-path*="/lists/"] #navigation-bar .nav-item_top {
-  display: none !important;
-}
-
-// Category and tag filter dropdowns hiding
-// Method 1: URL-based selectors
-body[data-page*="lists"] .category-breadcrumb .category-drop,
-body[data-page*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
-  display: none !important;
-}
-
-// Method 2: Class-based selectors
-body[class*="lists"] .category-breadcrumb .category-drop,
-body[class*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
-  display: none !important;
-}
-
-// Method 3: Specific classes
-body.lists-show .category-breadcrumb .category-drop,
-body.lists-show .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
-body.custom-lists .category-breadcrumb .category-drop,
-body.custom-lists .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
-  display: none !important;
-}
-
-// Method 4: Path-based hiding
-body[data-current-path*="/lists/"] .category-breadcrumb .category-drop,
-body[data-current-path*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
-  display: none !important;
-}
-
-// Hide parent li elements that contain category/tag dropdowns on lists pages
-body[data-page*="lists"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-body[data-page*="lists"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
-body[class*="lists"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-body[class*="lists"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
-body.lists-show .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-body.lists-show .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
-body.custom-lists .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-body.custom-lists .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
-body[data-current-path*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
-  display: none !important;
-}
+// STAGING APPROACH: Minimal CSS - complex rules moved to solution-header.scss
 
 // Ensure Solutions dropdown remains visible with higher specificity
 .category-breadcrumb .custom-list-dropdown,
@@ -82,5 +6,3 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
   display: block !important;
   visibility: visible !important;
 }
-
-// Text replacement is now handled by head_tag.html for immediate loading
