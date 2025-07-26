@@ -143,6 +143,23 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
+// Fix navigation controls layout after aggressive hiding
+body[class*="/lists/"] .navigation-controls,
+body[class*="lists-"] .navigation-controls {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+// Ensure subscribe button wrapper maintains right alignment
+body[class*="/lists/"] #solution-subscribe-wrapper,
+body[class*="lists-"] #solution-subscribe-wrapper {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
 // Enhanced styling for solution subscribe button - override all Discourse button styles
 #solution-subscribe-button,
 #solution-subscribe-button.btn,

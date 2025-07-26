@@ -480,13 +480,16 @@ export default apiInitializer("0.11.1", (api) => {
       }, 500);
     }
 
-    // Listen for page changes using Discourse's router
+    // Listen for page changes using Discourse's router with ULTRA-AGGRESSIVE enforcement
     api.onPageChange((url) => {
       const isListsPage = url.includes('/lists/');
       
-      // Always run hideNavElements to handle showing/hiding based on page type
+      // IMMEDIATE aggressive hiding on navigation
+      aggressiveHideNavElements();
+      
+      // Also run with multiple timeouts for persistent enforcement
       setTimeout(() => {
-        hideNavElements();
+        aggressiveHideNavElements();
         
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();
@@ -499,16 +502,37 @@ export default apiInitializer("0.11.1", (api) => {
             applyCurrentPageStyles();
           }
         }
-      }, 300); // Give time for DOM to update
+      }, 50); // Reduced delay for faster response
+      
+      // Additional aggressive enforcement at different intervals
+      setTimeout(() => aggressiveHideNavElements(), 100);
+      setTimeout(() => aggressiveHideNavElements(), 200);
+      setTimeout(() => aggressiveHideNavElements(), 500);
+      
+      // Ultra-aggressive: Run every 100ms for 3 seconds after page change
+      if (isListsPage) {
+        let pageChangeIntervalCount = 0;
+        const maxPageChangeIntervals = 30; // 3 seconds (30 * 100ms)
+        const pageChangeHider = setInterval(() => {
+          aggressiveHideNavElements();
+          pageChangeIntervalCount++;
+          if (pageChangeIntervalCount >= maxPageChangeIntervals) {
+            clearInterval(pageChangeHider);
+          }
+        }, 100);
+      }
     });
 
-    // Fallback: Use MutationObserver to watch for header changes
+    // ULTRA-AGGRESSIVE MutationObserver to watch for navigation elements and headers
     const observer = new MutationObserver((mutations) => {
       let shouldUpdate = false;
+      let shouldHideNav = false;
       
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList') {
           const addedNodes = Array.from(mutation.addedNodes);
+          
+          // Check for header changes
           const hasHeader = addedNodes.some(node => 
             node.nodeType === 1 && (
               node.classList?.contains('category-title-header') ||
@@ -516,8 +540,26 @@ export default apiInitializer("0.11.1", (api) => {
             )
           );
           
+          // Check for navigation elements that need hiding
+          const hasNavElements = addedNodes.some(node => 
+            node.nodeType === 1 && (
+              node.classList?.contains('nav-item_categories') ||
+              node.classList?.contains('nav-item_latest') ||
+              node.classList?.contains('nav-item_top') ||
+              node.classList?.contains('nav-item_new') ||
+              node.classList?.contains('nav-item_unread') ||
+              node.classList?.contains('navigation-controls') ||
+              node.querySelector?.('.nav-item_categories, .nav-item_latest, .nav-item_top, .nav-item_new, .nav-item_unread') ||
+              node.querySelector?.('.navigation-controls .nav-pills, .topic-list-header .sortable, .period-chooser')
+            )
+          );
+          
           if (hasHeader) {
             shouldUpdate = true;
+          }
+          
+          if (hasNavElements) {
+            shouldHideNav = true;
           }
         }
       });
@@ -525,7 +567,16 @@ export default apiInitializer("0.11.1", (api) => {
       if (shouldUpdate) {
         setTimeout(() => {
           applyCurrentPageStyles();
-        }, 50);
+        }, 10); // Faster response
+      }
+      
+      if (shouldHideNav) {
+        // Immediate hiding when navigation elements are detected
+        aggressiveHideNavElements();
+        // Also run with small delays to catch any late additions
+        setTimeout(() => aggressiveHideNavElements(), 10);
+        setTimeout(() => aggressiveHideNavElements(), 50);
+        setTimeout(() => aggressiveHideNavElements(), 100);
       }
     });
 
