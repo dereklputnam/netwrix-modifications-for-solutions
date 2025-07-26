@@ -2,50 +2,7 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // CRITICAL: Inject CSS immediately to prevent flash of unwanted elements
-  const immediateStyle = document.createElement('style');
-  immediateStyle.id = 'netwrix-immediate-hiding';
-  immediateStyle.textContent = `
-    /* Hide elements immediately on /lists pages to prevent flash */
-    body[class*="lists"] #navigation-bar .nav-item_categories,
-    body[class*="lists"] #navigation-bar .nav-item_latest,
-    body[class*="lists"] #navigation-bar .nav-item_top,
-    body[class*="lists"] .category-breadcrumb .category-drop,
-    body[class*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
-    body[class*="lists"] .category-breadcrumb li:has(.category-drop),
-    body[class*="lists"] .category-breadcrumb li:has(.tag-drop:not(.custom-list-dropdown)) {
-      display: none !important;
-      visibility: hidden !important;
-    }
-    
-    /* Global text replacement for Custom lists -> Solutions */
-    .select-kit-header[data-name="Custom lists"],
-    .selected-name[data-name="Custom lists"],
-    .select-kit-selected-name .name:has-text("Custom lists") {
-      /* CSS can't change text content, will be handled by JS */
-    }
-    
-    /* Hide responsive line breaks by default */
-    .category-title .break-medium,
-    .category-title .break-small {
-      display: none !important;
-    }
-    
-    /* Show breaks on medium screens */
-    @media (max-width: 1200px) {
-      .category-title .break-medium {
-        display: inline !important;
-      }
-    }
-    
-    /* Show breaks on small screens */
-    @media (max-width: 768px) {
-      .category-title .break-small {
-        display: inline !important;
-      }
-    }
-  `;
-  document.head.insertBefore(immediateStyle, document.head.firstChild);
+  // Note: Element hiding is now handled by CSS files for zero-flash experience
 
   // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
   const hideNavElements = () => {

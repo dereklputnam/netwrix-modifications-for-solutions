@@ -1,0 +1,96 @@
+// CRITICAL: Immediate hiding to prevent flash - this CSS loads before JavaScript
+// This stylesheet is specifically for preventing flash of unwanted elements
+
+// Hide navigation elements on all pages that contain "lists" in the URL
+// Using multiple selector approaches to ensure maximum compatibility
+[data-discourse-route*="lists"] #navigation-bar .nav-item_categories,
+[data-discourse-route*="lists"] #navigation-bar .nav-item_latest,
+[data-discourse-route*="lists"] #navigation-bar .nav-item_top,
+body[class*="lists"] #navigation-bar .nav-item_categories,
+body[class*="lists"] #navigation-bar .nav-item_latest,
+body[class*="lists"] #navigation-bar .nav-item_top,
+body.custom-lists #navigation-bar .nav-item_categories,
+body.custom-lists #navigation-bar .nav-item_latest,
+body.custom-lists #navigation-bar .nav-item_top,
+.lists-page #navigation-bar .nav-item_categories,
+.lists-page #navigation-bar .nav-item_latest,
+.lists-page #navigation-bar .nav-item_top {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+// Hide category and tag filter dropdowns on lists pages
+[data-discourse-route*="lists"] .category-breadcrumb .category-drop,
+[data-discourse-route*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+[data-discourse-route*="lists"] .category-breadcrumb li:has(.category-drop),
+[data-discourse-route*="lists"] .category-breadcrumb li:has(.tag-drop:not(.custom-list-dropdown)),
+body[class*="lists"] .category-breadcrumb .category-drop,
+body[class*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+body[class*="lists"] .category-breadcrumb li:has(.category-drop),
+body[class*="lists"] .category-breadcrumb li:has(.tag-drop:not(.custom-list-dropdown)),
+body.custom-lists .category-breadcrumb .category-drop,
+body.custom-lists .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+body.custom-lists .category-breadcrumb li:has(.category-drop),
+body.custom-lists .category-breadcrumb li:has(.tag-drop:not(.custom-list-dropdown)),
+.lists-page .category-breadcrumb .category-drop,
+.lists-page .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+.lists-page .category-breadcrumb li:has(.category-drop),
+.lists-page .category-breadcrumb li:has(.tag-drop:not(.custom-list-dropdown)) {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+// Fallback selectors for broader compatibility (without :has() pseudo-selector)
+[data-discourse-route*="lists"] .category-breadcrumb li:first-child,
+[data-discourse-route*="lists"] .category-breadcrumb li:nth-child(2),
+body[class*="lists"] .category-breadcrumb li:first-child,
+body[class*="lists"] .category-breadcrumb li:nth-child(2),
+body.custom-lists .category-breadcrumb li:first-child,
+body.custom-lists .category-breadcrumb li:nth-child(2),
+.lists-page .category-breadcrumb li:first-child,
+.lists-page .category-breadcrumb li:nth-child(2) {
+  // Only hide if they don't contain the Solutions dropdown
+  &:not(:has(.custom-list-dropdown)) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+// Additional broad selectors for category/tag dropdowns
+.category-breadcrumb {
+  .category-drop:not(.custom-list-dropdown),
+  .tag-drop:not(.custom-list-dropdown) {
+    [data-discourse-route*="lists"] &,
+    body[class*="lists"] &,
+    body.custom-lists &,
+    .lists-page & {
+      display: none !important;
+      visibility: hidden !important;
+    }
+  }
+}
+
+// Ultra-aggressive approach - hide all breadcrumb elements except Solutions on lists pages
+[data-discourse-route*="lists"] .category-breadcrumb > li,
+body[class*="lists"] .category-breadcrumb > li,
+body.custom-lists .category-breadcrumb > li,
+.lists-page .category-breadcrumb > li {
+  // Show only if it contains the Solutions dropdown
+  &:not(:has(.custom-list-dropdown)) {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+// Ensure Solutions dropdown remains visible
+[data-discourse-route*="lists"] .category-breadcrumb .custom-list-dropdown,
+body[class*="lists"] .category-breadcrumb .custom-list-dropdown,
+body.custom-lists .category-breadcrumb .custom-list-dropdown,
+.lists-page .category-breadcrumb .custom-list-dropdown,
+[data-discourse-route*="lists"] .category-breadcrumb li:has(.custom-list-dropdown),
+body[class*="lists"] .category-breadcrumb li:has(.custom-list-dropdown),
+body.custom-lists .category-breadcrumb li:has(.custom-list-dropdown),
+.lists-page .category-breadcrumb li:has(.custom-list-dropdown) {
+  display: block !important;
+  visibility: visible !important;
+}
