@@ -2,68 +2,56 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // Note: Element hiding is now handled by CSS files for zero-flash experience
-  // Text replacement back to simple approach to avoid global interference
-
-  // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
+  // PRIORITY: Hide navigation elements immediately to prevent flash
   const hideNavElements = () => {
-    // Only run on /lists/ pages
-    if (!window.location.pathname.includes('/lists/')) {
-      return;
-    }
+    const style = document.createElement('style');
+    style.textContent = `
+      #navigation-bar .nav-item_categories,
+      #navigation-bar .nav-item_latest, 
+      #navigation-bar .nav-item_new,
+      #navigation-bar .nav-item_top,
+      #navigation-bar .nav-item_unread {
+        display: none !important;
+      }
+      
+      /* Hide responsive line breaks by default */
+      .category-title .break-medium,
+      .category-title .break-small {
+        display: none !important;
+      }
+      
+      /* Show breaks on medium screens */
+      @media (max-width: 1200px) {
+        .category-title .break-medium {
+          display: inline !important;
+        }
+      }
+      
+      /* Show breaks on small screens */
+      @media (max-width: 768px) {
+        .category-title .break-small {
+          display: inline !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
     
-    // Hide specific navigation elements immediately with JavaScript on /lists/ pages only
-    const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_top');
+    // Also hide immediately with JavaScript
+    const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => item.style.display = 'none');
     
-    // Hide category and tag filter dropdowns with multiple selector approaches
-    // Method 1: Hide by header data-name attribute
-    const categoryHeaders = document.querySelectorAll('.category-breadcrumb .category-drop-header[data-name="categories"]');
-    const tagHeaders = document.querySelectorAll('.category-breadcrumb .tag-drop-header[data-name="tags"]');
+    // Hide category and tag filter dropdowns
+    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
+    filterDropdowns.forEach(item => item.style.display = 'none');
     
-    categoryHeaders.forEach(header => {
-      const parentLi = header.closest('li');
-      if (parentLi) {
-        parentLi.style.display = 'none';
-        parentLi.style.visibility = 'hidden';
-      }
-    });
-    
-    tagHeaders.forEach(header => {
-      const parentLi = header.closest('li');
-      if (parentLi) {
-        parentLi.style.display = 'none';
-        parentLi.style.visibility = 'hidden';
-      }
-    });
-    
-    // Method 2: Hide by dropdown classes (broader approach)
-    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown), .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
-    filterDropdowns.forEach(item => {
-      item.style.display = 'none';
-      item.style.visibility = 'hidden';
-      const parentLi = item.closest('li');
-      if (parentLi) {
-        parentLi.style.display = 'none';
-        parentLi.style.visibility = 'hidden';
-      }
-    });
-    
-    // Method 3: Hide breadcrumb li elements that contain category/tag dropdowns (but not Solutions)
+    // Also hide their parent <li> elements
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
-      // Skip if it contains the Solutions dropdown
-      if (li.querySelector('.custom-list-dropdown')) {
-        return;
-      }
-      
-      // Hide if it contains category or tag dropdowns
-      const hasCategoryDrop = li.querySelector('.category-drop');
-      const hasTagDrop = li.querySelector('.tag-drop:not(.custom-list-dropdown)');
-      
-      if (hasCategoryDrop || hasTagDrop) {
-        li.style.display = 'none';
-        li.style.visibility = 'hidden';
+      if (index < 2) { // Hide first two <li> elements (categories and tags)
+        const hasCustomList = li.querySelector('.custom-list-dropdown');
+        if (!hasCustomList) {
+          li.style.display = 'none';
+        }
       }
     });
   };
