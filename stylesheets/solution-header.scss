@@ -143,21 +143,11 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Position subscribe button to the far right within breadcrumb
-body[class*="/lists/"] .category-breadcrumb,
-body[class*="lists-"] .category-breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-}
-
-// Subscribe button positioned to the right
+// Position subscribe button to the far right using float
 body[class*="/lists/"] .category-breadcrumb #solution-subscribe-wrapper,
 body[class*="lists-"] .category-breadcrumb #solution-subscribe-wrapper {
-  order: 999 !important;
-  margin-left: auto !important;
-  margin-right: 0 !important;
+  float: right !important;
+  margin-left: 20px !important;
   position: relative !important;
   z-index: 1000 !important;
 }
