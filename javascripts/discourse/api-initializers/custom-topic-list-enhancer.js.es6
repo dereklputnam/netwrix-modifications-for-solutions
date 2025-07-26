@@ -342,8 +342,7 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Function to update subscribe button for current solution
     function updateSubscribeButton() {
-      const nav = document.querySelector(".navigation-controls");
-      if (!nav || !currentUser) return; // Only show subscribe button if user is logged in
+      if (!currentUser) return; // Only show subscribe button if user is logged in
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
@@ -360,22 +359,15 @@ export default apiInitializer("0.11.1", (api) => {
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      // ULTRA-AGGRESSIVE navigation controls styling for proper button alignment
-      nav.style.display = "flex";
-      nav.style.alignItems = "center";
-      nav.style.justifyContent = "flex-end";
-      nav.style.width = "100%";
-      nav.style.position = "relative";
+      // Find the breadcrumb container to place button inline with the Solutions dropdown
+      const breadcrumb = document.querySelector(".category-breadcrumb");
+      if (!breadcrumb) return;
 
-      const wrapper = document.createElement("div");
+      const wrapper = document.createElement("li");
       wrapper.id = "solution-subscribe-wrapper";
-      wrapper.style.marginLeft = "auto";
-      wrapper.style.display = "flex";
-      wrapper.style.alignItems = "center";
-      wrapper.style.justifyContent = "flex-end";
-      wrapper.style.flex = "0 0 auto";
-      wrapper.style.position = "relative";
-      wrapper.style.zIndex = "1000";
+      wrapper.style.display = "inline-block";
+      wrapper.style.marginLeft = "10px";
+      wrapper.style.verticalAlign = "middle";
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -446,7 +438,7 @@ export default apiInitializer("0.11.1", (api) => {
       });
 
       wrapper.appendChild(btn);
-      nav.appendChild(wrapper);
+      breadcrumb.appendChild(wrapper);
     }
 
     // Handler for applying styles to current page
