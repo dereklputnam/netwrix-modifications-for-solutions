@@ -178,37 +178,47 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Function to update dropdown text
     function updateDropdownText() {
+      // Update the main dropdown text
       const dropdown = document.querySelector('.custom-list-dropdown .select-kit-selected-name .name');
       if (dropdown && dropdown.textContent.trim() === 'Custom lists') {
-        dropdown.textContent = 'Solution';
+        dropdown.textContent = 'Solutions';
       }
       
-      // Also update the aria-label and title attributes
-      const header = document.querySelector('.custom-list-dropdown .select-kit-header');
-      if (header) {
+      // Also find dropdowns by data-name attribute in case the class isn't there
+      const dropdownsByName = document.querySelectorAll('.select-kit-selected-name .name');
+      dropdownsByName.forEach(nameEl => {
+        if (nameEl.textContent.trim() === 'Custom lists') {
+          nameEl.textContent = 'Solutions';
+        }
+      });
+      
+      // Update the aria-label and title attributes for the header
+      const headers = document.querySelectorAll('.select-kit-header');
+      headers.forEach(header => {
         const ariaLabel = header.getAttribute('aria-label');
         const dataName = header.getAttribute('data-name');
         
         if (ariaLabel && ariaLabel.includes('Custom lists')) {
-          header.setAttribute('aria-label', ariaLabel.replace('Custom lists', 'Solution'));
+          header.setAttribute('aria-label', ariaLabel.replace('Custom lists', 'Solutions'));
         }
         if (dataName === 'Custom lists') {
-          header.setAttribute('data-name', 'Solution');
+          header.setAttribute('data-name', 'Solutions');
         }
-      }
+      });
       
-      const selectedChoice = document.querySelector('.custom-list-dropdown .selected-name.choice');
-      if (selectedChoice) {
+      // Update selected choice elements
+      const selectedChoices = document.querySelectorAll('.selected-name.choice');
+      selectedChoices.forEach(selectedChoice => {
         const title = selectedChoice.getAttribute('title');
         const dataName = selectedChoice.getAttribute('data-name');
         
         if (title === 'Custom lists') {
-          selectedChoice.setAttribute('title', 'Solution');
+          selectedChoice.setAttribute('title', 'Solutions');
         }
         if (dataName === 'Custom lists') {
-          selectedChoice.setAttribute('data-name', 'Solution');
+          selectedChoice.setAttribute('data-name', 'Solutions');
         }
-      }
+      });
     }
 
     const currentUser = api.getCurrentUser();
@@ -425,7 +435,17 @@ export default apiInitializer("0.11.1", (api) => {
       // Use a timer to ensure DOM is ready
       setTimeout(() => {
         applyCurrentPageStyles();
+        updateDropdownText(); // Update dropdown text on initial load
       }, 100);
+      
+      // Update dropdown text periodically to catch any dynamic updates
+      const textUpdateInterval = setInterval(() => {
+        if (window.location.pathname.includes('/lists/')) {
+          updateDropdownText();
+        } else {
+          clearInterval(textUpdateInterval);
+        }
+      }, 500);
     }
 
     // Listen for page changes using Discourse's router
