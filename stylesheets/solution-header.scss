@@ -143,21 +143,40 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Fix navigation controls layout after aggressive hiding
+// ULTRA-AGGRESSIVE navigation controls layout after aggressive hiding
 body[class*="/lists/"] .navigation-controls,
 body[class*="lists-"] .navigation-controls {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   width: 100% !important;
+  position: relative !important;
+  min-height: 40px !important;
 }
 
-// Ensure subscribe button wrapper maintains right alignment
+// ULTRA-AGGRESSIVE subscribe button wrapper right alignment
 body[class*="/lists/"] #solution-subscribe-wrapper,
 body[class*="lists-"] #solution-subscribe-wrapper {
   margin-left: auto !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: flex-end !important;
+  flex: 0 0 auto !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  min-width: auto !important;
+  width: auto !important;
+}
+
+// Force right positioning even if other elements interfere
+body[class*="/lists/"] .navigation-controls #solution-subscribe-wrapper,
+body[class*="lists-"] .navigation-controls #solution-subscribe-wrapper {
+  position: absolute !important;
+  right: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles

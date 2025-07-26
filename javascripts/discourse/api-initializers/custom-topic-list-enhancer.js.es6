@@ -373,12 +373,22 @@ export default apiInitializer("0.11.1", (api) => {
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
+      // ULTRA-AGGRESSIVE navigation controls styling for proper button alignment
       nav.style.display = "flex";
       nav.style.alignItems = "center";
+      nav.style.justifyContent = "space-between";
+      nav.style.width = "100%";
+      nav.style.position = "relative";
 
       const wrapper = document.createElement("div");
       wrapper.id = "solution-subscribe-wrapper";
       wrapper.style.marginLeft = "auto";
+      wrapper.style.display = "flex";
+      wrapper.style.alignItems = "center";
+      wrapper.style.justifyContent = "flex-end";
+      wrapper.style.flex = "0 0 auto";
+      wrapper.style.position = "relative";
+      wrapper.style.zIndex = "1000";
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
