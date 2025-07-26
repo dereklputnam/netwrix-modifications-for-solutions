@@ -347,30 +347,21 @@ export default apiInitializer("0.11.1", (api) => {
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
         // Remove subscribe button if not on solution page
-        const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-        if (existingWrapper) existingWrapper.remove();
+        const existingButton = document.querySelector("#solution-subscribe-button");
+        if (existingButton) existingButton.remove();
         return;
       }
       
       // Remove existing button
-      const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-      if (existingWrapper) existingWrapper.remove();
+      const existingButton = document.querySelector("#solution-subscribe-button");
+      if (existingButton) existingButton.remove();
       
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      // Find the breadcrumb container to place button inline with the Solutions dropdown
-      const breadcrumb = document.querySelector(".category-breadcrumb");
-      if (!breadcrumb) return;
-
-      const wrapper = document.createElement("li");
-      wrapper.id = "solution-subscribe-wrapper";
-      
-      // Apply right positioning directly via JavaScript since CSS selectors aren't matching
-      wrapper.style.float = 'right';
-      wrapper.style.marginLeft = 'auto';
-      wrapper.style.position = 'relative';
-      wrapper.style.zIndex = '1000';
+      // Find the navigation-controls container (where buttons should go)
+      const navControls = document.querySelector(".navigation-controls");
+      if (!navControls) return;
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -440,15 +431,8 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      wrapper.appendChild(btn);
-      breadcrumb.appendChild(wrapper);
-      
-      // Add a clearfix element to ensure proper float layout
-      const clearfix = document.createElement("div");
-      clearfix.style.clear = "both";
-      clearfix.style.height = "0";
-      clearfix.style.visibility = "hidden";
-      breadcrumb.appendChild(clearfix);
+      // Insert the button at the beginning of navigation-controls (it will appear on the right)
+      navControls.insertBefore(btn, navControls.firstChild);
     }
 
     // Handler for applying styles to current page
