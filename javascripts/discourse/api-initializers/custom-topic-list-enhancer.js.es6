@@ -365,9 +365,6 @@ export default apiInitializer("0.11.1", (api) => {
 
       const wrapper = document.createElement("li");
       wrapper.id = "solution-subscribe-wrapper";
-      wrapper.style.display = "inline-block";
-      wrapper.style.marginLeft = "10px";
-      wrapper.style.verticalAlign = "middle";
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
