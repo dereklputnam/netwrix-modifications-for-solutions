@@ -12,19 +12,23 @@ body[class*="lists-"] #navigation-bar .nav-item_unread {
   display: none !important;
 }
 
-// Hide category and tag filter dropdowns only on /lists/ pages
+// Hide specific category and tag filter headers only on /lists/ pages
+body[class*="/lists/"] .category-breadcrumb .category-drop-header[data-name="categories"],
+body[class*="/lists/"] .category-breadcrumb .tag-drop-header[data-name="tags"],
 body[class*="/lists/"] .category-breadcrumb .category-drop,
 body[class*="/lists/"] .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
+body[class*="/lists/"] .category-breadcrumb li:has(.category-drop-header[data-name="categories"]),
+body[class*="/lists/"] .category-breadcrumb li:has(.tag-drop-header[data-name="tags"]),
 body[class*="/lists/"] .category-breadcrumb li:has(.category-drop),
 body[class*="/lists/"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
-body[class*="/lists/"] .navigation-container .category-breadcrumb li:first-child,
-body[class*="/lists/"] .navigation-container .category-breadcrumb li:nth-child(2),
+body[class*="lists-"] .category-breadcrumb .category-drop-header[data-name="categories"],
+body[class*="lists-"] .category-breadcrumb .tag-drop-header[data-name="tags"],
 body[class*="lists-"] .category-breadcrumb .category-drop,
 body[class*="lists-"] .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
+body[class*="lists-"] .category-breadcrumb li:has(.category-drop-header[data-name="categories"]),
+body[class*="lists-"] .category-breadcrumb li:has(.tag-drop-header[data-name="tags"]),
 body[class*="lists-"] .category-breadcrumb li:has(.category-drop),
-body[class*="lists-"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
-body[class*="lists-"] .navigation-container .category-breadcrumb li:first-child,
-body[class*="lists-"] .navigation-container .category-breadcrumb li:nth-child(2) {
+body[class*="lists-"] .category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)) {
   display: none !important;
 }
 

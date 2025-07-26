@@ -33,24 +33,27 @@ export default apiInitializer("0.11.1", (api) => {
     `;
     document.head.appendChild(style);
     
-    // Also hide navigation elements immediately with JavaScript on /lists/ pages only
+    // Hide specific navigation elements immediately with JavaScript on /lists/ pages only
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => item.style.display = 'none');
     
-    // Hide category and tag filter dropdowns
+    // Hide specific category and tag filter headers by data-name attribute
+    const categoryHeaders = document.querySelectorAll('.category-breadcrumb .category-drop-header[data-name="categories"]');
+    const tagHeaders = document.querySelectorAll('.category-breadcrumb .tag-drop-header[data-name="tags"]');
+    
+    categoryHeaders.forEach(header => {
+      const parentLi = header.closest('li');
+      if (parentLi) parentLi.style.display = 'none';
+    });
+    
+    tagHeaders.forEach(header => {
+      const parentLi = header.closest('li');
+      if (parentLi) parentLi.style.display = 'none';
+    });
+    
+    // Fallback: Hide category and tag filter dropdowns by class
     const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown)');
     filterDropdowns.forEach(item => item.style.display = 'none');
-    
-    // Also hide their parent <li> elements
-    const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
-    breadcrumbItems.forEach((li, index) => {
-      if (index < 2) { // Hide first two <li> elements (categories and tags)
-        const hasCustomList = li.querySelector('.custom-list-dropdown');
-        if (!hasCustomList) {
-          li.style.display = 'none';
-        }
-      }
-    });
   };
   
   // Execute immediately
