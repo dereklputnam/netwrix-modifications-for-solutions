@@ -2,15 +2,39 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // PRIORITY: Hide navigation elements immediately to prevent flash
+  // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
   const hideNavElements = () => {
+    // Only inject CSS and hide elements if we're on a /lists/ page
+    if (!window.location.pathname.includes('/lists/') && !window.location.pathname.includes('/community/lists/')) {
+      return;
+    }
+    
     const style = document.createElement('style');
     style.textContent = `
-      #navigation-bar .nav-item_categories,
-      #navigation-bar .nav-item_latest, 
-      #navigation-bar .nav-item_new,
-      #navigation-bar .nav-item_top,
-      #navigation-bar .nav-item_unread {
+      body[class*="/lists/"] #navigation-bar .nav-item_categories,
+      body[class*="/lists/"] #navigation-bar .nav-item_latest, 
+      body[class*="/lists/"] #navigation-bar .nav-item_new,
+      body[class*="/lists/"] #navigation-bar .nav-item_top,
+      body[class*="/lists/"] #navigation-bar .nav-item_unread,
+      body[class*="lists-"] #navigation-bar .nav-item_categories,
+      body[class*="lists-"] #navigation-bar .nav-item_latest, 
+      body[class*="lists-"] #navigation-bar .nav-item_new,
+      body[class*="lists-"] #navigation-bar .nav-item_top,
+      body[class*="lists-"] #navigation-bar .nav-item_unread {
+        display: none !important;
+      }
+      
+      body[class*="/lists/"] .category-breadcrumb .category-drop,
+      body[class*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+      body[class*="lists-"] .category-breadcrumb .category-drop,
+      body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
+        display: none !important;
+      }
+      
+      body[class*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+      body[class*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+      body[class*="lists-"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+      body[class*="lists-"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
         display: none !important;
       }
       
@@ -36,7 +60,7 @@ export default apiInitializer("0.11.1", (api) => {
     `;
     document.head.appendChild(style);
     
-    // Also hide immediately with JavaScript
+    // Also hide immediately with JavaScript as fallback
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => item.style.display = 'none');
     

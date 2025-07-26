@@ -1,7 +1,41 @@
 <script>
-// Ultra-early text replacement - runs before Discourse's main JavaScript
+// Ultra-early navigation hiding and text replacement - runs before Discourse's main JavaScript
 (function() {
   'use strict';
+  
+  // IMMEDIATE navigation hiding on /lists/ pages - inject CSS as early as possible
+  if (window.location.pathname.includes('/lists/') || window.location.pathname.includes('/community/lists/')) {
+    const navStyle = document.createElement('style');
+    navStyle.textContent = `
+      body[class*="/lists/"] #navigation-bar .nav-item_categories,
+      body[class*="/lists/"] #navigation-bar .nav-item_latest, 
+      body[class*="/lists/"] #navigation-bar .nav-item_new,
+      body[class*="/lists/"] #navigation-bar .nav-item_top,
+      body[class*="/lists/"] #navigation-bar .nav-item_unread,
+      body[class*="lists-"] #navigation-bar .nav-item_categories,
+      body[class*="lists-"] #navigation-bar .nav-item_latest, 
+      body[class*="lists-"] #navigation-bar .nav-item_new,
+      body[class*="lists-"] #navigation-bar .nav-item_top,
+      body[class*="lists-"] #navigation-bar .nav-item_unread {
+        display: none !important;
+      }
+      
+      body[class*="/lists/"] .category-breadcrumb .category-drop,
+      body[class*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+      body[class*="lists-"] .category-breadcrumb .category-drop,
+      body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
+        display: none !important;
+      }
+      
+      body[class*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+      body[class*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+      body[class*="lists-"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+      body[class*="lists-"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(navStyle);
+  }
   
   // Function to replace Custom lists with Solutions
   function replaceCustomListsText() {
