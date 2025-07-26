@@ -82,3 +82,30 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
   display: block !important;
   visibility: visible !important;
 }
+
+// Targeted text flash prevention - only for .custom-list-dropdown with "Custom lists"
+// Only hide if the element actually contains "Custom lists" data
+.custom-list-dropdown[data-name="Custom lists"],
+.custom-list-dropdown[aria-label*="Custom lists"] {
+  .select-kit-selected-name .name,
+  .selected-name .name,
+  .name {
+    &:not([data-solutions-ready="true"]) {
+      opacity: 0;
+      transition: opacity 0.15s ease-in-out;
+    }
+    
+    &[data-solutions-ready="true"] {
+      opacity: 1;
+    }
+  }
+}
+
+// Fallback: ensure all other custom-list-dropdown text is visible
+.custom-list-dropdown:not([data-name="Custom lists"]):not([aria-label*="Custom lists"]) {
+  .select-kit-selected-name .name,
+  .selected-name .name,
+  .name {
+    opacity: 1 !important;
+  }
+}
