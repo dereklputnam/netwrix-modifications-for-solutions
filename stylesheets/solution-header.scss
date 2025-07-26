@@ -1,4 +1,4 @@
-// Hide navigation elements immediately on /lists/ pages - STAGING APPROACH: Simple selectors
+// ULTRA-AGGRESSIVE navigation hiding on /lists/ pages - Multiple selector approaches for zero-flash
 body[class*="/lists/"] #navigation-bar .nav-item_categories,
 body[class*="/lists/"] #navigation-bar .nav-item_latest, 
 body[class*="/lists/"] #navigation-bar .nav-item_new,
@@ -8,16 +8,61 @@ body[class*="lists-"] #navigation-bar .nav-item_categories,
 body[class*="lists-"] #navigation-bar .nav-item_latest, 
 body[class*="lists-"] #navigation-bar .nav-item_new,
 body[class*="lists-"] #navigation-bar .nav-item_top,
-body[class*="lists-"] #navigation-bar .nav-item_unread {
+body[class*="lists-"] #navigation-bar .nav-item_unread,
+body.lists-show #navigation-bar .nav-item_categories,
+body.lists-show #navigation-bar .nav-item_latest,
+body.lists-show #navigation-bar .nav-item_new,
+body.lists-show #navigation-bar .nav-item_top,
+body.lists-show #navigation-bar .nav-item_unread,
+body[data-page*="lists"] #navigation-bar .nav-item_categories,
+body[data-page*="lists"] #navigation-bar .nav-item_latest,
+body[data-page*="lists"] #navigation-bar .nav-item_new,
+body[data-page*="lists"] #navigation-bar .nav-item_top,
+body[data-page*="lists"] #navigation-bar .nav-item_unread,
+body[data-current-path*="/lists/"] #navigation-bar .nav-item_categories,
+body[data-current-path*="/lists/"] #navigation-bar .nav-item_latest,
+body[data-current-path*="/lists/"] #navigation-bar .nav-item_new,
+body[data-current-path*="/lists/"] #navigation-bar .nav-item_top,
+body[data-current-path*="/lists/"] #navigation-bar .nav-item_unread {
   display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
 }
 
-// Hide category and tag filter dropdowns only on /lists/ pages - STAGING APPROACH: Simple selectors
+// ULTRA-AGGRESSIVE category and tag filter hiding only on /lists/ pages
 body[class*="/lists/"] .category-breadcrumb .category-drop,
 body[class*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
 body[class*="lists-"] .category-breadcrumb .category-drop,
-body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
+body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+body.lists-show .category-breadcrumb .category-drop,
+body.lists-show .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+body[data-page*="lists"] .category-breadcrumb .category-drop,
+body[data-page*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+body[data-current-path*="/lists/"] .category-breadcrumb .category-drop,
+body[data-current-path*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+body[class*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+body[class*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+body[class*="lists-"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+body[class*="lists-"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+body.lists-show .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+body.lists-show .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+body[data-page*="lists"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+body[data-page*="lists"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+body[data-current-path*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
   display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
 }
 
 // Hide header content until JavaScript styling loads on solution pages

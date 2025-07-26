@@ -2,20 +2,42 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // STAGING APPROACH: Simple navigation hiding with JavaScript fallback
-  const hideNavElements = () => {
+  // ULTRA-AGGRESSIVE navigation hiding with JavaScript fallback and persistent enforcement
+  const aggressiveHideNavElements = () => {
     // Only hide elements if we're on a /lists/ page  
     if (!window.location.pathname.includes('/lists/') && !window.location.pathname.includes('/community/lists/')) {
       return;
     }
     
-    // Simple JavaScript hiding as fallback to CSS
+    // Ultra-aggressive JavaScript hiding with multiple properties
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
-    navItems.forEach(item => item.style.display = 'none');
+    navItems.forEach(item => {
+      item.style.display = 'none';
+      item.style.visibility = 'hidden';
+      item.style.opacity = '0';
+      item.style.width = '0';
+      item.style.height = '0';
+      item.style.overflow = 'hidden';
+      item.style.position = 'absolute';
+      item.style.left = '-9999px';
+      item.setAttribute('hidden', 'true');
+      item.setAttribute('aria-hidden', 'true');
+    });
     
-    // Hide category and tag filter dropdowns
+    // Hide category and tag filter dropdowns with aggressive properties
     const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
-    filterDropdowns.forEach(item => item.style.display = 'none');
+    filterDropdowns.forEach(item => {
+      item.style.display = 'none';
+      item.style.visibility = 'hidden';
+      item.style.opacity = '0';
+      item.style.width = '0';
+      item.style.height = '0';
+      item.style.overflow = 'hidden';
+      item.style.position = 'absolute';
+      item.style.left = '-9999px';
+      item.setAttribute('hidden', 'true');
+      item.setAttribute('aria-hidden', 'true');
+    });
     
     // Hide parent <li> elements that contain category/tag dropdowns (but not Solutions)
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
@@ -24,19 +46,41 @@ export default apiInitializer("0.11.1", (api) => {
         const hasCustomList = li.querySelector('.custom-list-dropdown');
         if (!hasCustomList) {
           li.style.display = 'none';
+          li.style.visibility = 'hidden';
+          li.style.opacity = '0';
+          li.style.width = '0';
+          li.style.height = '0';
+          li.style.overflow = 'hidden';
+          li.style.position = 'absolute';
+          li.style.left = '-9999px';
+          li.setAttribute('hidden', 'true');
+          li.setAttribute('aria-hidden', 'true');
         }
       }
     });
   };
   
   // Execute immediately 
-  hideNavElements();
+  aggressiveHideNavElements();
   
-  // Also run on DOM ready and with intervals for persistent hiding (staging approach)
+  // Also run on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', hideNavElements);
+    document.addEventListener('DOMContentLoaded', aggressiveHideNavElements);
   } else {
-    hideNavElements();
+    aggressiveHideNavElements();
+  }
+  
+  // ULTRA-AGGRESSIVE: Run every 100ms for the first 5 seconds to catch any dynamically loaded elements
+  if (window.location.pathname.includes('/lists/') || window.location.pathname.includes('/community/lists/')) {
+    let intervalCount = 0;
+    const maxIntervals = 50; // 5 seconds (50 * 100ms)
+    const persistentHider = setInterval(() => {
+      aggressiveHideNavElements();
+      intervalCount++;
+      if (intervalCount >= maxIntervals) {
+        clearInterval(persistentHider);
+      }
+    }, 100);
   }
   
 

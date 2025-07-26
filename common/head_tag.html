@@ -3,10 +3,12 @@
 (function() {
   'use strict';
   
-  // IMMEDIATE navigation hiding on /lists/ pages - inject CSS as early as possible
+  // ULTRA-AGGRESSIVE navigation hiding on /lists/ pages - inject CSS IMMEDIATELY
   if (window.location.pathname.includes('/lists/') || window.location.pathname.includes('/community/lists/')) {
     const navStyle = document.createElement('style');
+    navStyle.id = 'ultra-early-nav-hiding';
     navStyle.textContent = `
+      /* Ultra-aggressive hiding with multiple selector patterns */
       body[class*="/lists/"] #navigation-bar .nav-item_categories,
       body[class*="/lists/"] #navigation-bar .nav-item_latest, 
       body[class*="/lists/"] #navigation-bar .nav-item_new,
@@ -16,25 +18,116 @@
       body[class*="lists-"] #navigation-bar .nav-item_latest, 
       body[class*="lists-"] #navigation-bar .nav-item_new,
       body[class*="lists-"] #navigation-bar .nav-item_top,
-      body[class*="lists-"] #navigation-bar .nav-item_unread {
+      body[class*="lists-"] #navigation-bar .nav-item_unread,
+      body.lists-show #navigation-bar .nav-item_categories,
+      body.lists-show #navigation-bar .nav-item_latest,
+      body.lists-show #navigation-bar .nav-item_new,
+      body.lists-show #navigation-bar .nav-item_top,
+      body.lists-show #navigation-bar .nav-item_unread,
+      body[data-page*="lists"] #navigation-bar .nav-item_categories,
+      body[data-page*="lists"] #navigation-bar .nav-item_latest,
+      body[data-page*="lists"] #navigation-bar .nav-item_new,
+      body[data-page*="lists"] #navigation-bar .nav-item_top,
+      body[data-page*="lists"] #navigation-bar .nav-item_unread {
         display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
       }
       
+      /* Category and tag dropdowns */
       body[class*="/lists/"] .category-breadcrumb .category-drop,
       body[class*="/lists/"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
       body[class*="lists-"] .category-breadcrumb .category-drop,
-      body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
+      body[class*="lists-"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+      body.lists-show .category-breadcrumb .category-drop,
+      body.lists-show .category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+      body[data-page*="lists"] .category-breadcrumb .category-drop,
+      body[data-page*="lists"] .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
         display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
       }
       
+      /* Parent li elements */
       body[class*="/lists/"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
       body[class*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
       body[class*="lists-"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
-      body[class*="lists-"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
+      body[class*="lists-"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+      body.lists-show .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+      body.lists-show .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)),
+      body[data-page*="lists"] .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+      body[data-page*="lists"] .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
         display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        opacity: 0 !important;
       }
     `;
-    document.head.appendChild(navStyle);
+    
+    // Insert at the very beginning of head for maximum priority
+    if (document.head.firstChild) {
+      document.head.insertBefore(navStyle, document.head.firstChild);
+    } else {
+      document.head.appendChild(navStyle);
+    }
+    
+    // Also hide elements immediately with JavaScript
+    const hideElementsImmediately = () => {
+      const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
+      navItems.forEach(item => {
+        item.style.display = 'none';
+        item.style.visibility = 'hidden';
+        item.style.opacity = '0';
+        item.style.width = '0';
+        item.style.height = '0';
+        item.style.overflow = 'hidden';
+      });
+      
+      const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
+      filterDropdowns.forEach(item => {
+        item.style.display = 'none';
+        item.style.visibility = 'hidden';
+        item.style.opacity = '0';
+        item.style.width = '0';
+        item.style.height = '0';
+        item.style.overflow = 'hidden';
+      });
+      
+      const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
+      breadcrumbItems.forEach((li, index) => {
+        if (index < 2 && !li.querySelector('.custom-list-dropdown')) {
+          li.style.display = 'none';
+          li.style.visibility = 'hidden';
+          li.style.opacity = '0';
+          li.style.width = '0';
+          li.style.height = '0';
+          li.style.overflow = 'hidden';
+        }
+      });
+    };
+    
+    // Run immediately
+    hideElementsImmediately();
+    
+    // Run on every animation frame for the first second to catch any late-loading elements
+    let frameCount = 0;
+    const maxFrames = 60; // ~1 second at 60fps
+    const frameHider = () => {
+      hideElementsImmediately();
+      frameCount++;
+      if (frameCount < maxFrames) {
+        requestAnimationFrame(frameHider);
+      }
+    };
+    requestAnimationFrame(frameHider);
   }
   
   // Function to replace Custom lists with Solutions
