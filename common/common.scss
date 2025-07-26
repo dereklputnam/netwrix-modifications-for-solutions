@@ -84,25 +84,7 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
 }
 
 // Hide "Custom lists" text initially to prevent flash before JavaScript replacement
-.select-kit-selected-name .name,
-.selected-name .name,
-.custom-list-dropdown .name,
-.tag-drop-header .name,
-.select-kit-header .name {
-  // Hide text that contains "Custom lists" until JavaScript can replace it
-  &:not([data-text-replaced="true"]) {
-    opacity: 0;
-    transition: opacity 0.1s ease-in-out;
-  }
-  
-  // Show text after JavaScript replacement
-  &[data-text-replaced="true"] {
-    opacity: 1;
-  }
-}
-
-// Fallback: If specific selectors fail, hide any element with "Custom lists" text
-// This is aggressive but should prevent any flash
+// Only target elements that specifically contain "Custom lists" data
 [aria-label*="Custom lists"],
 [data-name="Custom lists"],
 [name*="Custom lists"],
@@ -113,6 +95,32 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
   }
   
   &[data-text-replaced="true"] .name {
+    opacity: 1 !important;
+  }
+}
+
+// More specific targeting for custom-list-dropdown only
+.custom-list-dropdown {
+  .select-kit-selected-name .name,
+  .selected-name .name,
+  .name {
+    &:not([data-text-replaced="true"]) {
+      opacity: 0;
+      transition: opacity 0.1s ease-in-out;
+    }
+    
+    &[data-text-replaced="true"] {
+      opacity: 1;
+    }
+  }
+}
+
+// Ensure all other dropdown text remains visible
+.category-drop,
+.tag-drop:not(.custom-list-dropdown) {
+  .select-kit-selected-name .name,
+  .selected-name .name,
+  .name {
     opacity: 1 !important;
   }
 }

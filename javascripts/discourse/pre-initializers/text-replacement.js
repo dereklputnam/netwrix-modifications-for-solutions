@@ -7,54 +7,55 @@ export default {
   initialize() {
     // Override the text content as early as possible
     const replaceCustomListsText = () => {
-      // Method 1: Direct text replacement in any elements that already exist
-      const textNodes = document.createTreeWalker(
-        document.body || document.documentElement,
-        NodeFilter.SHOW_TEXT,
-        {
-          acceptNode: function(node) {
-            return node.textContent.includes('Custom lists') ? 
-              NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-          }
-        }
-      );
-      
-      let node;
-      while (node = textNodes.nextNode()) {
-        if (node.textContent.trim() === 'Custom lists') {
-          node.textContent = 'Solutions';
-          // Mark parent element as replaced
-          const parentElement = node.parentElement;
-          if (parentElement) {
-            parentElement.setAttribute('data-text-replaced', 'true');
-            // Also mark grandparent if it's a header
-            const grandParent = parentElement.closest('.select-kit-header');
-            if (grandParent) {
-              grandParent.setAttribute('data-text-replaced', 'true');
+      // Method 1: Direct text replacement only in custom-list-dropdown elements
+      const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
+      customListDropdowns.forEach(dropdown => {
+        const textNodes = document.createTreeWalker(
+          dropdown,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function(node) {
+              return node.textContent.includes('Custom lists') ? 
+                NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
             }
           }
-        } else if (node.textContent.includes('Custom lists')) {
-          node.textContent = node.textContent.replace(/Custom lists/g, 'Solutions');
-          // Mark parent element as replaced
-          const parentElement = node.parentElement;
-          if (parentElement) {
-            parentElement.setAttribute('data-text-replaced', 'true');
-            // Also mark grandparent if it's a header
-            const grandParent = parentElement.closest('.select-kit-header');
-            if (grandParent) {
-              grandParent.setAttribute('data-text-replaced', 'true');
+        );
+        
+        let node;
+        while (node = textNodes.nextNode()) {
+          if (node.textContent.trim() === 'Custom lists') {
+            node.textContent = 'Solutions';
+            // Mark parent element as replaced
+            const parentElement = node.parentElement;
+            if (parentElement) {
+              parentElement.setAttribute('data-text-replaced', 'true');
+              // Also mark grandparent if it's a header
+              const grandParent = parentElement.closest('.select-kit-header');
+              if (grandParent) {
+                grandParent.setAttribute('data-text-replaced', 'true');
+              }
+            }
+          } else if (node.textContent.includes('Custom lists')) {
+            node.textContent = node.textContent.replace(/Custom lists/g, 'Solutions');
+            // Mark parent element as replaced
+            const parentElement = node.parentElement;
+            if (parentElement) {
+              parentElement.setAttribute('data-text-replaced', 'true');
+              // Also mark grandparent if it's a header
+              const grandParent = parentElement.closest('.select-kit-header');
+              if (grandParent) {
+                grandParent.setAttribute('data-text-replaced', 'true');
+              }
             }
           }
         }
-      }
+      });
       
-      // Method 2: Target specific selectors that commonly contain this text
+      // Method 2: Target specific selectors for custom-list-dropdown only
       const selectors = [
-        '.select-kit-selected-name .name',
-        '.selected-name .name',
-        '.custom-list-dropdown .name',
-        '.tag-drop-header .name',
-        '.select-kit-header .name'
+        '.custom-list-dropdown .select-kit-selected-name .name',
+        '.custom-list-dropdown .selected-name .name',
+        '.custom-list-dropdown .name'
       ];
       
       selectors.forEach(selector => {
@@ -115,11 +116,31 @@ export default {
       replaceCustomListsText();
     }
     
-    // Use MutationObserver to catch dynamically added content
+    // Use MutationObserver to catch dynamically added content, but only in custom-list-dropdown elements
     const observer = new MutationObserver((mutations) => {
       let shouldReplace = false;
       
       mutations.forEach((mutation) => {
+        // Only process mutations that are within or add custom-list-dropdown elements
+        const isInCustomListDropdown = mutation.target.closest && mutation.target.closest('.custom-list-dropdown');
+        const isCustomListDropdown = mutation.target.classList && mutation.target.classList.contains('custom-list-dropdown');
+        
+        if (!isInCustomListDropdown && !isCustomListDropdown) {
+          // Check if any added nodes are custom-list-dropdown elements
+          if (mutation.type === 'childList') {
+            const addedNodes = Array.from(mutation.addedNodes);
+            const hasCustomListDropdown = addedNodes.some(node => 
+              node.nodeType === Node.ELEMENT_NODE && 
+              (node.classList?.contains('custom-list-dropdown') || node.querySelector?.('.custom-list-dropdown'))
+            );
+            if (!hasCustomListDropdown) {
+              return; // Skip this mutation
+            }
+          } else {
+            return; // Skip this mutation
+          }
+        }
+        
         if (mutation.type === 'childList') {
           // Check if any added nodes contain "Custom lists" text
           const addedNodes = Array.from(mutation.addedNodes);
