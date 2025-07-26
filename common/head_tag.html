@@ -21,6 +21,10 @@
       nameElements.forEach(nameEl => {
         if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
           nameEl.textContent = 'Solutions';
+          nameEl.classList.add('solutions-ready'); // Mark as ready like banner approach
+        } else if (nameEl.textContent && nameEl.textContent.trim()) {
+          // If there's other text, mark as ready too
+          nameEl.classList.add('solutions-ready');
         }
       });
       
@@ -33,17 +37,38 @@
           }
         });
       });
+      
+      // Mark the entire header as ready if it was processed
+      if (customListHeaders.length > 0) {
+        customListHeaders.forEach(header => {
+          const dropdown = header.closest('.custom-list-dropdown');
+          if (dropdown) {
+            dropdown.classList.add('solutions-ready');
+          }
+        });
+      }
     });
     
     // Also target by class in case data-name isn't set yet
     const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
     customListDropdowns.forEach(dropdown => {
+      let wasProcessed = false;
       const nameElements = dropdown.querySelectorAll('.name');
       nameElements.forEach(nameEl => {
         if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
           nameEl.textContent = 'Solutions';
+          nameEl.classList.add('solutions-ready');
+          wasProcessed = true;
+        } else if (nameEl.textContent && nameEl.textContent.trim()) {
+          // If there's other text, mark as ready
+          nameEl.classList.add('solutions-ready');
+          wasProcessed = true;
         }
       });
+      
+      if (wasProcessed) {
+        dropdown.classList.add('solutions-ready');
+      }
     });
   }
   
@@ -128,5 +153,17 @@
   
   // Start periodic replacement after a short delay
   setTimeout(periodicReplace, 100);
+  
+  // Ultimate fallback: ensure all dropdown text is visible after 3 seconds
+  setTimeout(function() {
+    const allCustomDropdowns = document.querySelectorAll('.custom-list-dropdown');
+    allCustomDropdowns.forEach(function(dropdown) {
+      dropdown.classList.add('solutions-ready');
+      const allNames = dropdown.querySelectorAll('.name');
+      allNames.forEach(function(name) {
+        name.classList.add('solutions-ready');
+      });
+    });
+  }, 3000);
 })();
 </script>

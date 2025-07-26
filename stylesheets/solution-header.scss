@@ -1,14 +1,10 @@
-// Hide navigation elements only on /lists/ pages - PRIORITY: hide immediately
+// Hide navigation elements immediately on /lists/ pages - PRIORITY: CSS-first approach
 body[class*="/lists/"] #navigation-bar .nav-item_categories,
 body[class*="/lists/"] #navigation-bar .nav-item_latest, 
-body[class*="/lists/"] #navigation-bar .nav-item_new,
 body[class*="/lists/"] #navigation-bar .nav-item_top,
-body[class*="/lists/"] #navigation-bar .nav-item_unread,
 body[class*="lists-"] #navigation-bar .nav-item_categories,
 body[class*="lists-"] #navigation-bar .nav-item_latest, 
-body[class*="lists-"] #navigation-bar .nav-item_new,
-body[class*="lists-"] #navigation-bar .nav-item_top,
-body[class*="lists-"] #navigation-bar .nav-item_unread {
+body[class*="lists-"] #navigation-bar .nav-item_top {
   display: none !important;
 }
 
@@ -168,5 +164,45 @@ button#solution-subscribe-button {
 @media (max-width: 768px) {
   .category-title .break-small { 
     display: inline !important; 
+  }
+}
+
+// Hide dropdown text until JavaScript replacement is complete - same approach as banner
+.custom-list-dropdown {
+  .select-kit-selected-name .name,
+  .selected-name .name,
+  .name {
+    visibility: hidden;
+    
+    &.solutions-ready {
+      visibility: visible;
+      transition: opacity 0.2s ease-in-out;
+    }
+  }
+  
+  // Also target by attributes that might contain "Custom lists"
+  &[data-name="Custom lists"],
+  &[aria-label*="Custom lists"] {
+    .select-kit-selected-name .name,
+    .selected-name .name,
+    .name {
+      visibility: hidden;
+      
+      &.solutions-ready {
+        visibility: visible;
+        transition: opacity 0.2s ease-in-out;
+      }
+    }
+  }
+  
+  // Show immediately if already processed or doesn't contain "Custom lists"
+  &.solutions-ready,
+  &[data-name="Solutions"],
+  &[aria-label*="Solutions"] {
+    .select-kit-selected-name .name,
+    .selected-name .name,
+    .name {
+      visibility: visible !important;
+    }
   }
 }
