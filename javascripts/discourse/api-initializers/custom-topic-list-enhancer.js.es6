@@ -9,9 +9,24 @@ export default apiInitializer("0.11.1", (api) => {
       return;
     }
     
-    // Ultra-aggressive JavaScript hiding with multiple properties
+    // Ultra-aggressive JavaScript hiding with multiple properties - MAIN NAVIGATION
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => {
+      item.style.display = 'none';
+      item.style.visibility = 'hidden';
+      item.style.opacity = '0';
+      item.style.width = '0';
+      item.style.height = '0';
+      item.style.overflow = 'hidden';
+      item.style.position = 'absolute';
+      item.style.left = '-9999px';
+      item.setAttribute('hidden', 'true');
+      item.setAttribute('aria-hidden', 'true');
+    });
+    
+    // Ultra-aggressive JavaScript hiding - SORTING NAVIGATION ELEMENTS
+    const sortingElements = document.querySelectorAll('.navigation-controls .nav-pills .nav-item, .topic-list-header .sortable, .period-chooser, .list-controls .nav-pills');
+    sortingElements.forEach(item => {
       item.style.display = 'none';
       item.style.visibility = 'hidden';
       item.style.opacity = '0';

@@ -8,7 +8,7 @@
     const navStyle = document.createElement('style');
     navStyle.id = 'ultra-early-nav-hiding';
     navStyle.textContent = `
-      /* Ultra-aggressive hiding with multiple selector patterns */
+      /* Ultra-aggressive hiding with multiple selector patterns - MAIN NAVIGATION */
       body[class*="/lists/"] #navigation-bar .nav-item_categories,
       body[class*="/lists/"] #navigation-bar .nav-item_latest, 
       body[class*="/lists/"] #navigation-bar .nav-item_new,
@@ -28,7 +28,24 @@
       body[data-page*="lists"] #navigation-bar .nav-item_latest,
       body[data-page*="lists"] #navigation-bar .nav-item_new,
       body[data-page*="lists"] #navigation-bar .nav-item_top,
-      body[data-page*="lists"] #navigation-bar .nav-item_unread {
+      body[data-page*="lists"] #navigation-bar .nav-item_unread,
+      /* Ultra-aggressive hiding - SORTING NAVIGATION */
+      body[class*="/lists/"] .navigation-controls .nav-pills .nav-item,
+      body[class*="/lists/"] .topic-list-header .sortable,
+      body[class*="/lists/"] .period-chooser,
+      body[class*="/lists/"] .list-controls .nav-pills,
+      body[class*="lists-"] .navigation-controls .nav-pills .nav-item,
+      body[class*="lists-"] .topic-list-header .sortable,
+      body[class*="lists-"] .period-chooser,
+      body[class*="lists-"] .list-controls .nav-pills,
+      body.lists-show .navigation-controls .nav-pills .nav-item,
+      body.lists-show .topic-list-header .sortable,
+      body.lists-show .period-chooser,
+      body.lists-show .list-controls .nav-pills,
+      body[data-page*="lists"] .navigation-controls .nav-pills .nav-item,
+      body[data-page*="lists"] .topic-list-header .sortable,
+      body[data-page*="lists"] .period-chooser,
+      body[data-page*="lists"] .list-controls .nav-pills {
         display: none !important;
         visibility: hidden !important;
         width: 0 !important;
@@ -81,8 +98,20 @@
     
     // Also hide elements immediately with JavaScript
     const hideElementsImmediately = () => {
+      // Main navigation items
       const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
       navItems.forEach(item => {
+        item.style.display = 'none';
+        item.style.visibility = 'hidden';
+        item.style.opacity = '0';
+        item.style.width = '0';
+        item.style.height = '0';
+        item.style.overflow = 'hidden';
+      });
+      
+      // Sorting navigation elements
+      const sortingElements = document.querySelectorAll('.navigation-controls .nav-pills .nav-item, .topic-list-header .sortable, .period-chooser, .list-controls .nav-pills');
+      sortingElements.forEach(item => {
         item.style.display = 'none';
         item.style.visibility = 'hidden';
         item.style.opacity = '0';
@@ -130,82 +159,133 @@
     requestAnimationFrame(frameHider);
   }
   
-  // Function to replace Custom lists with Solutions
-  function replaceCustomListsText() {
-    // Target the specific dropdown structure
-    const customListHeaders = document.querySelectorAll('.tag-drop-header[data-name="Custom lists"], .select-kit-header[data-name="Custom lists"]');
-    customListHeaders.forEach(header => {
-      // Update attributes
-      ['aria-label', 'name', 'data-name'].forEach(attr => {
-        const value = header.getAttribute(attr);
-        if (value && value.includes('Custom lists')) {
-          header.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
+  // ULTRA-AGGRESSIVE function to replace Custom lists with Solutions
+  function ultraAggressiveTextReplacement() {
+    // Hide dropdown text until replacement is complete - IMMEDIATE CSS injection
+    if (!document.getElementById('ultra-text-replacement-css')) {
+      const textStyle = document.createElement('style');
+      textStyle.id = 'ultra-text-replacement-css';
+      textStyle.textContent = `
+        .custom-list-dropdown .select-kit-selected-name .name,
+        .custom-list-dropdown .selected-name .name,
+        .custom-list-dropdown .name,
+        .tag-drop-header[data-name*="Custom"] .name,
+        .select-kit-header[data-name*="Custom"] .name {
+          visibility: hidden !important;
+          opacity: 0 !important;
         }
-      });
-      
-      // Update child elements
-      const nameElements = header.querySelectorAll('.name');
-      nameElements.forEach(nameEl => {
-        if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
-          nameEl.textContent = 'Solutions';
-          nameEl.classList.add('solutions-ready'); // Mark as ready like banner approach
-        } else if (nameEl.textContent && nameEl.textContent.trim()) {
-          // If there's other text, mark as ready too
-          nameEl.classList.add('solutions-ready');
+        
+        .custom-list-dropdown.solutions-ready .select-kit-selected-name .name,
+        .custom-list-dropdown.solutions-ready .selected-name .name,
+        .custom-list-dropdown.solutions-ready .name,
+        .tag-drop-header[data-name*="Solutions"] .name,
+        .select-kit-header[data-name*="Solutions"] .name,
+        .solutions-ready .name {
+          visibility: visible !important;
+          opacity: 1 !important;
         }
-      });
-      
-      const selectedNames = header.querySelectorAll('.selected-name');
-      selectedNames.forEach(selected => {
-        ['title', 'data-name'].forEach(attr => {
-          const value = selected.getAttribute(attr);
+      `;
+      document.head.appendChild(textStyle);
+    }
+    
+    // Ultra-aggressive text replacement with multiple approaches
+    const selectors = [
+      '.tag-drop-header[data-name="Custom lists"]',
+      '.select-kit-header[data-name="Custom lists"]',
+      '.custom-list-dropdown .select-kit-header',
+      '.custom-list-dropdown',
+      '[data-name*="Custom lists"]',
+      '[aria-label*="Custom lists"]'
+    ];
+    
+    selectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(element => {
+        // Update all possible attributes
+        ['aria-label', 'name', 'data-name', 'title'].forEach(attr => {
+          const value = element.getAttribute(attr);
           if (value && value.includes('Custom lists')) {
-            selected.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
+            element.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
           }
         });
+        
+        // Update all text content
+        const nameElements = element.querySelectorAll('.name, .selected-name, .select-kit-selected-name');
+        nameElements.forEach(nameEl => {
+          if (nameEl.textContent && nameEl.textContent.includes('Custom lists')) {
+            nameEl.textContent = nameEl.textContent.replace(/Custom lists/g, 'Solutions');
+            nameEl.classList.add('solutions-ready');
+          }
+        });
+        
+        // Direct text content replacement
+        if (element.textContent && element.textContent.includes('Custom lists')) {
+          element.textContent = element.textContent.replace(/Custom lists/g, 'Solutions');
+        }
+        
+        // Mark as processed
+        const dropdown = element.closest('.custom-list-dropdown') || element;
+        if (dropdown.classList && dropdown.classList.contains('custom-list-dropdown')) {
+          dropdown.classList.add('solutions-ready');
+        }
       });
-      
-      // Mark the entire header as ready if it was processed
-      if (customListHeaders.length > 0) {
-        customListHeaders.forEach(header => {
-          const dropdown = header.closest('.custom-list-dropdown');
-          if (dropdown) {
-            dropdown.classList.add('solutions-ready');
-          }
-        });
-      }
     });
     
-    // Also target by class in case data-name isn't set yet
-    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
-    customListDropdowns.forEach(dropdown => {
-      let wasProcessed = false;
-      const nameElements = dropdown.querySelectorAll('.name');
-      nameElements.forEach(nameEl => {
-        if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
-          nameEl.textContent = 'Solutions';
-          nameEl.classList.add('solutions-ready');
-          wasProcessed = true;
-        } else if (nameEl.textContent && nameEl.textContent.trim()) {
-          // If there's other text, mark as ready
-          nameEl.classList.add('solutions-ready');
-          wasProcessed = true;
+    // Ultra-aggressive direct text node replacement
+    const walker = document.createTreeWalker(
+      document.body || document.documentElement,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: function(node) {
+          if (node.textContent && node.textContent.includes('Custom lists')) {
+            const parent = node.parentElement;
+            if (parent && (
+              parent.closest('.custom-list-dropdown') ||
+              parent.closest('[data-name*="Custom"]') ||
+              parent.classList.contains('name') ||
+              parent.classList.contains('selected-name')
+            )) {
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+          return NodeFilter.FILTER_REJECT;
         }
-      });
-      
-      if (wasProcessed) {
-        dropdown.classList.add('solutions-ready');
       }
-    });
+    );
+    
+    let textNode;
+    while (textNode = walker.nextNode()) {
+      textNode.textContent = textNode.textContent.replace(/Custom lists/g, 'Solutions');
+      const parent = textNode.parentElement;
+      if (parent) {
+        parent.classList.add('solutions-ready');
+        const dropdown = parent.closest('.custom-list-dropdown');
+        if (dropdown) {
+          dropdown.classList.add('solutions-ready');
+        }
+      }
+    }
   }
   
   // Run immediately if DOM is already loaded
   if (document.readyState !== 'loading') {
-    replaceCustomListsText();
+    ultraAggressiveTextReplacement();
   }
   
   // Run when DOM content is loaded
-  document.addEventListener('DOMContentLoaded', replaceCustomListsText);
+  document.addEventListener('DOMContentLoaded', ultraAggressiveTextReplacement);
+  
+  // ULTRA-AGGRESSIVE: Run on every animation frame for first second
+  let frameCount = 0;
+  const maxFrames = 60; // ~1 second at 60fps
+  const frameTextReplacer = () => {
+    ultraAggressiveTextReplacement();
+    frameCount++;
+    if (frameCount < maxFrames) {
+      requestAnimationFrame(frameTextReplacer);
+    }
+  };
+  requestAnimationFrame(frameTextReplacer);
   
   // Use MutationObserver to catch dynamically added content
   const observer = new MutationObserver(function(mutations) {
@@ -226,7 +306,7 @@
             } else if (node.querySelector) {
               if (node.querySelector('.custom-list-dropdown') ||
                   node.querySelector('.tag-drop-header') ||
-                  node.querySelector('[data-name="Custom lists"]')) {
+                  node.querySelector('[data-name*="Custom"]')) {
                 shouldReplace = true;
               }
             }
@@ -249,8 +329,8 @@
     });
     
     if (shouldReplace) {
-      // Small delay to ensure DOM is stable
-      setTimeout(replaceCustomListsText, 1);
+      // Immediate replacement, no delay
+      ultraAggressiveTextReplacement();
     }
   });
   
@@ -265,21 +345,16 @@
     });
   }
   
-  // Fallback: run periodically for the first few seconds
-  let attempts = 0;
-  const maxAttempts = 20; // Run for 10 seconds (20 * 500ms)
-  
-  const periodicReplace = function() {
-    attempts++;
-    replaceCustomListsText();
-    
-    if (attempts < maxAttempts) {
-      setTimeout(periodicReplace, 500);
+  // ULTRA-AGGRESSIVE: Run every 50ms for the first 5 seconds
+  let intervalCount = 0;
+  const maxIntervals = 100; // 5 seconds (100 * 50ms)
+  const persistentTextReplacer = setInterval(() => {
+    ultraAggressiveTextReplacement();
+    intervalCount++;
+    if (intervalCount >= maxIntervals) {
+      clearInterval(persistentTextReplacer);
     }
-  };
-  
-  // Start periodic replacement after a short delay
-  setTimeout(periodicReplace, 100);
+  }, 50);
   
   // Ultimate fallback: ensure all dropdown text is visible after 3 seconds
   setTimeout(function() {

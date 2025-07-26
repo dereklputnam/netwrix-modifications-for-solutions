@@ -23,7 +23,28 @@ body[data-current-path*="/lists/"] #navigation-bar .nav-item_categories,
 body[data-current-path*="/lists/"] #navigation-bar .nav-item_latest,
 body[data-current-path*="/lists/"] #navigation-bar .nav-item_new,
 body[data-current-path*="/lists/"] #navigation-bar .nav-item_top,
-body[data-current-path*="/lists/"] #navigation-bar .nav-item_unread {
+body[data-current-path*="/lists/"] #navigation-bar .nav-item_unread,
+// ULTRA-AGGRESSIVE sorting navigation hiding
+body[class*="/lists/"] .navigation-controls .nav-pills .nav-item,
+body[class*="/lists/"] .topic-list-header .sortable,
+body[class*="/lists/"] .period-chooser,
+body[class*="/lists/"] .list-controls .nav-pills,
+body[class*="lists-"] .navigation-controls .nav-pills .nav-item,
+body[class*="lists-"] .topic-list-header .sortable,
+body[class*="lists-"] .period-chooser,
+body[class*="lists-"] .list-controls .nav-pills,
+body.lists-show .navigation-controls .nav-pills .nav-item,
+body.lists-show .topic-list-header .sortable,
+body.lists-show .period-chooser,
+body.lists-show .list-controls .nav-pills,
+body[data-page*="lists"] .navigation-controls .nav-pills .nav-item,
+body[data-page*="lists"] .topic-list-header .sortable,
+body[data-page*="lists"] .period-chooser,
+body[data-page*="lists"] .list-controls .nav-pills,
+body[data-current-path*="/lists/"] .navigation-controls .nav-pills .nav-item,
+body[data-current-path*="/lists/"] .topic-list-header .sortable,
+body[data-current-path*="/lists/"] .period-chooser,
+body[data-current-path*="/lists/"] .list-controls .nav-pills {
   display: none !important;
   visibility: hidden !important;
   width: 0 !important;
