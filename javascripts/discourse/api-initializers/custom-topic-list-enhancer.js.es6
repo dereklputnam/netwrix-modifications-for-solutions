@@ -80,26 +80,28 @@ export default apiInitializer("0.11.1", (api) => {
 
     const slug = slugMatch[1];
     
-    // First try to get from site.custom_topic_lists (Custom Topic Lists plugin)
-    const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-    let solutionConfig = customTopicLists.find(list => list.slug === slug);
+    // First try to get from theme settings (has subscription fields)
+    let solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
     
-    // Fallback to theme settings if not found in plugin
+    // If not found in theme settings, try plugin data as fallback
     if (!solutionConfig) {
-      solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
+      const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
+      solutionConfig = customTopicLists.find(list => list.slug === slug);
     }
     
     if (!solutionConfig) {
       if (isAdmin || isDevelopment) {
         console.log(`No solution configuration found for slug: ${slug}`);
-        console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
         console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
+        const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
+        console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
       }
       return null;
     }
 
     if (isAdmin || isDevelopment) {
       console.log(`Found solution config for: ${solutionConfig.title || solutionConfig.name} (slug: ${slug})`);
+      console.log(`Config source: ${settings.netwrix_solutions?.find(s => s.slug === slug) ? 'theme settings' : 'plugin data'}`);
     }
     return { slug, solutionConfig };
   }
@@ -116,12 +118,23 @@ export default apiInitializer("0.11.1", (api) => {
     const level4Categories = solutionConfig.level_4_categories || "";
     const level3Categories = solutionConfig.level_3_categories || "";
     
+    if (isAdmin || isDevelopment) {
+      console.log(`Category data for ${solutionConfig.title || solutionConfig.name}:`);
+      console.log(`  level_4_categories: "${level4Categories}"`);
+      console.log(`  level_3_categories: "${level3Categories}"`);
+    }
+    
     const level4Ids = level4Categories 
       ? level4Categories.split(',').map(s => parseInt(s.trim())).filter(id => !isNaN(id))
       : [];
     const level3Ids = level3Categories 
       ? level3Categories.split(',').map(s => parseInt(s.trim())).filter(id => !isNaN(id))
       : [];
+      
+    if (isAdmin || isDevelopment) {
+      console.log(`  Parsed level4Ids: [${level4Ids.join(', ')}]`);
+      console.log(`  Parsed level3Ids: [${level3Ids.join(', ')}]`);
+    }
       
     return { level4Ids, level3Ids };
   }
@@ -336,6 +349,13 @@ export default apiInitializer("0.11.1", (api) => {
         btn.disabled = true;
         btn.textContent = "No valid categories configured";
         btn.title = "Check console for available category IDs";
+        if (isAdmin || isDevelopment) {
+          console.error(`❌ No valid categories found for ${currentConfig.solutionConfig.title || currentConfig.solutionConfig.name}`);
+          console.error(`   level_4_categories: "${currentConfig.solutionConfig.level_4_categories || 'undefined'}"`);
+          console.error(`   level_3_categories: "${currentConfig.solutionConfig.level_3_categories || 'undefined'}"`);
+        }
+      } else if (isAdmin || isDevelopment) {
+        console.log(`✅ Subscribe button enabled with ${level4Ids.length} level 4 + ${level3Ids.length} level 3 categories`);
       }
 
       btn.addEventListener("click", () => {
