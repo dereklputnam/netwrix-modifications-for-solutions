@@ -147,7 +147,7 @@ body[class*="lists-"] .category-title-header {
 body[class*="/lists/"] .navigation-controls,
 body[class*="lists-"] .navigation-controls {
   display: flex !important;
-  justify-content: space-between !important;
+  justify-content: flex-end !important;
   align-items: center !important;
   width: 100% !important;
   position: relative !important;

@@ -150,11 +150,6 @@ export default apiInitializer("0.11.1", (api) => {
     const level4Categories = solutionConfig.level_4_categories || "";
     const level3Categories = solutionConfig.level_3_categories || "";
     
-    if (isAdmin || isDevelopment) {
-      console.log(`Category data for ${solutionConfig.title || solutionConfig.name}:`);
-      console.log(`  level_4_categories: "${level4Categories}"`);
-      console.log(`  level_3_categories: "${level3Categories}"`);
-    }
     
     const level4Ids = level4Categories 
       ? level4Categories.split(',').map(s => parseInt(s.trim())).filter(id => !isNaN(id))
@@ -163,10 +158,6 @@ export default apiInitializer("0.11.1", (api) => {
       ? level3Categories.split(',').map(s => parseInt(s.trim())).filter(id => !isNaN(id))
       : [];
       
-    if (isAdmin || isDevelopment) {
-      console.log(`  Parsed level4Ids: [${level4Ids.join(', ')}]`);
-      console.log(`  Parsed level3Ids: [${level3Ids.join(', ')}]`);
-    }
       
     return { level4Ids, level3Ids };
   }
@@ -197,10 +188,6 @@ export default apiInitializer("0.11.1", (api) => {
       const validLevel4Names = level4Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
       const validLevel3Names = level3Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
 
-      if (isAdmin || isDevelopment) {
-        console.log(`✅ ${configTitle} Level 4 categories: ${validLevel4Names.join(', ')} (IDs: ${level4Ids.join(', ')})`);
-        console.log(`✅ ${configTitle} Level 3 categories: ${validLevel3Names.join(', ')} (IDs: ${level3Ids.join(', ')})`);
-      }
     }
 
     // Validate current solution
@@ -376,7 +363,7 @@ export default apiInitializer("0.11.1", (api) => {
       // ULTRA-AGGRESSIVE navigation controls styling for proper button alignment
       nav.style.display = "flex";
       nav.style.alignItems = "center";
-      nav.style.justifyContent = "space-between";
+      nav.style.justifyContent = "flex-end";
       nav.style.width = "100%";
       nav.style.position = "relative";
 
@@ -394,7 +381,7 @@ export default apiInitializer("0.11.1", (api) => {
       btn.id = "solution-subscribe-button";
       btn.className = "btn btn-default";
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-      btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">to all news & security advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">to all news & security advisories</span>`;
+      btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
@@ -440,7 +427,7 @@ export default apiInitializer("0.11.1", (api) => {
         Promise.all(allUpdates)
           .then(() => {
             const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">to all news & security advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">to all news & security advisories</span>`;
+            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
             if (subscribing) {
               btn.classList.add("subscribed");
             } else {
@@ -453,7 +440,7 @@ export default apiInitializer("0.11.1", (api) => {
               console.error("Error updating subscription:", error);
             }
             const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">to all news & security advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">to all news & security advisories</span>`;
+            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
             btn.disabled = false;
           });
       });
