@@ -394,7 +394,7 @@ export default apiInitializer("0.11.1", (api) => {
       btn.id = "solution-subscribe-button";
       btn.className = "btn btn-default";
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-      btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+      btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">to all news & security advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">to all news & security advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
@@ -440,7 +440,7 @@ export default apiInitializer("0.11.1", (api) => {
         Promise.all(allUpdates)
           .then(() => {
             const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>`;
+            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">to all news & security advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">to all news & security advisories</span>`;
             if (subscribing) {
               btn.classList.add("subscribed");
             } else {
@@ -453,7 +453,7 @@ export default apiInitializer("0.11.1", (api) => {
               console.error("Error updating subscription:", error);
             }
             const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>`;
+            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">to all news & security advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">to all news & security advisories</span>`;
             btn.disabled = false;
           });
       });
