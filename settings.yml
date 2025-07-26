@@ -1,4 +1,4 @@
-solutions:
+netwrix_solutions:
   type: objects
   default: 
     - slug: "directory-management"

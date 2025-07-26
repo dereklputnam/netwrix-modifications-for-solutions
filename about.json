@@ -1,9 +1,9 @@
 {
   "name": "Netwrix - Modifications for Solutions",
-  "about_url": "https://github.com/dereklputnam/etwrix-modifications-for-solutions",
-  "license_url": "https://github.com/dereklputnam/etwrix-modifications-for-solutions/blob/main/LICENSE",
+  "about_url": "https://github.com/dereklputnam/netwrix-modifications-for-solutions",
+  "license_url": "https://github.com/dereklputnam/netwrix-modifications-for-solutions/blob/main/LICENSE",
   "authors": "derek.putnam",
-  "theme_version": "1.0.0",
+  "theme_version": "1.0.1",
   "minimum_discourse_version": "3.0.0",
   "maximum_discourse_version": null,
   "component": true,

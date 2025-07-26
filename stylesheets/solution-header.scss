@@ -9,9 +9,9 @@
 
 // Hide category and tag filter dropdowns that break the solution list view
 .category-breadcrumb .category-drop,
-.category-breadcrumb .tag-drop:not(.custom-list-dropdown),
+.category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown),
 .category-breadcrumb li:has(.category-drop),
-.category-breadcrumb li:has(.tag-drop:not(.custom-list-dropdown)),
+.category-breadcrumb li:has(.select-kit.tag-drop:not(.custom-list-dropdown)),
 .navigation-container .category-breadcrumb li:first-child,
 .navigation-container .category-breadcrumb li:nth-child(2) {
   display: none !important;

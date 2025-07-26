@@ -41,7 +41,7 @@ export default apiInitializer("0.11.1", (api) => {
     navItems.forEach(item => item.style.display = 'none');
     
     // Hide category and tag filter dropdowns
-    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
+    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown)');
     filterDropdowns.forEach(item => item.style.display = 'none');
     
     // Also hide their parent <li> elements
@@ -91,12 +91,12 @@ export default apiInitializer("0.11.1", (api) => {
       console.table(categoryTable);
       
       // Also log as a simple list for easy copying
-      console.log("\\n=== CATEGORY IDS FOR COPY/PASTE ===");
+      console.log("\n=== CATEGORY IDS FOR COPY/PASTE ===");
       categoryTable.forEach(cat => {
         console.log(`${cat.id} (${cat.full_name})`);
       });
       
-      console.log("\\n=== EXAMPLE USAGE ===");
+      console.log("\n=== EXAMPLE USAGE ===");
       console.log("For comma-separated lists, use:");
       console.log("5,12,8 (where numbers are category IDs)");
     });
@@ -105,15 +105,15 @@ export default apiInitializer("0.11.1", (api) => {
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
-    const slugMatch = currentPath.match(/^\\/community\\/lists\\/([^\\/?#]+)/);
+    const slugMatch = currentPath.match(/^\/community\/lists\/([^\/?#]+)/);
     if (!slugMatch) return null;
 
     const slug = slugMatch[1];
-    const solutionConfig = settings.solutions?.find(solution => solution.slug === slug);
+    const solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
     
     if (!solutionConfig) {
       console.log(`No solution configuration found for slug: ${slug}`);
-      console.log(`Available solutions:`, settings.solutions?.map(s => s.slug));
+      console.log(`Available solutions:`, settings.netwrix_solutions?.map(s => s.slug));
       return null;
     }
 
@@ -156,11 +156,11 @@ export default apiInitializer("0.11.1", (api) => {
       const invalidLevel4 = level4Ids.filter(id => !idToCategory[id]);
       const invalidLevel3 = level3Ids.filter(id => !idToCategory[id]);
       
-      if (invalidLevel4.length > 0) {
+      if (invalidLevel4.length > 0 && (isAdmin || isDevelopment)) {
         console.error(`❌ Invalid Level 4 category IDs for ${solutionConfig.title}: ${invalidLevel4.join(', ')}`);
       }
       
-      if (invalidLevel3.length > 0) {
+      if (invalidLevel3.length > 0 && (isAdmin || isDevelopment)) {
         console.error(`❌ Invalid Level 3 category IDs for ${solutionConfig.title}: ${invalidLevel3.join(', ')}`);
       }
 
@@ -385,7 +385,9 @@ export default apiInitializer("0.11.1", (api) => {
             btn.disabled = false;
           })
           .catch((error) => {
-            console.error("Error updating subscription:", error);
+            if (isAdmin || isDevelopment) {
+              console.error("Error updating subscription:", error);
+            }
             btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${currentConfig.solutionConfig.title} News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${currentConfig.solutionConfig.title} News & Security Advisories</span>`;
             btn.disabled = false;
           });

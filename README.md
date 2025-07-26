@@ -23,7 +23,7 @@ A Discourse theme component that provides custom styling and functionality for N
 1. Go to your Discourse Admin Panel
 2. Navigate to **Customize** → **Themes**
 3. Click **Install** → **From a Git repository**
-4. Enter: `https://github.com/dereklputnam/etwrix-modifications-for-solutions`
+4. Enter: `https://github.com/dereklputnam/netwrix-modifications-for-solutions`
 5. Click **Install**
 
 ## Configuration
