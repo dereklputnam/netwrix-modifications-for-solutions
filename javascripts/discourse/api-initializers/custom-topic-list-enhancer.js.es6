@@ -2,237 +2,129 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // Note: Element hiding is now handled by CSS files for zero-flash experience
-  // Text replacement back to simple approach to avoid global interference
-
-  // PRIORITY: Hide navigation elements immediately to prevent flash - ONLY on /lists/ pages
+  // PRIORITY: Hide navigation elements immediately to prevent flash
   const hideNavElements = () => {
-    // Only run on /lists/ pages
-    if (!window.location.pathname.includes('/lists/')) {
-      return;
-    }
+    const style = document.createElement('style');
+    style.textContent = `
+      #navigation-bar .nav-item_categories,
+      #navigation-bar .nav-item_latest, 
+      #navigation-bar .nav-item_new,
+      #navigation-bar .nav-item_top,
+      #navigation-bar .nav-item_unread {
+        display: none !important;
+      }
+      
+      /* Hide responsive line breaks by default */
+      .category-title .break-medium,
+      .category-title .break-small {
+        display: none !important;
+      }
+      
+      /* Show breaks on medium screens */
+      @media (max-width: 1200px) {
+        .category-title .break-medium {
+          display: inline !important;
+        }
+      }
+      
+      /* Show breaks on small screens */
+      @media (max-width: 768px) {
+        .category-title .break-small {
+          display: inline !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
     
-    // Hide specific navigation elements immediately with JavaScript on /lists/ pages only
-    const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_top');
+    // Also hide immediately with JavaScript
+    const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => item.style.display = 'none');
     
-    // Hide category and tag filter dropdowns with multiple selector approaches
-    // Method 1: Hide by header data-name attribute
-    const categoryHeaders = document.querySelectorAll('.category-breadcrumb .category-drop-header[data-name="categories"]');
-    const tagHeaders = document.querySelectorAll('.category-breadcrumb .tag-drop-header[data-name="tags"]');
+    // Hide category and tag filter dropdowns
+    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
+    filterDropdowns.forEach(item => item.style.display = 'none');
     
-    categoryHeaders.forEach(header => {
-      const parentLi = header.closest('li');
-      if (parentLi) {
-        parentLi.style.display = 'none';
-        parentLi.style.visibility = 'hidden';
-      }
-    });
-    
-    tagHeaders.forEach(header => {
-      const parentLi = header.closest('li');
-      if (parentLi) {
-        parentLi.style.display = 'none';
-        parentLi.style.visibility = 'hidden';
-      }
-    });
-    
-    // Method 2: Hide by dropdown classes (broader approach)
-    const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .select-kit.tag-drop:not(.custom-list-dropdown), .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
-    filterDropdowns.forEach(item => {
-      item.style.display = 'none';
-      item.style.visibility = 'hidden';
-      const parentLi = item.closest('li');
-      if (parentLi) {
-        parentLi.style.display = 'none';
-        parentLi.style.visibility = 'hidden';
-      }
-    });
-    
-    // Method 3: Hide breadcrumb li elements that contain category/tag dropdowns (but not Solutions)
+    // Also hide their parent <li> elements
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
-      // Skip if it contains the Solutions dropdown
-      if (li.querySelector('.custom-list-dropdown')) {
-        return;
-      }
-      
-      // Hide if it contains category or tag dropdowns
-      const hasCategoryDrop = li.querySelector('.category-drop');
-      const hasTagDrop = li.querySelector('.tag-drop:not(.custom-list-dropdown)');
-      
-      if (hasCategoryDrop || hasTagDrop) {
-        li.style.display = 'none';
-        li.style.visibility = 'hidden';
+      if (index < 2) { // Hide first two <li> elements (categories and tags)
+        const hasCustomList = li.querySelector('.custom-list-dropdown');
+        if (!hasCustomList) {
+          li.style.display = 'none';
+        }
       }
     });
   };
   
-  // Function to replace "Custom lists" with "Solutions" ONLY in .custom-list-dropdown
-  const replaceCustomListsText = () => {
-    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
-    
-    customListDropdowns.forEach(dropdown => {
-      let wasReplaced = false;
-      let hasCustomListsText = false;
-      
-      // Replace text content in name elements
-      const nameElements = dropdown.querySelectorAll('.name');
-      nameElements.forEach(nameEl => {
-        if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
-          nameEl.textContent = 'Solutions';
-          nameEl.setAttribute('data-solutions-ready', 'true');
-          wasReplaced = true;
-          hasCustomListsText = true;
-        } else if (nameEl.textContent && nameEl.textContent.trim()) {
-          // If there's other text, make sure it's visible
-          nameEl.setAttribute('data-solutions-ready', 'true');
-        }
-      });
-      
-      // Replace attributes
-      const header = dropdown.querySelector('.select-kit-header');
-      if (header) {
-        ['aria-label', 'data-name', 'name'].forEach(attr => {
-          const value = header.getAttribute(attr);
-          if (value && value.includes('Custom lists')) {
-            header.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
-            wasReplaced = true;
-            hasCustomListsText = true;
-          }
-        });
-      }
-      
-      // Replace in selected elements
-      const selectedElements = dropdown.querySelectorAll('.selected-name');
-      selectedElements.forEach(selected => {
-        ['title', 'data-name'].forEach(attr => {
-          const value = selected.getAttribute(attr);
-          if (value && value.includes('Custom lists')) {
-            selected.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
-            wasReplaced = true;
-            hasCustomListsText = true;
-          }
-        });
-      });
-      
-      // Always mark dropdown as ready, even if no replacements were made
-      dropdown.setAttribute('data-solutions-ready', 'true');
-      
-      // Always make sure all name elements are visible
-      const allNames = dropdown.querySelectorAll('.name');
-      allNames.forEach(name => name.setAttribute('data-solutions-ready', 'true'));
-      
-      // Debug log
-      if (hasCustomListsText) {
-        console.log('✅ Replaced "Custom lists" with "Solutions" in dropdown');
-      }
-    });
-  };
-
   // Execute immediately
   hideNavElements();
-  replaceCustomListsText();
   
-  // Also run on DOM ready
+  // Also run on DOM ready and with intervals for persistent hiding
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      hideNavElements();
-      replaceCustomListsText();
-    });
+    document.addEventListener('DOMContentLoaded', hideNavElements);
   } else {
     hideNavElements();
-    replaceCustomListsText();
   }
   
-  // Fallback: Ensure all custom-list-dropdown text is visible after 2 seconds
-  setTimeout(() => {
-    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
-    customListDropdowns.forEach(dropdown => {
-      dropdown.setAttribute('data-solutions-ready', 'true');
-      const allNames = dropdown.querySelectorAll('.name');
-      allNames.forEach(name => {
-        name.setAttribute('data-solutions-ready', 'true');
-        name.style.opacity = '1'; // Force visibility as backup
-      });
-    });
-    console.log('🔧 Fallback: Ensured all custom-list-dropdown text is visible');
-  }, 2000);
-  
-  // Watch for custom-list-dropdown elements being added
-  const customListObserver = new MutationObserver((mutations) => {
-    let shouldReplace = false;
-    
-    mutations.forEach((mutation) => {
-      if (mutation.type === 'childList') {
-        const addedNodes = Array.from(mutation.addedNodes);
-        addedNodes.forEach(node => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            // Check if the added node is or contains a custom-list-dropdown
-            if (node.classList?.contains('custom-list-dropdown') || 
-                node.querySelector?.('.custom-list-dropdown')) {
-              shouldReplace = true;
-            }
-          }
-        });
-      }
-    });
-    
-    if (shouldReplace) {
-      setTimeout(replaceCustomListsText, 50);
-    }
-  });
-  
-  // Start observing
-  customListObserver.observe(document.documentElement, {
-    childList: true,
-    subtree: true
-  });
-  
 
-  // Get current user and environment info for debug logging
+  // Log categories for reference only in admin or development mode
   const currentUser = api.getCurrentUser();
   const isAdmin = currentUser?.admin || currentUser?.moderator;
   const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname.includes('dev');
+  
+  if (isAdmin || isDevelopment) {
+    ajax("/site.json").then((siteData) => {
+      console.log("=== AVAILABLE CATEGORIES FOR THEME SETTINGS ===");
+      console.log("Copy the 'ID' values into your theme component settings:");
+      
+      const categoryTable = siteData.categories.map(cat => {
+        const parent = siteData.categories.find(p => p.id === cat.parent_category_id);
+        return {
+          name: cat.name,
+          slug: cat.slug,
+          id: cat.id,
+          parent: parent ? parent.name : 'None',
+          full_name: parent ? `${parent.name} > ${cat.name}` : cat.name
+        };
+      }).sort((a, b) => a.full_name.localeCompare(b.full_name));
+      
+      console.table(categoryTable);
+      
+      // Also log as a simple list for easy copying
+      console.log("\n=== CATEGORY IDS FOR COPY/PASTE ===");
+      categoryTable.forEach(cat => {
+        console.log(`${cat.id} (${cat.full_name})`);
+      });
+      
+      console.log("\n=== EXAMPLE USAGE ===");
+      console.log("For comma-separated lists, use:");
+      console.log("5,12,8 (where numbers are category IDs)");
+    });
+  }
 
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
-    const slugMatch = currentPath.match(/^\/lists\/([^\/?#]+)/);
+    const slugMatch = currentPath.match(/^\/community\/lists\/([^\/?#]+)/);
     if (!slugMatch) return null;
 
     const slug = slugMatch[1];
-    
-    // First try to get from theme settings (has subscription fields)
-    let solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
-    
-    // If not found in theme settings, try plugin data as fallback
-    if (!solutionConfig) {
-      const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-      solutionConfig = customTopicLists.find(list => list.slug === slug);
-    }
+    const solutionConfig = settings.solutions?.find(solution => solution.slug === slug);
     
     if (!solutionConfig) {
-      if (isAdmin || isDevelopment) {
-        console.log(`No solution configuration found for slug: ${slug}`);
-        console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
-        const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-        console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
-      }
+      console.log(`No solution configuration found for slug: ${slug}`);
+      console.log(`Available solutions:`, settings.solutions?.map(s => s.slug));
       return null;
     }
 
-    if (isAdmin || isDevelopment) {
-      console.log(`Found solution config for: ${solutionConfig.title || solutionConfig.name} (slug: ${slug})`);
-      console.log(`Config source: ${settings.netwrix_solutions?.find(s => s.slug === slug) ? 'theme settings' : 'plugin data'}`);
-    }
+    console.log(`Found solution config for: ${solutionConfig.title} (slug: ${slug})`);
     return { slug, solutionConfig };
   }
 
   // Check if we're on a solution page initially
   const initialConfig = getCurrentSolutionConfig();
-  if (!initialConfig && (isAdmin || isDevelopment)) {
-    console.log("Not on a solution page. Navigate to /lists/[slug] to test subscription functionality.");
+  if (!initialConfig) {
+    console.log("Category list logged. Navigate to /community/lists/[slug] to test subscription functionality.");
     // Don't return here - continue to setup page change handlers
   }
 
@@ -241,23 +133,12 @@ export default apiInitializer("0.11.1", (api) => {
     const level4Categories = solutionConfig.level_4_categories || "";
     const level3Categories = solutionConfig.level_3_categories || "";
     
-    if (isAdmin || isDevelopment) {
-      console.log(`Category data for ${solutionConfig.title || solutionConfig.name}:`);
-      console.log(`  level_4_categories: "${level4Categories}"`);
-      console.log(`  level_3_categories: "${level3Categories}"`);
-    }
-    
     const level4Ids = level4Categories 
       ? level4Categories.split(',').map(s => parseInt(s.trim())).filter(id => !isNaN(id))
       : [];
     const level3Ids = level3Categories 
       ? level3Categories.split(',').map(s => parseInt(s.trim())).filter(id => !isNaN(id))
       : [];
-      
-    if (isAdmin || isDevelopment) {
-      console.log(`  Parsed level4Ids: [${level4Ids.join(', ')}]`);
-      console.log(`  Parsed level3Ids: [${level3Ids.join(', ')}]`);
-    }
       
     return { level4Ids, level3Ids };
   }
@@ -275,23 +156,19 @@ export default apiInitializer("0.11.1", (api) => {
       const invalidLevel4 = level4Ids.filter(id => !idToCategory[id]);
       const invalidLevel3 = level3Ids.filter(id => !idToCategory[id]);
       
-      const configTitle = solutionConfig.title || solutionConfig.name || 'Solution';
-      
-      if (invalidLevel4.length > 0 && (isAdmin || isDevelopment)) {
-        console.error(`❌ Invalid Level 4 category IDs for ${configTitle}: ${invalidLevel4.join(', ')}`);
+      if (invalidLevel4.length > 0) {
+        console.error(`❌ Invalid Level 4 category IDs for ${solutionConfig.title}: ${invalidLevel4.join(', ')}`);
       }
       
-      if (invalidLevel3.length > 0 && (isAdmin || isDevelopment)) {
-        console.error(`❌ Invalid Level 3 category IDs for ${configTitle}: ${invalidLevel3.join(', ')}`);
+      if (invalidLevel3.length > 0) {
+        console.error(`❌ Invalid Level 3 category IDs for ${solutionConfig.title}: ${invalidLevel3.join(', ')}`);
       }
 
       const validLevel4Names = level4Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
       const validLevel3Names = level3Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
 
-      if (isAdmin || isDevelopment) {
-        console.log(`✅ ${configTitle} Level 4 categories: ${validLevel4Names.join(', ')} (IDs: ${level4Ids.join(', ')})`);
-        console.log(`✅ ${configTitle} Level 3 categories: ${validLevel3Names.join(', ')} (IDs: ${level3Ids.join(', ')})`);
-      }
+      console.log(`✅ ${solutionConfig.title} Level 4 categories: ${validLevel4Names.join(', ')} (IDs: ${level4Ids.join(', ')})`);
+      console.log(`✅ ${solutionConfig.title} Level 3 categories: ${validLevel3Names.join(', ')} (IDs: ${level3Ids.join(', ')})`);
     }
 
     // Validate current solution
@@ -301,23 +178,14 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Function to update dropdown text
     function updateDropdownText() {
-      // Update the main dropdown text
       const dropdown = document.querySelector('.custom-list-dropdown .select-kit-selected-name .name');
       if (dropdown && dropdown.textContent.trim() === 'Custom lists') {
         dropdown.textContent = 'Solutions';
       }
       
-      // Also find dropdowns by data-name attribute in case the class isn't there
-      const dropdownsByName = document.querySelectorAll('.select-kit-selected-name .name');
-      dropdownsByName.forEach(nameEl => {
-        if (nameEl.textContent.trim() === 'Custom lists') {
-          nameEl.textContent = 'Solutions';
-        }
-      });
-      
-      // Update the aria-label and title attributes for the header
-      const headers = document.querySelectorAll('.select-kit-header');
-      headers.forEach(header => {
+      // Also update the aria-label and title attributes
+      const header = document.querySelector('.custom-list-dropdown .select-kit-header');
+      if (header) {
         const ariaLabel = header.getAttribute('aria-label');
         const dataName = header.getAttribute('data-name');
         
@@ -327,11 +195,10 @@ export default apiInitializer("0.11.1", (api) => {
         if (dataName === 'Custom lists') {
           header.setAttribute('data-name', 'Solutions');
         }
-      });
+      }
       
-      // Update selected choice elements
-      const selectedChoices = document.querySelectorAll('.selected-name.choice');
-      selectedChoices.forEach(selectedChoice => {
+      const selectedChoice = document.querySelector('.custom-list-dropdown .selected-name.choice');
+      if (selectedChoice) {
         const title = selectedChoice.getAttribute('title');
         const dataName = selectedChoice.getAttribute('data-name');
         
@@ -341,7 +208,7 @@ export default apiInitializer("0.11.1", (api) => {
         if (dataName === 'Custom lists') {
           selectedChoice.setAttribute('data-name', 'Solutions');
         }
-      });
+      }
     }
 
     const currentUser = api.getCurrentUser();
@@ -374,16 +241,12 @@ export default apiInitializer("0.11.1", (api) => {
         return; // Same solution, no need to update
       }
       
-      const config = currentConfig.solutionConfig;
-      const title = config.subtitle || config.name || config.title || 'Solution';
-      const desc = config.description || '';
-      
       header.innerHTML = `
         <div class="category-title-contents">
-          <h1 class="category-title">${title}<br>News & Security Advisories</h1>
+          <h1 class="category-title">${currentConfig.solutionConfig.subtitle}<br>News & Security Advisories</h1>
           <div class="category-title-description">
             <div class="solution-subtext">
-              ${desc}
+              ${currentConfig.solutionConfig.description}
             </div>
           </div>
         </div>
@@ -482,13 +345,6 @@ export default apiInitializer("0.11.1", (api) => {
         btn.disabled = true;
         btn.textContent = "No valid categories configured";
         btn.title = "Check console for available category IDs";
-        if (isAdmin || isDevelopment) {
-          console.error(`❌ No valid categories found for ${currentConfig.solutionConfig.title || currentConfig.solutionConfig.name}`);
-          console.error(`   level_4_categories: "${currentConfig.solutionConfig.level_4_categories || 'undefined'}"`);
-          console.error(`   level_3_categories: "${currentConfig.solutionConfig.level_3_categories || 'undefined'}"`);
-        }
-      } else if (isAdmin || isDevelopment) {
-        console.log(`✅ Subscribe button enabled with ${level4Ids.length} level 4 + ${level3Ids.length} level 3 categories`);
       }
 
       btn.addEventListener("click", () => {
@@ -520,21 +376,18 @@ export default apiInitializer("0.11.1", (api) => {
 
         Promise.all(allUpdates)
           .then(() => {
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>`;
-            if (subscribing) {
-              btn.classList.add("subscribed");
-            } else {
-              btn.classList.remove("subscribed");
-            }
-            btn.disabled = false;
+            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+            btn.classList.toggle("subscribed");
+            console.log(`${subscribing ? '✅ Subscribed to' : '❌ Unsubscribed from'} ${currentConfig.solutionConfig.title} solution`);
           })
           .catch((error) => {
-            if (isAdmin || isDevelopment) {
-              console.error("Error updating subscription:", error);
-            }
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All ${configTitle} News & Security Advisories</span>`;
+            console.error("Failed to update subscriptions:", error);
+            btn.innerHTML = "❌ Error - Try again";
+            setTimeout(() => {
+              btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+            }, 3000);
+          })
+          .finally(() => {
             btn.disabled = false;
           });
       });
@@ -543,94 +396,117 @@ export default apiInitializer("0.11.1", (api) => {
       nav.appendChild(wrapper);
     }
 
-    // Handler for applying styles to current page
-    function applyCurrentPageStyles() {
-      const header = document.querySelector(".category-title-header");
-      if (header) {
-        styleHeader(header, true); // Force update to handle page navigation
-      }
-      updateSubscribeButton();
-      updateDropdownText();
-      replaceCustomListsText(); // Ensure Solutions text is updated
-    }
 
-    // Apply initial styles if we're on a solution page
-    if (initialConfig) {
-      // Use a timer to ensure DOM is ready
-      setTimeout(() => {
-        applyCurrentPageStyles();
-        updateDropdownText(); // Update dropdown text on initial load
-      }, 100);
+    // Function to hide navigation elements
+    function hideNavigationElements() {
+      // Check if we're on a solution list page
+      const currentPath = window.location.pathname;
+      const isSolutionPage = currentPath.match(/^\/community\/lists\/([^\/?#]+)/);
       
-      // Update dropdown text periodically to catch any dynamic updates
-      const textUpdateInterval = setInterval(() => {
-        if (window.location.pathname.includes('/lists/')) {
-          updateDropdownText();
-        } else {
-          clearInterval(textUpdateInterval);
-        }
-      }, 500);
-    }
-
-    // Listen for page changes using Discourse's router
-    api.onPageChange((url) => {
-      const isListsPage = url.includes('/lists/');
-      
-      // Always run hideNavElements and text replacement to handle showing/hiding based on page type
-      setTimeout(() => {
-        hideNavElements();
-        replaceCustomListsText();
-        
-        if (isListsPage) {
-          const currentConfig = getCurrentSolutionConfig();
-          if (currentConfig) {
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            if (isAdmin || isDevelopment) {
-              console.log(`✅ Navigated to solution: ${configTitle}`);
-              validateSolutionCategories(currentConfig.solutionConfig);
-            }
-            applyCurrentPageStyles();
-          }
-        }
-      }, 300); // Give time for DOM to update
-    });
-
-    // Fallback: Use MutationObserver to watch for header changes
-    const observer = new MutationObserver((mutations) => {
-      let shouldUpdate = false;
-      
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
-          const addedNodes = Array.from(mutation.addedNodes);
-          const hasHeader = addedNodes.some(node => 
-            node.nodeType === 1 && (
-              node.classList?.contains('category-title-header') ||
-              node.querySelector?.('.category-title-header')
-            )
-          );
-          
-          if (hasHeader) {
-            shouldUpdate = true;
-          }
-        }
+      const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
+      navItems.forEach(item => {
+        item.style.display = 'none';
       });
       
-      if (shouldUpdate) {
-        setTimeout(() => {
-          applyCurrentPageStyles();
-        }, 50);
+      // Only hide category and tag filter dropdowns on solution pages
+      if (isSolutionPage) {
+        const categoryDropdown = document.querySelector('.category-breadcrumb .category-drop');
+        if (categoryDropdown) {
+          categoryDropdown.style.display = 'none';
+          // Hide parent li as well
+          const parentLi = categoryDropdown.closest('li');
+          if (parentLi) parentLi.style.display = 'none';
+        }
+        
+        const tagDropdowns = document.querySelectorAll('.category-breadcrumb .tag-drop');
+        tagDropdowns.forEach(dropdown => {
+          // Only hide if it's NOT the custom solution dropdown
+          if (!dropdown.classList.contains('custom-list-dropdown')) {
+            dropdown.style.display = 'none';
+            // Hide parent li as well
+            const parentLi = dropdown.closest('li');
+            if (parentLi) parentLi.style.display = 'none';
+          }
+        });
       }
-    });
+    }
 
-    // Start observing
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-
-    // Clean up observer when leaving the page
     api.onPageChange(() => {
-      // Don't disconnect observer, we want it to keep working
+      // Force update header for solution page changes
+      const header = document.querySelector(".category-title-header");
+      if (header) {
+        styleHeader(header, true); // Force update
+      }
+      
+      // Fallback with minimal delay for DOM readiness
+      setTimeout(() => {
+        const headerDelayed = document.querySelector(".category-title-header");
+        if (headerDelayed) {
+          styleHeader(headerDelayed, true); // Force update
+        }
+      }, 50);
+
+      // Update subscribe button
+      updateSubscribeButton();
+      
+      // Fallback for subscribe button
+      setTimeout(() => {
+        updateSubscribeButton();
+      }, 100);
+
+      // Hide navigation elements
+      hideNavigationElements();
+      setTimeout(() => {
+        hideNavigationElements();
+      }, 100);
     });
   });
+
+  // Update dropdown text on all pages
+  function updateDropdownText() {
+    const dropdown = document.querySelector('.custom-list-dropdown .select-kit-selected-name .name');
+    if (dropdown && dropdown.textContent.trim() === 'Custom lists') {
+      dropdown.textContent = 'Solutions';
+    }
+    
+    // Also update the aria-label and title attributes
+    const header = document.querySelector('.custom-list-dropdown .select-kit-header');
+    if (header) {
+      const ariaLabel = header.getAttribute('aria-label');
+      const dataName = header.getAttribute('data-name');
+      
+      if (ariaLabel && ariaLabel.includes('Custom lists')) {
+        header.setAttribute('aria-label', ariaLabel.replace('Custom lists', 'Solutions'));
+      }
+      if (dataName === 'Custom lists') {
+        header.setAttribute('data-name', 'Solutions');
+      }
+    }
+    
+    const selectedChoice = document.querySelector('.custom-list-dropdown .selected-name.choice');
+    if (selectedChoice) {
+      const title = selectedChoice.getAttribute('title');
+      const dataName = selectedChoice.getAttribute('data-name');
+      
+      if (title === 'Custom lists') {
+        selectedChoice.setAttribute('title', 'Solutions');
+      }
+      if (dataName === 'Custom lists') {
+        selectedChoice.setAttribute('data-name', 'Solutions');
+      }
+    }
+  }
+
+  api.onPageChange(() => {
+    // Update dropdown text on all pages
+    updateDropdownText();
+    setTimeout(() => {
+      updateDropdownText();
+    }, 100);
+  });
+
+  // Initial call for dropdown text
+  setTimeout(() => {
+    updateDropdownText();
+  }, 500);
 });
