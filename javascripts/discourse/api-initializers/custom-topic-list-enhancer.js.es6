@@ -68,126 +68,15 @@ export default apiInitializer("0.11.1", (api) => {
     });
   };
   
-  // Function to replace "Custom lists" with "Solutions" ONLY in .custom-list-dropdown
-  const replaceCustomListsText = () => {
-    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
-    
-    customListDropdowns.forEach(dropdown => {
-      let wasReplaced = false;
-      let hasCustomListsText = false;
-      
-      // Replace text content in name elements
-      const nameElements = dropdown.querySelectorAll('.name');
-      nameElements.forEach(nameEl => {
-        if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
-          nameEl.textContent = 'Solutions';
-          nameEl.setAttribute('data-solutions-ready', 'true');
-          wasReplaced = true;
-          hasCustomListsText = true;
-        } else if (nameEl.textContent && nameEl.textContent.trim()) {
-          // If there's other text, make sure it's visible
-          nameEl.setAttribute('data-solutions-ready', 'true');
-        }
-      });
-      
-      // Replace attributes
-      const header = dropdown.querySelector('.select-kit-header');
-      if (header) {
-        ['aria-label', 'data-name', 'name'].forEach(attr => {
-          const value = header.getAttribute(attr);
-          if (value && value.includes('Custom lists')) {
-            header.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
-            wasReplaced = true;
-            hasCustomListsText = true;
-          }
-        });
-      }
-      
-      // Replace in selected elements
-      const selectedElements = dropdown.querySelectorAll('.selected-name');
-      selectedElements.forEach(selected => {
-        ['title', 'data-name'].forEach(attr => {
-          const value = selected.getAttribute(attr);
-          if (value && value.includes('Custom lists')) {
-            selected.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
-            wasReplaced = true;
-            hasCustomListsText = true;
-          }
-        });
-      });
-      
-      // Always mark dropdown as ready, even if no replacements were made
-      dropdown.setAttribute('data-solutions-ready', 'true');
-      
-      // Always make sure all name elements are visible
-      const allNames = dropdown.querySelectorAll('.name');
-      allNames.forEach(name => name.setAttribute('data-solutions-ready', 'true'));
-      
-      // Debug log
-      if (hasCustomListsText) {
-        console.log('✅ Replaced "Custom lists" with "Solutions" in dropdown');
-      }
-    });
-  };
-
   // Execute immediately
   hideNavElements();
-  replaceCustomListsText();
   
   // Also run on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      hideNavElements();
-      replaceCustomListsText();
-    });
+    document.addEventListener('DOMContentLoaded', hideNavElements);
   } else {
     hideNavElements();
-    replaceCustomListsText();
   }
-  
-  // Fallback: Ensure all custom-list-dropdown text is visible after 2 seconds
-  setTimeout(() => {
-    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
-    customListDropdowns.forEach(dropdown => {
-      dropdown.setAttribute('data-solutions-ready', 'true');
-      const allNames = dropdown.querySelectorAll('.name');
-      allNames.forEach(name => {
-        name.setAttribute('data-solutions-ready', 'true');
-        name.style.opacity = '1'; // Force visibility as backup
-      });
-    });
-    console.log('🔧 Fallback: Ensured all custom-list-dropdown text is visible');
-  }, 2000);
-  
-  // Watch for custom-list-dropdown elements being added
-  const customListObserver = new MutationObserver((mutations) => {
-    let shouldReplace = false;
-    
-    mutations.forEach((mutation) => {
-      if (mutation.type === 'childList') {
-        const addedNodes = Array.from(mutation.addedNodes);
-        addedNodes.forEach(node => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            // Check if the added node is or contains a custom-list-dropdown
-            if (node.classList?.contains('custom-list-dropdown') || 
-                node.querySelector?.('.custom-list-dropdown')) {
-              shouldReplace = true;
-            }
-          }
-        });
-      }
-    });
-    
-    if (shouldReplace) {
-      setTimeout(replaceCustomListsText, 50);
-    }
-  });
-  
-  // Start observing
-  customListObserver.observe(document.documentElement, {
-    childList: true,
-    subtree: true
-  });
   
 
   // Get current user and environment info for debug logging
@@ -551,7 +440,6 @@ export default apiInitializer("0.11.1", (api) => {
       }
       updateSubscribeButton();
       updateDropdownText();
-      replaceCustomListsText(); // Ensure Solutions text is updated
     }
 
     // Apply initial styles if we're on a solution page
@@ -576,10 +464,9 @@ export default apiInitializer("0.11.1", (api) => {
     api.onPageChange((url) => {
       const isListsPage = url.includes('/lists/');
       
-      // Always run hideNavElements and text replacement to handle showing/hiding based on page type
+      // Always run hideNavElements to handle showing/hiding based on page type
       setTimeout(() => {
         hideNavElements();
-        replaceCustomListsText();
         
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();

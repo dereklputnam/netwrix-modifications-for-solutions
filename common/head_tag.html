@@ -1,0 +1,132 @@
+<script>
+// Ultra-early text replacement - runs before Discourse's main JavaScript
+(function() {
+  'use strict';
+  
+  // Function to replace Custom lists with Solutions
+  function replaceCustomListsText() {
+    // Target the specific dropdown structure
+    const customListHeaders = document.querySelectorAll('.tag-drop-header[data-name="Custom lists"], .select-kit-header[data-name="Custom lists"]');
+    customListHeaders.forEach(header => {
+      // Update attributes
+      ['aria-label', 'name', 'data-name'].forEach(attr => {
+        const value = header.getAttribute(attr);
+        if (value && value.includes('Custom lists')) {
+          header.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
+        }
+      });
+      
+      // Update child elements
+      const nameElements = header.querySelectorAll('.name');
+      nameElements.forEach(nameEl => {
+        if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
+          nameEl.textContent = 'Solutions';
+        }
+      });
+      
+      const selectedNames = header.querySelectorAll('.selected-name');
+      selectedNames.forEach(selected => {
+        ['title', 'data-name'].forEach(attr => {
+          const value = selected.getAttribute(attr);
+          if (value && value.includes('Custom lists')) {
+            selected.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
+          }
+        });
+      });
+    });
+    
+    // Also target by class in case data-name isn't set yet
+    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
+    customListDropdowns.forEach(dropdown => {
+      const nameElements = dropdown.querySelectorAll('.name');
+      nameElements.forEach(nameEl => {
+        if (nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
+          nameEl.textContent = 'Solutions';
+        }
+      });
+    });
+  }
+  
+  // Run immediately if DOM is already loaded
+  if (document.readyState !== 'loading') {
+    replaceCustomListsText();
+  }
+  
+  // Run when DOM content is loaded
+  document.addEventListener('DOMContentLoaded', replaceCustomListsText);
+  
+  // Use MutationObserver to catch dynamically added content
+  const observer = new MutationObserver(function(mutations) {
+    let shouldReplace = false;
+    
+    mutations.forEach(function(mutation) {
+      if (mutation.type === 'childList') {
+        const addedNodes = Array.from(mutation.addedNodes);
+        addedNodes.forEach(function(node) {
+          if (node.nodeType === 1) { // Element node
+            // Check if it's a custom list dropdown or contains one
+            if (node.classList && (
+                node.classList.contains('custom-list-dropdown') ||
+                node.classList.contains('tag-drop-header') ||
+                node.classList.contains('select-kit-header')
+              )) {
+              shouldReplace = true;
+            } else if (node.querySelector) {
+              if (node.querySelector('.custom-list-dropdown') ||
+                  node.querySelector('.tag-drop-header') ||
+                  node.querySelector('[data-name="Custom lists"]')) {
+                shouldReplace = true;
+              }
+            }
+          }
+        });
+      } else if (mutation.type === 'characterData') {
+        // Text content changed
+        if (mutation.target.textContent && mutation.target.textContent.includes('Custom lists')) {
+          shouldReplace = true;
+        }
+      } else if (mutation.type === 'attributes') {
+        // Attribute changed
+        if (mutation.attributeName === 'data-name' || mutation.attributeName === 'aria-label') {
+          const value = mutation.target.getAttribute(mutation.attributeName);
+          if (value && value.includes('Custom lists')) {
+            shouldReplace = true;
+          }
+        }
+      }
+    });
+    
+    if (shouldReplace) {
+      // Small delay to ensure DOM is stable
+      setTimeout(replaceCustomListsText, 1);
+    }
+  });
+  
+  // Start observing immediately
+  if (document.documentElement) {
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['data-name', 'aria-label', 'name', 'title']
+    });
+  }
+  
+  // Fallback: run periodically for the first few seconds
+  let attempts = 0;
+  const maxAttempts = 20; // Run for 10 seconds (20 * 500ms)
+  
+  const periodicReplace = function() {
+    attempts++;
+    replaceCustomListsText();
+    
+    if (attempts < maxAttempts) {
+      setTimeout(periodicReplace, 500);
+    }
+  };
+  
+  // Start periodic replacement after a short delay
+  setTimeout(periodicReplace, 100);
+})();
+</script>
