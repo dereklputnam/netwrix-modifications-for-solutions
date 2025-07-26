@@ -434,26 +434,13 @@ export default apiInitializer("0.11.1", (api) => {
       // Apply direct styling to ensure right alignment
       navControls.style.display = 'flex';
       navControls.style.alignItems = 'center';
-      navControls.style.justifyContent = 'space-between'; // This will push button to the right
-      navControls.style.width = '100%';
+      navControls.style.justifyContent = 'flex-start';
       
       btn.style.marginLeft = 'auto';
-      btn.style.flexShrink = '0'; // Prevent button from shrinking
+      btn.style.order = '999';
       
-      // Wrap existing content in a div to control layout
-      const existingContent = Array.from(navControls.children);
-      const leftWrapper = document.createElement('div');
-      leftWrapper.style.display = 'flex';
-      leftWrapper.style.alignItems = 'center';
-      leftWrapper.style.gap = '10px';
-      
-      // Move existing content to left wrapper
-      existingContent.forEach(child => leftWrapper.appendChild(child));
-      
-      // Clear navControls and add wrapper + button
-      navControls.innerHTML = '';
-      navControls.appendChild(leftWrapper);
-      navControls.appendChild(btn);
+      // Insert the button at the beginning of navigation-controls (it will appear on the right)
+      navControls.insertBefore(btn, navControls.firstChild);
       
       // Add responsive text handling
       function updateButtonText() {
