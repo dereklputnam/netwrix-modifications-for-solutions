@@ -74,6 +74,7 @@ export default apiInitializer("0.11.1", (api) => {
     
     customListDropdowns.forEach(dropdown => {
       let wasReplaced = false;
+      let hasCustomListsText = false;
       
       // Replace text content in name elements
       const nameElements = dropdown.querySelectorAll('.name');
@@ -82,6 +83,10 @@ export default apiInitializer("0.11.1", (api) => {
           nameEl.textContent = 'Solutions';
           nameEl.setAttribute('data-solutions-ready', 'true');
           wasReplaced = true;
+          hasCustomListsText = true;
+        } else if (nameEl.textContent && nameEl.textContent.trim()) {
+          // If there's other text, make sure it's visible
+          nameEl.setAttribute('data-solutions-ready', 'true');
         }
       });
       
@@ -93,6 +98,7 @@ export default apiInitializer("0.11.1", (api) => {
           if (value && value.includes('Custom lists')) {
             header.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
             wasReplaced = true;
+            hasCustomListsText = true;
           }
         });
       }
@@ -105,16 +111,21 @@ export default apiInitializer("0.11.1", (api) => {
           if (value && value.includes('Custom lists')) {
             selected.setAttribute(attr, value.replace(/Custom lists/g, 'Solutions'));
             wasReplaced = true;
+            hasCustomListsText = true;
           }
         });
       });
       
-      // Mark dropdown as ready if any replacements were made
-      if (wasReplaced) {
-        dropdown.setAttribute('data-solutions-ready', 'true');
-        // Also mark all name elements as ready
-        const allNames = dropdown.querySelectorAll('.name');
-        allNames.forEach(name => name.setAttribute('data-solutions-ready', 'true'));
+      // Always mark dropdown as ready, even if no replacements were made
+      dropdown.setAttribute('data-solutions-ready', 'true');
+      
+      // Always make sure all name elements are visible
+      const allNames = dropdown.querySelectorAll('.name');
+      allNames.forEach(name => name.setAttribute('data-solutions-ready', 'true'));
+      
+      // Debug log
+      if (hasCustomListsText) {
+        console.log('✅ Replaced "Custom lists" with "Solutions" in dropdown');
       }
     });
   };
@@ -133,6 +144,20 @@ export default apiInitializer("0.11.1", (api) => {
     hideNavElements();
     replaceCustomListsText();
   }
+  
+  // Fallback: Ensure all custom-list-dropdown text is visible after 2 seconds
+  setTimeout(() => {
+    const customListDropdowns = document.querySelectorAll('.custom-list-dropdown');
+    customListDropdowns.forEach(dropdown => {
+      dropdown.setAttribute('data-solutions-ready', 'true');
+      const allNames = dropdown.querySelectorAll('.name');
+      allNames.forEach(name => {
+        name.setAttribute('data-solutions-ready', 'true');
+        name.style.opacity = '1'; // Force visibility as backup
+      });
+    });
+    console.log('🔧 Fallback: Ensured all custom-list-dropdown text is visible');
+  }, 2000);
   
   // Watch for custom-list-dropdown elements being added
   const customListObserver = new MutationObserver((mutations) => {
