@@ -412,27 +412,57 @@ export default apiInitializer("0.11.1", (api) => {
 
         Promise.all(allUpdates)
           .then(() => {
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
             if (subscribing) {
               btn.classList.add("subscribed");
             } else {
               btn.classList.remove("subscribed");
             }
             btn.disabled = false;
+            // Update text based on current window size
+            updateButtonText();
           })
           .catch((error) => {
             if (isAdmin || isDevelopment) {
               console.error("Error updating subscription:", error);
             }
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            btn.innerHTML = subscribing ? `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
             btn.disabled = false;
+            // Update text based on current window size
+            updateButtonText();
           });
       });
 
+      // Apply direct styling to ensure right alignment
+      navControls.style.display = 'flex';
+      navControls.style.alignItems = 'center';
+      navControls.style.justifyContent = 'flex-start';
+      
+      btn.style.marginLeft = 'auto';
+      btn.style.order = '999';
+      
       // Insert the button at the beginning of navigation-controls (it will appear on the right)
       navControls.insertBefore(btn, navControls.firstChild);
+      
+      // Add responsive text handling
+      function updateButtonText() {
+        const windowWidth = window.innerWidth;
+        const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
+        
+        if (windowWidth <= 900) {
+          // Mobile/narrow: show short text
+          btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? '✅ Subscribed' : `${bellIcon} Subscribe`;
+        } else {
+          // Desktop/wide: show full text
+          btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? 
+            '✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>' : 
+            `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+        }
+      }
+      
+      // Initial text update
+      updateButtonText();
+      
+      // Listen for window resize
+      window.addEventListener('resize', updateButtonText);
     }
 
     // Handler for applying styles to current page
