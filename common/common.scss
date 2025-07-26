@@ -83,6 +83,32 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
   visibility: visible !important;
 }
 
-// Note: Text replacement for "Custom lists" -> "Solutions" is now handled
-// by the existing JavaScript in the api-initializer without flash prevention
-// to avoid interfering with other dropdowns globally
+// Targeted text flash prevention - only for .custom-list-dropdown
+.custom-list-dropdown {
+  // Hide text initially only if it contains "Custom lists"
+  .select-kit-selected-name .name,
+  .selected-name .name,
+  .name {
+    &:not([data-solutions-ready="true"]) {
+      opacity: 0;
+      transition: opacity 0.15s ease-in-out;
+    }
+    
+    &[data-solutions-ready="true"] {
+      opacity: 1;
+    }
+  }
+  
+  // Also hide elements with Custom lists attributes
+  &[data-name="Custom lists"],
+  &[aria-label*="Custom lists"] {
+    .name {
+      opacity: 0;
+      transition: opacity 0.15s ease-in-out;
+    }
+    
+    &[data-solutions-ready="true"] .name {
+      opacity: 1;
+    }
+  }
+}
