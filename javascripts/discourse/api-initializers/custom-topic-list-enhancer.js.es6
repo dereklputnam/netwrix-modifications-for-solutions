@@ -368,7 +368,30 @@ export default apiInitializer("0.11.1", (api) => {
       btn.id = "solution-subscribe-button";
       btn.className = "btn btn-default";
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-      btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+      
+      // Dynamic button text based on window width
+      function updateButtonText() {
+        const windowWidth = window.innerWidth;
+        const showFullText = windowWidth > 1200;
+        const isCurrentlySubscribed = btn.classList.contains("subscribed");
+        
+        if (isCurrentlySubscribed) {
+          btn.innerHTML = showFullText 
+            ? `✅ Subscribed&nbsp;To All News & Security Advisories`
+            : `✅ Subscribed`;
+        } else {
+          btn.innerHTML = showFullText
+            ? `${bellIcon} Subscribe&nbsp;To All News & Security Advisories`
+            : `${bellIcon} Subscribe`;
+        }
+      }
+      
+      // Set initial text
+      updateButtonText();
+      
+      // Update text on window resize
+      const resizeHandler = () => updateButtonText();
+      window.addEventListener('resize', resizeHandler);
       if (isSubscribed) btn.classList.add("subscribed");
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
@@ -406,14 +429,19 @@ export default apiInitializer("0.11.1", (api) => {
 
         Promise.all(allUpdates)
           .then(() => {
-            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
-            btn.classList.toggle("subscribed");
+            // Update subscription status and refresh button text
+            if (subscribing) {
+              btn.classList.add("subscribed");
+            } else {
+              btn.classList.remove("subscribed");
+            }
+            updateButtonText(); // Use the dynamic text function
           })
           .catch((error) => {
             console.error("Failed to update subscriptions:", error);
             btn.innerHTML = "❌ Error - Try again";
             setTimeout(() => {
-              btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+              updateButtonText(); // Use the dynamic text function
             }, 3000);
           })
           .finally(() => {
