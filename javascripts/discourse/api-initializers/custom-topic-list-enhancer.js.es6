@@ -440,7 +440,7 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      // ULTRA-AGGRESSIVE: Fixed positioning relative to viewport
+      // ULTRA-AGGRESSIVE: Fixed positioning relative to viewport but constrained to content area
       // Calculate the position of the navigation container
       function positionButtonFixed() {
         const navContainer = document.querySelector(".navigation-container");
@@ -449,14 +449,19 @@ export default apiInitializer("0.11.1", (api) => {
         const rect = navContainer.getBoundingClientRect();
         const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
+        // Calculate right position relative to the container's right edge instead of viewport
+        const containerRight = rect.right;
+        const viewportWidth = window.innerWidth;
+        const rightOffset = viewportWidth - containerRight + 10; // 10px padding from container edge
+        
         btn.style.position = "fixed";
-        btn.style.right = "20px"; // 20px from right edge of viewport
-        btn.style.top = (rect.top + scrollTop + 10) + "px"; // Align with nav container + 10px padding
+        btn.style.right = rightOffset + "px"; // Position relative to container's right edge
+        btn.style.top = (rect.top + 10) + "px"; // Use fixed position top (no scrollTop needed for fixed)
         btn.style.zIndex = "9999";
         btn.style.pointerEvents = "auto";
         
         if (isAdmin || isDevelopment) {
-          console.log(`🎯 Fixed positioning: right=20px, top=${rect.top + scrollTop + 10}px`);
+          console.log(`🎯 Fixed positioning: right=${rightOffset}px, top=${rect.top + 10}px (container-bound)`);
         }
       }
       
