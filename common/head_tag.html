@@ -152,20 +152,16 @@
       
       const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
       breadcrumbItems.forEach((li, index) => {
-        // NEVER hide the Solutions dropdown or custom topic list dropdown - check multiple identifiers
-        const hasCustomList = li.querySelector('.custom-list-dropdown');
-        const isCustomListItem = li.classList.contains('custom-list-item');
-        const hasCustomTopicList = li.querySelector('[data-name*="Solution"], [data-name*="Custom"], .tag-drop, .tag-drop-header');
-        const hasDropdownContent = li.textContent && (li.textContent.includes('Solution') || li.textContent.includes('Custom') || li.textContent.includes('DSPM') || li.textContent.includes('Data Security'));
-        
-        // Only hide if it's in the first two positions AND doesn't have any Solutions-related content
-        if (index < 2 && !hasCustomList && !isCustomListItem && !hasCustomTopicList && !hasDropdownContent) {
-          li.style.display = 'none';
-          li.style.visibility = 'hidden';
-          li.style.opacity = '0';
-          li.style.width = '0';
-          li.style.height = '0';
-          li.style.overflow = 'hidden';
+        if (index < 2) { // Hide first two <li> elements (categories and tags)
+          const hasCustomList = li.querySelector('.custom-list-dropdown');
+          if (!hasCustomList) {
+            li.style.display = 'none';
+            li.style.visibility = 'hidden';
+            li.style.opacity = '0';
+            li.style.width = '0';
+            li.style.height = '0';
+            li.style.overflow = 'hidden';
+          }
         }
       });
     };
