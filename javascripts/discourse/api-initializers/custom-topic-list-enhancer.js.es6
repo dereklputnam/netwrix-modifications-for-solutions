@@ -359,9 +359,12 @@ export default apiInitializer("0.11.1", (api) => {
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      // Find the navigation-controls container (where buttons should go)
-      const navControls = document.querySelector(".navigation-controls");
-      if (!navControls) return;
+      // Try multiple container options to find the best placement
+      let container = document.querySelector(".navigation-controls");
+      if (!container) {
+        container = document.querySelector(".navigation-container");
+      }
+      if (!container) return;
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -431,8 +434,20 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      // Simply append to the end of navigation-controls like the standard notification button
-      navControls.appendChild(btn);
+      // Create a wrapper div to isolate the button positioning
+      const buttonWrapper = document.createElement("div");
+      buttonWrapper.id = "subscribe-button-wrapper";
+      buttonWrapper.style.position = "absolute";
+      buttonWrapper.style.right = "0";
+      buttonWrapper.style.top = "0";
+      buttonWrapper.style.zIndex = "1000";
+      buttonWrapper.appendChild(btn);
+      
+      // Ensure container is positioned relatively
+      container.style.position = "relative";
+      
+      // Append wrapper to container
+      container.appendChild(buttonWrapper);
       
       // Add responsive text handling
       function updateButtonText() {
