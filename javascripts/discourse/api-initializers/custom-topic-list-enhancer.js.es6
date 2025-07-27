@@ -388,16 +388,30 @@ export default apiInitializer("0.11.1", (api) => {
           wrapper.style.background = "magenta"; // Changes to magenta at 1500px and below
           nav.style.background = "rgba(255,0,0,0.5)"; // Changes to red at 1500px and below
           
-          // FORCE flexbox properties in problem zone
+          // NUCLEAR OPTION: Force positioning with absolute positioning at 1500px breakpoint
           nav.style.display = "flex";
           nav.style.alignItems = "center";
-          nav.style.justifyContent = "flex-start"; // Ensure flex-start behavior
-          wrapper.style.marginLeft = "auto";
-          wrapper.style.order = "999"; // Force to end
+          nav.style.justifyContent = "flex-start";
+          nav.style.position = "relative"; // Ensure positioning context
+          
+          // Force wrapper to absolute right positioning in problem zone
+          wrapper.style.position = "absolute";
+          wrapper.style.right = "10px";
+          wrapper.style.top = "50%";
+          wrapper.style.transform = "translateY(-50%)";
+          wrapper.style.marginLeft = "0"; // Reset margin since we're using absolute
+          wrapper.style.zIndex = "99999";
           
         } else {
           wrapper.style.background = "red"; // Red above 1500px
           nav.style.background = "rgba(0,0,255,0.3)"; // Blue above 1500px
+          
+          // Reset to normal flexbox positioning above 1500px
+          wrapper.style.position = "relative";
+          wrapper.style.right = "auto";
+          wrapper.style.top = "auto";
+          wrapper.style.transform = "none";
+          wrapper.style.marginLeft = "auto";
         }
         
         // DEBUG: Log computed styles to see what's happening
