@@ -218,28 +218,8 @@ button#solution-subscribe-button {
   // Mobile responsiveness moved to global scope below
 }
 
-// Responsive line breaks for titles - hide by default, show only when needed
-.category-title .break-medium { 
-  display: none !important; 
-}
-
-.category-title .break-small { 
-  display: none !important; 
-}
-
-// Show breaks on medium screens (tablets/small desktops)
-@media (max-width: 1200px) {
-  .category-title .break-medium { 
-    display: inline !important; 
-  }
-}
-
-// Show breaks on small screens (phones)
-@media (max-width: 768px) {
-  .category-title .break-small { 
-    display: inline !important; 
-  }
-}
+// Responsive line breaks for titles - match staging behavior exactly
+// In staging, breaks are visible by default and controlled by their own responsive logic
 
 // Mobile responsiveness for subscribe button - hide long text on smaller screens
 @media (max-width: 1200px) {
