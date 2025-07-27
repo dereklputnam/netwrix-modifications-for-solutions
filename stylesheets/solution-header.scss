@@ -143,50 +143,68 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Ultra-aggressive debug styling to force visibility
-body[class*="/lists/"] #solution-subscribe-wrapper,
-body[class*="lists-"] #solution-subscribe-wrapper,
+// NUCLEAR OPTION: Ultra-aggressive debug styling with highest specificity possible
+html body.ember-application div.ember-view section.navigation-container div.navigation-controls #solution-subscribe-wrapper,
+body div#solution-subscribe-wrapper,
+div#solution-subscribe-wrapper,
 #solution-subscribe-wrapper {
   margin-left: auto !important;
-  background: red !important; // Debug: temporary red background to see wrapper
-  padding: 5px !important; // Debug: larger padding to make wrapper visible
-  border: 3px solid yellow !important; // Debug: yellow border
-  min-width: 100px !important; // Debug: ensure wrapper has width
-  min-height: 30px !important; // Debug: ensure wrapper has height
+  background: red !important; // Debug: RED background
+  background-color: red !important;
+  padding: 10px !important; // Debug: large padding
+  border: 5px solid yellow !important; // Debug: thick yellow border
+  min-width: 150px !important; // Debug: ensure wrapper has width
+  min-height: 50px !important; // Debug: ensure wrapper has height
+  box-shadow: 0 0 20px magenta !important; // Debug: magenta glow
+  z-index: 99999 !important;
+  position: relative !important;
 }
 
-// Debug: make navigation controls visible with ultra-aggressive rules
-body[class*="/lists/"] .navigation-controls,
-body[class*="lists-"] .navigation-controls,
+// NUCLEAR: Target the exact navigation controls with maximum specificity
+html body.ember-application div.ember-view section.navigation-container div.navigation-controls,
+body section.navigation-container div.navigation-controls,
+section.navigation-container .navigation-controls,
+div.navigation-controls,
 .navigation-controls {
-  border: 3px solid blue !important; // Debug: show navigation container
-  background: rgba(0,0,255,0.1) !important; // Debug: light blue background
+  border: 5px solid blue !important; // Debug: thick blue border
+  background: rgba(0,0,255,0.3) !important; // Debug: more visible blue background
+  background-color: rgba(0,0,255,0.3) !important;
+  box-shadow: inset 0 0 20px cyan !important; // Debug: cyan inner glow
+  min-height: 60px !important;
+  padding: 5px !important;
 }
 
-// Debug: responsive breakpoint testing with different colors
-@media (max-width: 1600px) {
-  .navigation-controls {
-    border-color: orange !important; // Orange at 1600px and below
-    background: rgba(255,165,0,0.1) !important;
-  }
+// NUCLEAR: Ultra-specific button targeting
+html body div#solution-subscribe-button,
+body button#solution-subscribe-button,
+button#solution-subscribe-button,
+#solution-subscribe-button {
+  background: lime !important; // Debug: lime button background
+  background-color: lime !important;
+  color: black !important;
+  border: 3px solid orange !important;
+  box-shadow: 0 0 15px red !important;
 }
 
+// NUCLEAR: Responsive breakpoint testing - target everything possible
 @media (max-width: 1500px) {
+  html body.ember-application div.ember-view section.navigation-container div.navigation-controls,
+  body section.navigation-container div.navigation-controls,
+  section.navigation-container .navigation-controls,
+  div.navigation-controls,
   .navigation-controls {
-    border-color: red !important; // Red at 1500px and below (problem zone)
-    background: rgba(255,0,0,0.1) !important;
+    border-color: red !important; // RED border in problem zone
+    background: rgba(255,0,0,0.5) !important; // More visible red background
+    background-color: rgba(255,0,0,0.5) !important;
   }
   
+  html body div#solution-subscribe-wrapper,
+  body div#solution-subscribe-wrapper,
+  div#solution-subscribe-wrapper,
   #solution-subscribe-wrapper {
-    background: lime !important; // Bright green when problematic
-    border-color: purple !important;
-  }
-}
-
-@media (max-width: 1400px) {
-  .navigation-controls {
-    border-color: purple !important; // Purple at 1400px and below
-    background: rgba(128,0,128,0.1) !important;
+    background: magenta !important; // MAGENTA wrapper in problem zone
+    background-color: magenta !important;
+    border-color: lime !important;
   }
 }
 
