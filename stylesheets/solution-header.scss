@@ -154,13 +154,17 @@ body[class*="lists-"] .navigation-controls {
 // Position the subscribe button wrapper absolutely to the far right
 #subscribe-button-wrapper {
   position: absolute !important;
-  top: 0 !important;
-  right: 0 !important;
+  top: 0px !important;
+  right: 0px !important;
+  left: auto !important; // Explicitly override any left positioning
   z-index: 1000 !important;
+  width: auto !important;
   
   // Ensure button inside wrapper is properly styled
   #solution-subscribe-button {
     margin: 0 !important;
+    float: none !important; // Clear any float
+    position: static !important; // Reset any positioning on the button itself
   }
 }
 

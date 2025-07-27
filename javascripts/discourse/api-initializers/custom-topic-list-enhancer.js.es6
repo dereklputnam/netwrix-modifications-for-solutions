@@ -361,10 +361,16 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Try multiple container options to find the best placement
       let container = document.querySelector(".navigation-controls");
+      let containerType = "navigation-controls";
       if (!container) {
         container = document.querySelector(".navigation-container");
+        containerType = "navigation-container";
       }
       if (!container) return;
+      
+      if (isAdmin || isDevelopment) {
+        console.log(`📍 Placing subscribe button in: ${containerType}`);
+      }
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -438,9 +444,11 @@ export default apiInitializer("0.11.1", (api) => {
       const buttonWrapper = document.createElement("div");
       buttonWrapper.id = "subscribe-button-wrapper";
       buttonWrapper.style.position = "absolute";
-      buttonWrapper.style.right = "0";
-      buttonWrapper.style.top = "0";
+      buttonWrapper.style.right = "0px";
+      buttonWrapper.style.left = "auto"; // Explicitly unset left
+      buttonWrapper.style.top = "0px";
       buttonWrapper.style.zIndex = "1000";
+      buttonWrapper.style.width = "auto";
       buttonWrapper.appendChild(btn);
       
       // Ensure container is positioned relatively
