@@ -475,19 +475,27 @@ export default apiInitializer("0.11.1", (api) => {
       // Append directly to body to avoid container layout issues
       document.body.appendChild(btn);
       
-      // Add responsive text handling
+      // Add responsive text handling with ultra-narrow support
       function updateButtonText() {
         const windowWidth = window.innerWidth;
         const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
         
-        if (windowWidth <= 1200) {
+        if (windowWidth <= 500) {
+          // Ultra-narrow: show only icons
+          btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? '✅' : bellIcon;
+          btn.title = isSubscribedToSolution(currentConfig.solutionConfig) ? 
+            'Subscribed To All News & Security Advisories' : 
+            'Subscribe To All News & Security Advisories';
+        } else if (windowWidth <= 1200) {
           // Mobile/narrow: show short text
           btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? '✅ Subscribed' : `${bellIcon} Subscribe`;
+          btn.title = ''; // Clear title when text is visible
         } else {
           // Desktop/wide: show full text
           btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? 
             '✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>' : 
             `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+          btn.title = ''; // Clear title when text is visible
         }
       }
       

@@ -253,6 +253,15 @@ button#solution-subscribe-button {
   }
 }
 
+// Ultra-narrow screens - compact button with minimal padding
+@media (max-width: 500px) {
+  #solution-subscribe-button {
+    padding: 0.4em 0.5em !important; // Reduced padding for icon-only mode
+    min-width: auto !important;
+    font-size: 0.9em !important; // Slightly smaller for ultra-narrow
+  }
+}
+
 // Hide dropdown text until JavaScript replacement is complete - same approach as banner
 .custom-list-dropdown {
   .select-kit-selected-name .name,
