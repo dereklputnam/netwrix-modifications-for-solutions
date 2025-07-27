@@ -143,47 +143,9 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// NUCLEAR OPTION: Ultra-aggressive debug styling with highest specificity possible
-html body.ember-application div.ember-view section.navigation-container div.navigation-controls #solution-subscribe-wrapper,
-body div#solution-subscribe-wrapper,
-div#solution-subscribe-wrapper,
+// Subscribe button wrapper styling - simple approach from staging
 #solution-subscribe-wrapper {
-  margin-left: auto !important;
-  background: red !important; // Debug: RED background
-  background-color: red !important;
-  padding: 10px !important; // Debug: large padding
-  border: 5px solid yellow !important; // Debug: thick yellow border
-  min-width: 150px !important; // Debug: ensure wrapper has width
-  min-height: 50px !important; // Debug: ensure wrapper has height
-  box-shadow: 0 0 20px magenta !important; // Debug: magenta glow
-  z-index: 99999 !important;
-  position: relative !important;
-}
-
-// NUCLEAR: Target the exact navigation controls with maximum specificity
-html body.ember-application div.ember-view section.navigation-container div.navigation-controls,
-body section.navigation-container div.navigation-controls,
-section.navigation-container .navigation-controls,
-div.navigation-controls,
-.navigation-controls {
-  border: 5px solid blue !important; // Debug: thick blue border
-  background: rgba(0,0,255,0.3) !important; // Debug: more visible blue background
-  background-color: rgba(0,0,255,0.3) !important;
-  box-shadow: inset 0 0 20px cyan !important; // Debug: cyan inner glow
-  min-height: 60px !important;
-  padding: 5px !important;
-}
-
-// NUCLEAR: Ultra-specific button targeting
-html body div#solution-subscribe-button,
-body button#solution-subscribe-button,
-button#solution-subscribe-button,
-#solution-subscribe-button {
-  background: lime !important; // Debug: lime button background
-  background-color: lime !important;
-  color: black !important;
-  border: 3px solid orange !important;
-  box-shadow: 0 0 15px red !important;
+  margin-left: auto;
 }
 
 // SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint

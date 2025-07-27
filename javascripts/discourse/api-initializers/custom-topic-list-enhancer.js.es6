@@ -359,40 +359,10 @@ export default apiInitializer("0.11.1", (api) => {
 
       nav.style.display = "flex";
       nav.style.alignItems = "center";
-      
-      // DEBUG: Add ultra-aggressive inline styles to navigation container
-      nav.style.border = "5px solid blue";
-      nav.style.background = "rgba(0,0,255,0.3)";
-      nav.style.minHeight = "60px";
-      nav.style.padding = "5px";
-      nav.style.boxShadow = "inset 0 0 20px cyan";
 
       const wrapper = document.createElement("div");
       wrapper.id = "solution-subscribe-wrapper";
       wrapper.style.marginLeft = "auto";
-      
-      // DEBUG: Add ultra-aggressive inline styles to wrapper
-      wrapper.style.background = "red";
-      wrapper.style.border = "5px solid yellow";
-      wrapper.style.padding = "10px";
-      wrapper.style.minWidth = "150px";
-      wrapper.style.minHeight = "50px";
-      wrapper.style.boxShadow = "0 0 20px magenta";
-      wrapper.style.zIndex = "99999";
-      wrapper.style.position = "relative";
-      
-      // Simple debug: just show when we hit the problematic breakpoint
-      const addWidthDebug = () => {
-        const width = window.innerWidth;
-        if (width <= 1500) {
-          wrapper.style.background = "magenta"; // Visual indicator of problem zone
-        } else {
-          wrapper.style.background = "red"; // Normal zone
-        }
-      };
-      
-      addWidthDebug();
-      window.addEventListener('resize', addWidthDebug);
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -400,12 +370,6 @@ export default apiInitializer("0.11.1", (api) => {
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
       btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
-      
-      // DEBUG: Add ultra-aggressive inline styles to button
-      btn.style.background = "lime";
-      btn.style.color = "black";
-      btn.style.border = "3px solid orange";
-      btn.style.boxShadow = "0 0 15px red";
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
         btn.disabled = true;
