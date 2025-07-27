@@ -143,56 +143,7 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// ULTRA-AGGRESSIVE: Target the full container hierarchy
-.list-controls {
-  background: rgba(255, 0, 255, 0.2) !important; // DEBUG: Magenta background
-}
-
-.list-controls .container {
-  width: 100% !important;
-  max-width: none !important;
-  background: rgba(255, 165, 0, 0.3) !important; // DEBUG: Orange background
-}
-
-.list-controls .container .navigation-container,
-body .list-controls .navigation-container,
-section.navigation-container {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  width: 100% !important;
-  background: rgba(255, 0, 0, 0.3) !important; // DEBUG: Red background
-}
-
-.list-controls .navigation-container .category-breadcrumb,
-body .navigation-container .category-breadcrumb,
-section.navigation-container .category-breadcrumb,
-.navigation-container .category-breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  flex-grow: 1 !important;
-  background: rgba(0, 255, 0, 0.3) !important; // DEBUG: Green background
-}
-
-.list-controls .navigation-controls,
-body .navigation-controls,
-section.navigation-container .navigation-controls,
-.navigation-container .navigation-controls {
-  display: flex !important;
-  align-items: center !important;
-  margin-left: auto !important;
-  flex-shrink: 0 !important;
-  background: rgba(0, 0, 255, 0.3) !important; // DEBUG: Blue background
-}
-
-.list-controls #solution-subscribe-wrapper,
-body #solution-subscribe-wrapper,
-section.navigation-container #solution-subscribe-wrapper,
-.navigation-controls #solution-subscribe-wrapper {
-  margin-left: auto !important;
-  flex-shrink: 0 !important;
-  background: rgba(255, 255, 0, 0.5) !important; // DEBUG: Yellow background
-}
+// Navigation alignment now handled by JavaScript instead of CSS
 
 // SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint
 @media (max-width: 1500px) {

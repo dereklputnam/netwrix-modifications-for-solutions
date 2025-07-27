@@ -393,6 +393,55 @@ export default apiInitializer("0.11.1", (api) => {
       const resizeHandler = () => updateButtonText();
       window.addEventListener('resize', resizeHandler);
       if (isSubscribed) btn.classList.add("subscribed");
+      
+      // FORCE navigation alignment with JavaScript since CSS isn't working
+      function forceNavigationAlignment() {
+        // Target the full container hierarchy
+        const listControls = document.querySelector('.list-controls');
+        const container = listControls?.querySelector('.container');
+        const navigationContainer = container?.querySelector('.navigation-container');
+        const categoryBreadcrumb = navigationContainer?.querySelector('.category-breadcrumb');
+        const navigationControls = navigationContainer?.querySelector('.navigation-controls');
+        const subscribeWrapper = navigationControls?.querySelector('#solution-subscribe-wrapper');
+        
+        if (listControls) {
+          listControls.style.width = '100%';
+        }
+        
+        if (container) {
+          container.style.width = '100%';
+          container.style.maxWidth = 'none';
+        }
+        
+        if (navigationContainer) {
+          navigationContainer.style.display = 'flex';
+          navigationContainer.style.justifyContent = 'space-between';
+          navigationContainer.style.alignItems = 'center';
+          navigationContainer.style.width = '100%';
+        }
+        
+        if (categoryBreadcrumb) {
+          categoryBreadcrumb.style.display = 'flex';
+          categoryBreadcrumb.style.alignItems = 'center';
+          categoryBreadcrumb.style.flexGrow = '1';
+        }
+        
+        if (navigationControls) {
+          navigationControls.style.display = 'flex';
+          navigationControls.style.alignItems = 'center';
+          navigationControls.style.marginLeft = 'auto';
+          navigationControls.style.flexShrink = '0';
+        }
+        
+        if (subscribeWrapper) {
+          subscribeWrapper.style.marginLeft = 'auto';
+          subscribeWrapper.style.flexShrink = '0';
+        }
+      }
+      
+      // Apply alignment immediately and on resize
+      forceNavigationAlignment();
+      window.addEventListener('resize', forceNavigationAlignment);
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
         btn.disabled = true;
