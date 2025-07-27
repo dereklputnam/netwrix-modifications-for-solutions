@@ -209,17 +209,21 @@
           }
         });
         
-        // Update all text content
+        // Update ONLY header text content, avoid dropdown body
         const nameElements = element.querySelectorAll('.name, .selected-name, .select-kit-selected-name');
         nameElements.forEach(nameEl => {
+          // Skip if this element is inside a dropdown body
+          if (nameEl.closest('.select-kit-body')) return;
+          
           if (nameEl.textContent && nameEl.textContent.includes('Custom lists')) {
             nameEl.textContent = nameEl.textContent.replace(/Custom lists/g, 'Solutions');
             nameEl.classList.add('solutions-ready');
           }
         });
         
-        // Direct text content replacement
-        if (element.textContent && element.textContent.includes('Custom lists')) {
+        // Direct text content replacement ONLY for headers
+        if (element.classList.contains('select-kit-header') && 
+            element.textContent && element.textContent.includes('Custom lists')) {
           element.textContent = element.textContent.replace(/Custom lists/g, 'Solutions');
         }
         
@@ -239,11 +243,23 @@
         acceptNode: function(node) {
           if (node.textContent && node.textContent.includes('Custom lists')) {
             const parent = node.parentElement;
+            // EXCLUDE dropdown body content and options to prevent clearing
+            if (parent && parent.closest('.select-kit-body')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            if (parent && parent.closest('.select-kit-collection')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            if (parent && parent.closest('.select-kit-row')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            
+            // INCLUDE only header/label elements for replacement
             if (parent && (
-              parent.closest('.custom-list-dropdown') ||
-              parent.closest('[data-name*="Custom"]') ||
+              parent.closest('.select-kit-header') ||
               parent.classList.contains('name') ||
-              parent.classList.contains('selected-name')
+              parent.classList.contains('selected-name') ||
+              parent.classList.contains('select-kit-selected-name')
             )) {
               return NodeFilter.FILTER_ACCEPT;
             }
