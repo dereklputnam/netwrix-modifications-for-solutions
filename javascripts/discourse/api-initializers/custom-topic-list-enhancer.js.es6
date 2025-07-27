@@ -321,13 +321,13 @@ export default apiInitializer("0.11.1", (api) => {
         titleEl.style.width = "100%";
       }
 
-      // Style the description - match staging exactly
+      // Style the description - expanded width for two-line layout
       const subtext = header.querySelector(".solution-subtext");
       if (subtext) {
         subtext.style.fontSize = "17px";
         subtext.style.color = "var(--primary-high)";
         subtext.style.lineHeight = "1.6";
-        subtext.style.maxWidth = "900px";
+        subtext.style.maxWidth = "920px";
         subtext.style.margin = "0px auto";
         subtext.style.textAlign = "center";
       }
