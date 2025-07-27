@@ -296,10 +296,10 @@ export default apiInitializer("0.11.1", (api) => {
       header.style.visibility = 'visible';
       header.classList.add("header-styled");
 
-      // Style the contents wrapper - match staging exactly
+      // Style the contents wrapper - reduced horizontal padding
       const contents = header.querySelector(".category-title-contents");
       if (contents) {
-        contents.style.padding = "40px 20px 20px";
+        contents.style.padding = "40px 10px 20px";
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
         contents.style.maxWidth = "850px";
