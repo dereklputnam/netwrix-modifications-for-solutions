@@ -131,10 +131,7 @@ export default apiInitializer("0.11.1", (api) => {
       return null;
     }
 
-    if (isAdmin || isDevelopment) {
-      console.log(`Found solution config for: ${solutionConfig.title || solutionConfig.name} (slug: ${slug})`);
-      console.log(`Config source: ${settings.netwrix_solutions?.find(s => s.slug === slug) ? 'theme settings' : 'plugin data'}`);
-    }
+    // Reduced logging for cleaner console
     return { slug, solutionConfig };
   }
 
@@ -368,9 +365,7 @@ export default apiInitializer("0.11.1", (api) => {
       }
       if (!container) return;
       
-      if (isAdmin || isDevelopment) {
-        console.log(`📍 Placing subscribe button in: ${containerType}`);
-      }
+      // Reduced logging for cleaner console
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -388,9 +383,7 @@ export default apiInitializer("0.11.1", (api) => {
           console.error(`   level_4_categories: "${currentConfig.solutionConfig.level_4_categories || 'undefined'}"`);
           console.error(`   level_3_categories: "${currentConfig.solutionConfig.level_3_categories || 'undefined'}"`);
         }
-      } else if (isAdmin || isDevelopment) {
-        console.log(`✅ Subscribe button enabled with ${level4Ids.length} level 4 + ${level3Ids.length} level 3 categories`);
-      }
+      // Reduced logging for cleaner console
 
       btn.addEventListener("click", () => {
         if (btn.disabled) return;
@@ -460,9 +453,7 @@ export default apiInitializer("0.11.1", (api) => {
         btn.style.zIndex = "9999";
         btn.style.pointerEvents = "auto";
         
-        if (isAdmin || isDevelopment) {
-          console.log(`🎯 Fixed positioning: right=${rightOffset}px, top=${rect.top + 10}px (container-bound)`);
-        }
+        // Removed excessive positioning logs
       }
       
       // Apply fixed positioning immediately
@@ -549,10 +540,7 @@ export default apiInitializer("0.11.1", (api) => {
           const currentConfig = getCurrentSolutionConfig();
           if (currentConfig) {
             const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            if (isAdmin || isDevelopment) {
-              console.log(`✅ Navigated to solution: ${configTitle}`);
-              validateSolutionCategories(currentConfig.solutionConfig);
-            }
+            // Reduced logging for cleaner console
             applyCurrentPageStyles();
           }
         }
