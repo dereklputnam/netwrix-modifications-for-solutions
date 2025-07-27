@@ -339,35 +339,34 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Function to update subscribe button for current solution
     function updateSubscribeButton() {
-      if (!currentUser) return; // Only show subscribe button if user is logged in
+      const nav = document.querySelector(".navigation-controls");
+      if (!nav || !currentUser) return; // Only show subscribe button if user is logged in
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
         // Remove subscribe button if not on solution page
-        const existingButton = document.querySelector("#solution-subscribe-button");
-        if (existingButton) existingButton.remove();
+        const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
+        if (existingWrapper) existingWrapper.remove();
         return;
       }
       
       // Remove existing button
-      const existingButton = document.querySelector("#solution-subscribe-button");
-      if (existingButton) existingButton.remove();
+      const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
+      if (existingWrapper) existingWrapper.remove();
       
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      // Try multiple container options to find the best placement
-      let container = document.querySelector(".navigation-controls");
-      let containerType = "navigation-controls";
-      if (!container) {
-        container = document.querySelector(".navigation-container");
-        containerType = "navigation-container";
-      }
-      if (!container) return;
-      
+      nav.style.display = "flex";
+      nav.style.alignItems = "center";
+
+      const wrapper = document.createElement("div");
+      wrapper.id = "solution-subscribe-wrapper";
+      wrapper.style.marginLeft = "auto";
+
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
-      btn.className = "btn btn-default btn-icon-text"; // Match standard button classes
+      btn.className = "btn btn-default";
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
       btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
@@ -376,11 +375,6 @@ export default apiInitializer("0.11.1", (api) => {
         btn.disabled = true;
         btn.textContent = "No valid categories configured";
         btn.title = "Check console for available category IDs";
-        if (isAdmin || isDevelopment) {
-          console.error(`❌ No valid categories found for ${currentConfig.solutionConfig.title || currentConfig.solutionConfig.name}`);
-          console.error(`   level_4_categories: "${currentConfig.solutionConfig.level_4_categories || 'undefined'}"`);
-          console.error(`   level_3_categories: "${currentConfig.solutionConfig.level_3_categories || 'undefined'}"`);
-        }
       }
 
       btn.addEventListener("click", () => {
@@ -412,61 +406,23 @@ export default apiInitializer("0.11.1", (api) => {
 
         Promise.all(allUpdates)
           .then(() => {
-            if (subscribing) {
-              btn.classList.add("subscribed");
-            } else {
-              btn.classList.remove("subscribed");
-            }
-            btn.disabled = false;
-            // Update text based on current window size
-            updateButtonText();
+            btn.innerHTML = subscribing ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+            btn.classList.toggle("subscribed");
           })
           .catch((error) => {
-            if (isAdmin || isDevelopment) {
-              console.error("Error updating subscription:", error);
-            }
+            console.error("Failed to update subscriptions:", error);
+            btn.innerHTML = "❌ Error - Try again";
+            setTimeout(() => {
+              btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
+            }, 3000);
+          })
+          .finally(() => {
             btn.disabled = false;
-            // Update text based on current window size
-            updateButtonText();
           });
       });
 
-      // Add simple right alignment styles
-      btn.style.marginLeft = "auto";
-      btn.style.float = "right";
-      
-      // Append to container
-      container.appendChild(btn);
-      
-      // Add responsive text handling with ultra-narrow support
-      function updateButtonText() {
-        const windowWidth = window.innerWidth;
-        const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-        
-        if (windowWidth <= 500) {
-          // Ultra-narrow: show only icons
-          btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? '✅' : bellIcon;
-          btn.title = isSubscribedToSolution(currentConfig.solutionConfig) ? 
-            'Subscribed To All News & Security Advisories' : 
-            'Subscribe To All News & Security Advisories';
-        } else if (windowWidth <= 1200) {
-          // Mobile/narrow: show short text
-          btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? '✅ Subscribed' : `${bellIcon} Subscribe`;
-          btn.title = ''; // Clear title when text is visible
-        } else {
-          // Desktop/wide: show full text
-          btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? 
-            '✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>' : 
-            `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
-          btn.title = ''; // Clear title when text is visible
-        }
-      }
-      
-      // Initial text update
-      updateButtonText();
-      
-      // Listen for window resize
-      window.addEventListener('resize', updateButtonText);
+      wrapper.appendChild(btn);
+      nav.appendChild(wrapper);
     }
 
     // Handler for applying styles to current page

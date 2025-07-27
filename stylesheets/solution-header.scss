@@ -143,10 +143,9 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Simple right alignment for subscribe button
-#solution-subscribe-button {
-  float: right !important;
-  margin-left: auto !important;
+// Subscribe button wrapper styling - matches staging approach
+#solution-subscribe-wrapper {
+  margin-left: auto;
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles
