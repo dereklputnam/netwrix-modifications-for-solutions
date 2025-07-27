@@ -143,10 +143,20 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// ULTRA-AGGRESSIVE: Higher specificity selectors to override Discourse defaults
-body section.navigation-container,
-section.navigation-container,
-.navigation-container {
+// ULTRA-AGGRESSIVE: Target the full container hierarchy
+.list-controls {
+  background: rgba(255, 0, 255, 0.2) !important; // DEBUG: Magenta background
+}
+
+.list-controls .container {
+  width: 100% !important;
+  max-width: none !important;
+  background: rgba(255, 165, 0, 0.3) !important; // DEBUG: Orange background
+}
+
+.list-controls .container .navigation-container,
+body .list-controls .navigation-container,
+section.navigation-container {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -154,6 +164,7 @@ section.navigation-container,
   background: rgba(255, 0, 0, 0.3) !important; // DEBUG: Red background
 }
 
+.list-controls .navigation-container .category-breadcrumb,
 body .navigation-container .category-breadcrumb,
 section.navigation-container .category-breadcrumb,
 .navigation-container .category-breadcrumb {
@@ -163,6 +174,7 @@ section.navigation-container .category-breadcrumb,
   background: rgba(0, 255, 0, 0.3) !important; // DEBUG: Green background
 }
 
+.list-controls .navigation-controls,
 body .navigation-controls,
 section.navigation-container .navigation-controls,
 .navigation-container .navigation-controls {
@@ -173,6 +185,7 @@ section.navigation-container .navigation-controls,
   background: rgba(0, 0, 255, 0.3) !important; // DEBUG: Blue background
 }
 
+.list-controls #solution-subscribe-wrapper,
 body #solution-subscribe-wrapper,
 section.navigation-container #solution-subscribe-wrapper,
 .navigation-controls #solution-subscribe-wrapper {
