@@ -112,7 +112,7 @@ body[class*="lists-"] .category-title-header {
     font-size: 17px !important;
     color: var(--primary-high) !important;
     line-height: 1.6 !important;
-    max-width: 750px !important;
+    max-width: 765px !important; // Increased from 750px to 765px for better text fit
     margin: 0 auto !important;
     
     strong {
