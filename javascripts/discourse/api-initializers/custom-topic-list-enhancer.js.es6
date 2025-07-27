@@ -381,16 +381,31 @@ export default apiInitializer("0.11.1", (api) => {
       wrapper.style.zIndex = "99999";
       wrapper.style.position = "relative";
       
-      // DEBUG: Add responsive width detection
+      // DEBUG: Add responsive width detection with layout diagnosis
       const addWidthDebug = () => {
         const width = window.innerWidth;
         if (width <= 1500) {
           wrapper.style.background = "magenta"; // Changes to magenta at 1500px and below
           nav.style.background = "rgba(255,0,0,0.5)"; // Changes to red at 1500px and below
+          
+          // FORCE flexbox properties in problem zone
+          nav.style.display = "flex";
+          nav.style.alignItems = "center";
+          nav.style.justifyContent = "flex-start"; // Ensure flex-start behavior
+          wrapper.style.marginLeft = "auto";
+          wrapper.style.order = "999"; // Force to end
+          
         } else {
           wrapper.style.background = "red"; // Red above 1500px
           nav.style.background = "rgba(0,0,255,0.3)"; // Blue above 1500px
         }
+        
+        // DEBUG: Log computed styles to see what's happening
+        const computedNav = window.getComputedStyle(nav);
+        const computedWrapper = window.getComputedStyle(wrapper);
+        
+        console.log(`[${width}px] Navigation display: ${computedNav.display}, justify-content: ${computedNav.justifyContent}`);
+        console.log(`[${width}px] Wrapper margin-left: ${computedWrapper.marginLeft}, order: ${computedWrapper.order}`);
         
         // Add width indicator text to wrapper
         wrapper.setAttribute('data-width', `Width: ${width}px`);
