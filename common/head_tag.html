@@ -189,11 +189,8 @@
       const textStyle = document.createElement('style');
       textStyle.id = 'ultra-text-replacement-css';
       textStyle.textContent = `
-        .custom-list-dropdown .select-kit-selected-name .name,
-        .custom-list-dropdown .selected-name .name,
-        .custom-list-dropdown .name,
-        .tag-drop-header[data-name*="Custom"] .name,
-        .select-kit-header[data-name*="Custom"] .name {
+        .tag-drop-header[data-name="Custom lists"] .name,
+        .select-kit-header[data-name="Custom lists"] .name {
           visibility: hidden !important;
           opacity: 0 !important;
         }
