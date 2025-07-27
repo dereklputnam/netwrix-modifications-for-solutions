@@ -164,58 +164,66 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Enhanced styling for solution subscribe button - override all Discourse button styles
+// Standard Netwrix button styling to match community notification buttons
 #solution-subscribe-button,
 #solution-subscribe-button.btn,
 #solution-subscribe-button.btn-default,
 #solution-subscribe-button.btn-primary,
 button#solution-subscribe-button {
-  font-weight: 500 !important;
+  // Match standard Netwrix button dimensions and layout
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 42px !important;
+  min-width: 120px !important;
   padding: 8px 16px !important;
-  border-radius: 4px !important;
-  border: 1px solid #0088cc !important;
-  background: white !important;
-  background-color: white !important;
-  background-image: none !important;
-  color: #0088cc !important;
+  
+  // Match standard Netwrix button styling
+  font-family: "Open Sans", Arial, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: normal !important;
+  text-align: center !important;
   white-space: nowrap !important;
-  font-size: 14px !important;
+  
+  // Match standard Netwrix button colors and borders
+  background: rgba(0, 0, 0, 0) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) !important;
+  border: 2px solid rgb(0, 104, 218) !important;
+  border-radius: 5px !important;
+  color: rgb(0, 104, 218) !important;
+  
+  // Remove any conflicting styles
   box-shadow: none !important;
   text-shadow: none !important;
   
   &:hover,
   &:focus,
   &:active {
-    background: #f0f8ff !important;
-    background-color: #f0f8ff !important;
-    background-image: none !important;
-    border-color: #0066aa !important;
-    color: #0066aa !important;
+    background: rgba(0, 104, 218, 0.1) !important;
+    background-color: rgba(0, 104, 218, 0.1) !important;
+    border-color: rgb(0, 104, 218) !important;
+    color: rgb(0, 104, 218) !important;
     box-shadow: none !important;
     text-shadow: none !important;
   }
 
   &.subscribed {
-    background: white !important;
-    background-color: white !important;
-    background-image: none !important;
-    color: #28a745 !important;
     border-color: #28a745 !important;
+    color: #28a745 !important;
     
     &:hover,
     &:focus,
     &:active {
-      background: #f0fff0 !important;
-      background-color: #f0fff0 !important;
-      background-image: none !important;
-      border-color: #1e7e34 !important;
-      color: #1e7e34 !important;
+      background: rgba(40, 167, 69, 0.1) !important;
+      background-color: rgba(40, 167, 69, 0.1) !important;
+      border-color: #28a745 !important;
+      color: #28a745 !important;
       box-shadow: none !important;
       text-shadow: none !important;
     }
   }
-
-  // Mobile responsiveness moved to global scope below
 }
 
 // Responsive line breaks for titles - match staging behavior exactly
