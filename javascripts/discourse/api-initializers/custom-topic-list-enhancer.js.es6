@@ -282,31 +282,32 @@ export default apiInitializer("0.11.1", (api) => {
         </div>
       `;
 
-      // Apply header container styling
+      // Apply header container styling - match staging exactly
       header.style.background = "var(--secondary)";
-      header.style.border = "1px solid var(--primary-low)";
       header.style.borderTop = "6px solid var(--tertiary)";
       header.style.borderRadius = "6px";
-      header.style.padding = "0";
+      header.style.padding = "0px";
       header.style.marginBottom = "20px";
       header.style.display = "flex";
       header.style.justifyContent = "center";
+      header.style.visibility = "visible";
       
       // Show header after styling is complete
       header.style.visibility = 'visible';
       header.classList.add("header-styled");
 
-      // Style the contents wrapper
+      // Style the contents wrapper - match staging exactly
       const contents = header.querySelector(".category-title-contents");
       if (contents) {
         contents.style.padding = "40px 20px 20px";
-        contents.style.margin = "0 auto";
+        contents.style.margin = "0px auto";
         contents.style.width = "100%";
         contents.style.maxWidth = "850px";
         contents.style.textAlign = "center";
+        contents.style.visibility = "visible";
       }
 
-      // Style the title
+      // Style the title - match staging exactly
       const titleEl = header.querySelector(".category-title");
       if (titleEl) {
         titleEl.style.fontSize = "clamp(22px, 3vw, 30px)";
@@ -314,21 +315,20 @@ export default apiInitializer("0.11.1", (api) => {
         titleEl.style.color = "var(--primary)";
         titleEl.style.lineHeight = "1.2";
         titleEl.style.maxWidth = "850px";
-        titleEl.style.margin = "0 auto 16px auto";
+        titleEl.style.margin = "0px auto 16px";
         titleEl.style.textAlign = "center";
         titleEl.style.display = "block";
         titleEl.style.width = "100%";
-        
       }
 
-      // Style the description
+      // Style the description - match staging exactly
       const subtext = header.querySelector(".solution-subtext");
       if (subtext) {
         subtext.style.fontSize = "17px";
         subtext.style.color = "var(--primary-high)";
         subtext.style.lineHeight = "1.6";
         subtext.style.maxWidth = "900px";
-        subtext.style.margin = "0 auto";
+        subtext.style.margin = "0px auto";
         subtext.style.textAlign = "center";
       }
       
