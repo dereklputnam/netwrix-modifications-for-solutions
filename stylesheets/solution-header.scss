@@ -143,17 +143,17 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Ensure navigation-controls uses flex layout and position subscribe button to the right
+// For list pages, ensure navigation-controls positions our button to the right
 body[class*="/lists/"] .navigation-controls,
 body[class*="lists-"] .navigation-controls {
   display: flex !important;
+  justify-content: flex-end !important; // Push content to the right
   align-items: center !important;
-  justify-content: flex-start !important;
 }
 
+// The subscribe button should appear on the right naturally with justify-content: flex-end
 .navigation-controls #solution-subscribe-button {
-  margin-left: auto !important;
-  order: 999 !important; // Ensure it appears last (rightmost)
+  // No special positioning needed with flex-end
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles
