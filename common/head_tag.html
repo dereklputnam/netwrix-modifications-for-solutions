@@ -152,7 +152,14 @@
       
       const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
       breadcrumbItems.forEach((li, index) => {
-        if (index < 2 && !li.querySelector('.custom-list-dropdown')) {
+        // NEVER hide the Solutions dropdown - check multiple identifiers
+        const hasCustomList = li.querySelector('.custom-list-dropdown');
+        const isCustomListItem = li.classList.contains('custom-list-item');
+        const hasCustomTopicList = li.querySelector('[data-name*="Solution"], [data-name*="Custom"], .tag-drop');
+        const hasDropdownContent = li.textContent && (li.textContent.includes('Solution') || li.textContent.includes('Custom'));
+        
+        // Only hide if it's in the first two positions AND doesn't have any Solutions-related content
+        if (index < 2 && !hasCustomList && !isCustomListItem && !hasCustomTopicList && !hasDropdownContent) {
           li.style.display = 'none';
           li.style.visibility = 'hidden';
           li.style.opacity = '0';

@@ -54,23 +54,27 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('aria-hidden', 'true');
     });
     
-    // Hide parent <li> elements that contain category/tag dropdowns (but not Solutions)
+    // Hide parent <li> elements that contain category/tag dropdowns (but NEVER hide Solutions)
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
-      if (index < 2) { // Hide first two <li> elements (categories and tags)
-        const hasCustomList = li.querySelector('.custom-list-dropdown');
-        if (!hasCustomList) {
-          li.style.display = 'none';
-          li.style.visibility = 'hidden';
-          li.style.opacity = '0';
-          li.style.width = '0';
-          li.style.height = '0';
-          li.style.overflow = 'hidden';
-          li.style.position = 'absolute';
-          li.style.left = '-9999px';
-          li.setAttribute('hidden', 'true');
-          li.setAttribute('aria-hidden', 'true');
-        }
+      // NEVER hide the Solutions dropdown - check multiple identifiers
+      const hasCustomList = li.querySelector('.custom-list-dropdown');
+      const isCustomListItem = li.classList.contains('custom-list-item');
+      const hasCustomTopicList = li.querySelector('[data-name*="Solution"], [data-name*="Custom"], .tag-drop');
+      const hasDropdownContent = li.textContent && (li.textContent.includes('Solution') || li.textContent.includes('Custom'));
+      
+      // Only hide if it's in the first two positions AND doesn't have any Solutions-related content
+      if (index < 2 && !hasCustomList && !isCustomListItem && !hasCustomTopicList && !hasDropdownContent) {
+        li.style.display = 'none';
+        li.style.visibility = 'hidden';
+        li.style.opacity = '0';
+        li.style.width = '0';
+        li.style.height = '0';
+        li.style.overflow = 'hidden';
+        li.style.position = 'absolute';
+        li.style.left = '-9999px';
+        li.setAttribute('hidden', 'true');
+        li.setAttribute('aria-hidden', 'true');
       }
     });
   };
@@ -327,7 +331,7 @@ export default apiInitializer("0.11.1", (api) => {
         subtext.style.fontSize = "17px";
         subtext.style.color = "var(--primary-high)";
         subtext.style.lineHeight = "1.6";
-        subtext.style.maxWidth = "920px";
+        subtext.style.maxWidth = "950px";
         subtext.style.margin = "0px auto";
         subtext.style.textAlign = "center";
       }
