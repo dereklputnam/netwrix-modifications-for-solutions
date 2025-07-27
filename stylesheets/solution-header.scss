@@ -215,8 +215,8 @@ button#solution-subscribe-button {
     }
   }
 
-  // Mobile truncation - hide extended text on smaller screens
-  @media (max-width: 768px) {
+  // Responsive truncation - hide extended text when browser width gets small
+  @media (max-width: 1200px) {
     .mobile-hidden,
     span.mobile-hidden {
       display: none !important;
