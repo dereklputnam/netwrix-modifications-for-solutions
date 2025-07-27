@@ -369,20 +369,34 @@ export default apiInitializer("0.11.1", (api) => {
       btn.className = "btn btn-default";
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
       
-      // Dynamic button text based on window width
+      // Dynamic button text based on window width with ultra-compact mode
       function updateButtonText() {
         const windowWidth = window.innerWidth;
-        const showFullText = windowWidth > 1200;
         const isCurrentlySubscribed = btn.classList.contains("subscribed");
         
-        if (isCurrentlySubscribed) {
-          btn.innerHTML = showFullText 
-            ? `✅ Subscribed&nbsp;To All News & Security Advisories`
-            : `✅ Subscribed`;
+        if (windowWidth > 1200) {
+          // Full text mode - above 1200px
+          if (isCurrentlySubscribed) {
+            btn.innerHTML = `✅ Subscribed&nbsp;To All News & Security Advisories`;
+          } else {
+            btn.innerHTML = `${bellIcon} Subscribe&nbsp;To All News & Security Advisories`;
+          }
+        } else if (windowWidth > 800) {
+          // Truncated text mode - 800px to 1200px
+          if (isCurrentlySubscribed) {
+            btn.innerHTML = `✅ Subscribed`;
+          } else {
+            btn.innerHTML = `${bellIcon} Subscribe`;
+          }
         } else {
-          btn.innerHTML = showFullText
-            ? `${bellIcon} Subscribe&nbsp;To All News & Security Advisories`
-            : `${bellIcon} Subscribe`;
+          // Ultra-compact mode - below 800px (just icon)
+          if (isCurrentlySubscribed) {
+            btn.innerHTML = `✅`;
+            btn.title = "Subscribed To All News & Security Advisories";
+          } else {
+            btn.innerHTML = bellIcon;
+            btn.title = "Subscribe To All News & Security Advisories";
+          }
         }
       }
       
