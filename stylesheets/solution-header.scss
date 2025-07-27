@@ -143,34 +143,42 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// DEBUG: Add bright red background to identify which styles are working
+// ULTRA-AGGRESSIVE: Higher specificity selectors to override Discourse defaults
+body section.navigation-container,
+section.navigation-container,
 .navigation-container {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   width: 100% !important;
-  background: rgba(255, 0, 0, 0.1) !important; // DEBUG: Red background
+  background: rgba(255, 0, 0, 0.3) !important; // DEBUG: Red background
 }
 
-.category-breadcrumb {
+body .navigation-container .category-breadcrumb,
+section.navigation-container .category-breadcrumb,
+.navigation-container .category-breadcrumb {
   display: flex !important;
   align-items: center !important;
   flex-grow: 1 !important;
-  background: rgba(0, 255, 0, 0.1) !important; // DEBUG: Green background
+  background: rgba(0, 255, 0, 0.3) !important; // DEBUG: Green background
 }
 
-.navigation-controls {
+body .navigation-controls,
+section.navigation-container .navigation-controls,
+.navigation-container .navigation-controls {
   display: flex !important;
   align-items: center !important;
   margin-left: auto !important;
   flex-shrink: 0 !important;
-  background: rgba(0, 0, 255, 0.1) !important; // DEBUG: Blue background
+  background: rgba(0, 0, 255, 0.3) !important; // DEBUG: Blue background
 }
 
-#solution-subscribe-wrapper {
+body #solution-subscribe-wrapper,
+section.navigation-container #solution-subscribe-wrapper,
+.navigation-controls #solution-subscribe-wrapper {
   margin-left: auto !important;
   flex-shrink: 0 !important;
-  background: rgba(255, 255, 0, 0.3) !important; // DEBUG: Yellow background
+  background: rgba(255, 255, 0, 0.5) !important; // DEBUG: Yellow background
 }
 
 // SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint
