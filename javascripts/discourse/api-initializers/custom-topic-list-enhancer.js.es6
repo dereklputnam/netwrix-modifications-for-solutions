@@ -190,8 +190,8 @@ export default apiInitializer("0.11.1", (api) => {
 
     }
 
-    // Validate current solution
-    if (initialConfig) {
+    // Initial validation only in development/admin mode
+    if (initialConfig && (isAdmin || isDevelopment)) {
       validateSolutionCategories(initialConfig.solutionConfig);
     }
 
@@ -379,8 +379,7 @@ export default apiInitializer("0.11.1", (api) => {
           console.error(`   level_4_categories: "${currentConfig.solutionConfig.level_4_categories || 'undefined'}"`);
           console.error(`   level_3_categories: "${currentConfig.solutionConfig.level_3_categories || 'undefined'}"`);
         }
-      } else if (isAdmin || isDevelopment) {
-        console.log(`✅ Subscribe button enabled with ${level4Ids.length} level 4 + ${level3Ids.length} level 3 categories`);
+      // Reduced logging for cleaner console
       }
 
       btn.addEventListener("click", () => {
@@ -500,10 +499,7 @@ export default apiInitializer("0.11.1", (api) => {
           const currentConfig = getCurrentSolutionConfig();
           if (currentConfig) {
             const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            if (isAdmin || isDevelopment) {
-              console.log(`✅ Navigated to solution: ${configTitle}`);
-              validateSolutionCategories(currentConfig.solutionConfig);
-            }
+            // Reduced logging for cleaner console
             applyCurrentPageStyles();
           }
         }
