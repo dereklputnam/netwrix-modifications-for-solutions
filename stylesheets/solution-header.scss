@@ -222,7 +222,7 @@ button#solution-subscribe-button {
 // In staging, breaks are visible by default and controlled by their own responsive logic
 
 // Mobile responsiveness for subscribe button - hide long text on smaller screens
-@media (max-width: 1200px) {
+@media (max-width: 768px) {
   #solution-subscribe-button .mobile-hidden {
     display: none !important;
   }
