@@ -143,16 +143,24 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Subscribe button wrapper styling - matches staging approach with debug
+// Ultra-aggressive debug styling to force visibility
+body[class*="/lists/"] #solution-subscribe-wrapper,
+body[class*="lists-"] #solution-subscribe-wrapper,
 #solution-subscribe-wrapper {
   margin-left: auto !important;
   background: red !important; // Debug: temporary red background to see wrapper
-  padding: 2px !important; // Debug: small padding to make wrapper visible
+  padding: 5px !important; // Debug: larger padding to make wrapper visible
+  border: 3px solid yellow !important; // Debug: yellow border
+  min-width: 100px !important; // Debug: ensure wrapper has width
+  min-height: 30px !important; // Debug: ensure wrapper has height
 }
 
-// Debug: make navigation controls visible
+// Debug: make navigation controls visible with ultra-aggressive rules
+body[class*="/lists/"] .navigation-controls,
+body[class*="lists-"] .navigation-controls,
 .navigation-controls {
-  border: 2px solid blue !important; // Debug: show navigation container
+  border: 3px solid blue !important; // Debug: show navigation container
+  background: rgba(0,0,255,0.1) !important; // Debug: light blue background
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles
