@@ -163,6 +163,33 @@ body[class*="lists-"] .navigation-controls,
   background: rgba(0,0,255,0.1) !important; // Debug: light blue background
 }
 
+// Debug: responsive breakpoint testing with different colors
+@media (max-width: 1600px) {
+  .navigation-controls {
+    border-color: orange !important; // Orange at 1600px and below
+    background: rgba(255,165,0,0.1) !important;
+  }
+}
+
+@media (max-width: 1500px) {
+  .navigation-controls {
+    border-color: red !important; // Red at 1500px and below (problem zone)
+    background: rgba(255,0,0,0.1) !important;
+  }
+  
+  #solution-subscribe-wrapper {
+    background: lime !important; // Bright green when problematic
+    border-color: purple !important;
+  }
+}
+
+@media (max-width: 1400px) {
+  .navigation-controls {
+    border-color: purple !important; // Purple at 1400px and below
+    background: rgba(128,0,128,0.1) !important;
+  }
+}
+
 // Enhanced styling for solution subscribe button - override all Discourse button styles
 #solution-subscribe-button,
 #solution-subscribe-button.btn,
