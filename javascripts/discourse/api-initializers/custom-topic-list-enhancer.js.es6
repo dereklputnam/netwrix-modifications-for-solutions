@@ -365,7 +365,7 @@ export default apiInitializer("0.11.1", (api) => {
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
-      btn.className = "btn btn-default";
+      btn.className = "btn btn-default btn-icon-text"; // Match standard button classes
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
       btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
@@ -431,16 +431,8 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      // Apply direct styling to ensure right alignment
-      navControls.style.display = 'flex';
-      navControls.style.alignItems = 'center';
-      navControls.style.justifyContent = 'flex-start';
-      
-      btn.style.marginLeft = 'auto';
-      btn.style.order = '999';
-      
-      // Insert the button at the beginning of navigation-controls (it will appear on the right)
-      navControls.insertBefore(btn, navControls.firstChild);
+      // Simply append to the end of navigation-controls like the standard notification button
+      navControls.appendChild(btn);
       
       // Add responsive text handling
       function updateButtonText() {
