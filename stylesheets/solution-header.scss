@@ -143,9 +143,30 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Subscribe button wrapper styling - simple approach from staging
+// Navigation controls and subscribe button wrapper styling
+.navigation-container {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.category-breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  flex-grow: 1 !important;
+}
+
+.navigation-controls {
+  display: flex !important;
+  align-items: center !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+
 #solution-subscribe-wrapper {
-  margin-left: auto;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
 }
 
 // SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint
