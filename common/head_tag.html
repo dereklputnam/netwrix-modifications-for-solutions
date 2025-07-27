@@ -209,11 +209,18 @@
           }
         });
         
-        // Update ONLY header text content, avoid dropdown body
+        // Update ONLY header text content, avoid ALL dropdown body content
         const nameElements = element.querySelectorAll('.name, .selected-name, .select-kit-selected-name');
         nameElements.forEach(nameEl => {
-          // Skip if this element is inside a dropdown body
-          if (nameEl.closest('.select-kit-body')) return;
+          // Skip if this element is inside ANY dropdown body content
+          if (nameEl.closest('.select-kit-body') || 
+              nameEl.closest('.select-kit-collection') ||
+              nameEl.closest('.select-kit-row') ||
+              nameEl.closest('.select-kit-item') ||
+              nameEl.hasAttribute('data-value') ||
+              nameEl.parentElement.hasAttribute('data-value')) {
+            return;
+          }
           
           if (nameEl.textContent && nameEl.textContent.includes('Custom lists')) {
             nameEl.textContent = nameEl.textContent.replace(/Custom lists/g, 'Solutions');
@@ -243,23 +250,28 @@
         acceptNode: function(node) {
           if (node.textContent && node.textContent.includes('Custom lists')) {
             const parent = node.parentElement;
-            // EXCLUDE dropdown body content and options to prevent clearing
-            if (parent && parent.closest('.select-kit-body')) {
-              return NodeFilter.FILTER_REJECT;
-            }
-            if (parent && parent.closest('.select-kit-collection')) {
-              return NodeFilter.FILTER_REJECT;
-            }
-            if (parent && parent.closest('.select-kit-row')) {
+            // EXCLUDE ALL dropdown body content and options to prevent clearing
+            if (parent && (
+              parent.closest('.select-kit-body') ||
+              parent.closest('.select-kit-collection') ||
+              parent.closest('.select-kit-row') ||
+              parent.closest('.select-kit-item') ||
+              parent.closest('.select-kit-filter') ||
+              parent.closest('.collection') ||
+              parent.classList.contains('select-kit-row') ||
+              parent.classList.contains('select-kit-item') ||
+              parent.classList.contains('collection') ||
+              parent.hasAttribute('data-value') // Items with data-value are likely options
+            )) {
               return NodeFilter.FILTER_REJECT;
             }
             
-            // INCLUDE only header/label elements for replacement
+            // INCLUDE only very specific header elements for replacement
             if (parent && (
-              parent.closest('.select-kit-header') ||
-              parent.classList.contains('name') ||
-              parent.classList.contains('selected-name') ||
-              parent.classList.contains('select-kit-selected-name')
+              (parent.closest('.select-kit-header') && !parent.closest('.select-kit-body')) ||
+              (parent.classList.contains('name') && parent.closest('.custom-list-dropdown .select-kit-header')) ||
+              (parent.classList.contains('selected-name') && parent.closest('.custom-list-dropdown .select-kit-header')) ||
+              (parent.classList.contains('select-kit-selected-name') && parent.closest('.custom-list-dropdown .select-kit-header'))
             )) {
               return NodeFilter.FILTER_ACCEPT;
             }
