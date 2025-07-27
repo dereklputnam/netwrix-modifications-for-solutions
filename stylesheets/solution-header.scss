@@ -143,18 +143,20 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Navigation controls and subscribe button wrapper styling
+// DEBUG: Add bright red background to identify which styles are working
 .navigation-container {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   width: 100% !important;
+  background: rgba(255, 0, 0, 0.1) !important; // DEBUG: Red background
 }
 
 .category-breadcrumb {
   display: flex !important;
   align-items: center !important;
   flex-grow: 1 !important;
+  background: rgba(0, 255, 0, 0.1) !important; // DEBUG: Green background
 }
 
 .navigation-controls {
@@ -162,11 +164,13 @@ body[class*="lists-"] .category-title-header {
   align-items: center !important;
   margin-left: auto !important;
   flex-shrink: 0 !important;
+  background: rgba(0, 0, 255, 0.1) !important; // DEBUG: Blue background
 }
 
 #solution-subscribe-wrapper {
   margin-left: auto !important;
   flex-shrink: 0 !important;
+  background: rgba(255, 255, 0, 0.3) !important; // DEBUG: Yellow background
 }
 
 // SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint
