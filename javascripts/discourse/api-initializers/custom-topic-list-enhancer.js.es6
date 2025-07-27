@@ -380,6 +380,25 @@ export default apiInitializer("0.11.1", (api) => {
       wrapper.style.boxShadow = "0 0 20px magenta";
       wrapper.style.zIndex = "99999";
       wrapper.style.position = "relative";
+      
+      // DEBUG: Add responsive width detection
+      const addWidthDebug = () => {
+        const width = window.innerWidth;
+        if (width <= 1500) {
+          wrapper.style.background = "magenta"; // Changes to magenta at 1500px and below
+          nav.style.background = "rgba(255,0,0,0.5)"; // Changes to red at 1500px and below
+        } else {
+          wrapper.style.background = "red"; // Red above 1500px
+          nav.style.background = "rgba(0,0,255,0.3)"; // Blue above 1500px
+        }
+        
+        // Add width indicator text to wrapper
+        wrapper.setAttribute('data-width', `Width: ${width}px`);
+        wrapper.title = `Current width: ${width}px - ${width <= 1500 ? 'PROBLEM ZONE' : 'NORMAL'}`;
+      };
+      
+      addWidthDebug();
+      window.addEventListener('resize', addWidthDebug);
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
