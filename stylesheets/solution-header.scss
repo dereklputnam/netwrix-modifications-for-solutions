@@ -143,29 +143,30 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Ensure navigation containers are positioned relatively for absolute positioning
-body[class*="/lists/"] .navigation-container,
-body[class*="/lists/"] .navigation-controls,
-body[class*="lists-"] .navigation-container,
-body[class*="lists-"] .navigation-controls {
-  position: relative !important;
+// ULTRA-AGGRESSIVE: Fixed positioning for subscribe button (only on list pages)
+#solution-subscribe-button {
+  // Hide by default
+  display: none !important;
 }
 
-// Position the subscribe button wrapper absolutely to the far right
-#subscribe-button-wrapper {
-  position: absolute !important;
-  top: 0px !important;
-  right: 0px !important;
-  left: auto !important; // Explicitly override any left positioning
-  z-index: 1000 !important;
-  width: auto !important;
+// Show only on list pages with fixed positioning
+body[class*="/lists/"] #solution-subscribe-button,
+body[class*="lists-"] #solution-subscribe-button {
+  display: inline-flex !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  pointer-events: auto !important;
   
-  // Ensure button inside wrapper is properly styled
-  #solution-subscribe-button {
-    margin: 0 !important;
-    float: none !important; // Clear any float
-    position: static !important; // Reset any positioning on the button itself
-  }
+  // Reset any inherited positioning/layout properties
+  margin: 0 !important;
+  float: none !important;
+  transform: none !important;
+  
+  // Ensure proper button styling for fixed position
+  background: white !important;
+  border: 1px solid var(--tertiary) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important; // Add shadow for floating effect
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles

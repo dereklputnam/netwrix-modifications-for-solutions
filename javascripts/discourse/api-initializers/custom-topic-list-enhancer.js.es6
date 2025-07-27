@@ -440,22 +440,35 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      // Create a wrapper div to isolate the button positioning
-      const buttonWrapper = document.createElement("div");
-      buttonWrapper.id = "subscribe-button-wrapper";
-      buttonWrapper.style.position = "absolute";
-      buttonWrapper.style.right = "0px";
-      buttonWrapper.style.left = "auto"; // Explicitly unset left
-      buttonWrapper.style.top = "0px";
-      buttonWrapper.style.zIndex = "1000";
-      buttonWrapper.style.width = "auto";
-      buttonWrapper.appendChild(btn);
+      // ULTRA-AGGRESSIVE: Fixed positioning relative to viewport
+      // Calculate the position of the navigation container
+      function positionButtonFixed() {
+        const navContainer = document.querySelector(".navigation-container");
+        if (!navContainer) return;
+        
+        const rect = navContainer.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        btn.style.position = "fixed";
+        btn.style.right = "20px"; // 20px from right edge of viewport
+        btn.style.top = (rect.top + scrollTop + 10) + "px"; // Align with nav container + 10px padding
+        btn.style.zIndex = "9999";
+        btn.style.pointerEvents = "auto";
+        
+        if (isAdmin || isDevelopment) {
+          console.log(`🎯 Fixed positioning: right=20px, top=${rect.top + scrollTop + 10}px`);
+        }
+      }
       
-      // Ensure container is positioned relatively
-      container.style.position = "relative";
+      // Apply fixed positioning immediately
+      positionButtonFixed();
       
-      // Append wrapper to container
-      container.appendChild(buttonWrapper);
+      // Reposition on scroll and resize
+      window.addEventListener('scroll', positionButtonFixed);
+      window.addEventListener('resize', positionButtonFixed);
+      
+      // Append directly to body to avoid container layout issues
+      document.body.appendChild(btn);
       
       // Add responsive text handling
       function updateButtonText() {
