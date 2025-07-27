@@ -343,36 +343,48 @@ export default apiInitializer("0.11.1", (api) => {
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        // Remove subscribe button if not on solution page
+        // Remove subscribe button and wrapper if not on solution page
         const existingButton = document.querySelector("#solution-subscribe-button");
         if (existingButton) existingButton.remove();
+        const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
+        if (existingWrapper) existingWrapper.remove();
         return;
       }
       
-      // Remove existing button
+      // Remove existing button and wrapper
       const existingButton = document.querySelector("#solution-subscribe-button");
       if (existingButton) existingButton.remove();
+      const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
+      if (existingWrapper) existingWrapper.remove();
       
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      // Try multiple container options to find the best placement
-      let container = document.querySelector(".navigation-controls");
-      let containerType = "navigation-controls";
-      if (!container) {
-        container = document.querySelector(".navigation-container");
-        containerType = "navigation-container";
-      }
-      if (!container) return;
+      // Find the breadcrumb container to position button relative to it
+      const breadcrumb = document.querySelector(".category-breadcrumb");
+      if (!breadcrumb) return;
       
-      // Reduced logging for cleaner console
-
+      // Create wrapper element for proper positioning
+      const wrapper = document.createElement("li");
+      wrapper.id = "solution-subscribe-wrapper";
+      
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
       btn.className = "btn btn-default btn-icon-text"; // Match standard button classes
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
       btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
+      
+      // Apply direct inline styles to force right positioning
+      wrapper.style.cssText = `
+        float: right !important;
+        margin-left: auto !important;
+        position: relative !important;
+        z-index: 1000 !important;
+        list-style: none !important;
+      `;
+      
+      wrapper.appendChild(btn);
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
         btn.disabled = true;
@@ -383,7 +395,7 @@ export default apiInitializer("0.11.1", (api) => {
           console.error(`   level_4_categories: "${currentConfig.solutionConfig.level_4_categories || 'undefined'}"`);
           console.error(`   level_3_categories: "${currentConfig.solutionConfig.level_3_categories || 'undefined'}"`);
         }
-      // Reduced logging for cleaner console
+      }
 
       btn.addEventListener("click", () => {
         if (btn.disabled) return;
@@ -433,38 +445,8 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      // ULTRA-AGGRESSIVE: Fixed positioning relative to viewport but constrained to content area
-      // Calculate the position of the navigation container
-      function positionButtonFixed() {
-        const navContainer = document.querySelector(".navigation-container");
-        if (!navContainer) return;
-        
-        const rect = navContainer.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Calculate right position relative to the container's right edge instead of viewport
-        const containerRight = rect.right;
-        const viewportWidth = window.innerWidth;
-        const rightOffset = viewportWidth - containerRight; // No padding - align with container edge
-        
-        btn.style.position = "fixed";
-        btn.style.right = rightOffset + "px"; // Position relative to container's right edge
-        btn.style.top = (rect.top + 10) + "px"; // Use fixed position top (no scrollTop needed for fixed)
-        btn.style.zIndex = "9999";
-        btn.style.pointerEvents = "auto";
-        
-        // Removed excessive positioning logs
-      }
-      
-      // Apply fixed positioning immediately
-      positionButtonFixed();
-      
-      // Reposition on scroll and resize
-      window.addEventListener('scroll', positionButtonFixed);
-      window.addEventListener('resize', positionButtonFixed);
-      
-      // Append directly to body to avoid container layout issues
-      document.body.appendChild(btn);
+      // Append the wrapper to the breadcrumb container
+      breadcrumb.appendChild(wrapper);
       
       // Add responsive text handling with ultra-narrow support
       function updateButtonText() {
