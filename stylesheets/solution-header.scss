@@ -143,13 +143,21 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Position subscribe button wrapper to the far right using float
+// Make breadcrumb container flex to position subscribe button on far right
+body[class*="/lists/"] .category-breadcrumb,
+body[class*="lists-"] .category-breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+// Position subscribe button wrapper to the far right
 body[class*="/lists/"] .category-breadcrumb #solution-subscribe-wrapper,
 body[class*="lists-"] .category-breadcrumb #solution-subscribe-wrapper {
-  float: right !important;
+  order: 999 !important;
   margin-left: auto !important;
-  position: relative !important;
-  z-index: 1000 !important;
+  flex-shrink: 0 !important;
   list-style: none !important;
 }
 

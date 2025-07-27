@@ -375,12 +375,11 @@ export default apiInitializer("0.11.1", (api) => {
       btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
       
-      // Apply direct inline styles to force right positioning
+      // Apply inline styles for proper flexbox positioning
       wrapper.style.cssText = `
-        float: right !important;
+        order: 999 !important;
         margin-left: auto !important;
-        position: relative !important;
-        z-index: 1000 !important;
+        flex-shrink: 0 !important;
         list-style: none !important;
       `;
       
