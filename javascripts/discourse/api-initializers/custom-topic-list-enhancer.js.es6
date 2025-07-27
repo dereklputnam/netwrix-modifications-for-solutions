@@ -452,7 +452,7 @@ export default apiInitializer("0.11.1", (api) => {
         // Calculate right position relative to the container's right edge instead of viewport
         const containerRight = rect.right;
         const viewportWidth = window.innerWidth;
-        const rightOffset = viewportWidth - containerRight + 10; // 10px padding from container edge
+        const rightOffset = viewportWidth - containerRight; // No padding - align with container edge
         
         btn.style.position = "fixed";
         btn.style.right = rightOffset + "px"; // Position relative to container's right edge
@@ -480,7 +480,7 @@ export default apiInitializer("0.11.1", (api) => {
         const windowWidth = window.innerWidth;
         const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
         
-        if (windowWidth <= 900) {
+        if (windowWidth <= 1200) {
           // Mobile/narrow: show short text
           btn.innerHTML = isSubscribedToSolution(currentConfig.solutionConfig) ? '✅ Subscribed' : `${bellIcon} Subscribe`;
         } else {

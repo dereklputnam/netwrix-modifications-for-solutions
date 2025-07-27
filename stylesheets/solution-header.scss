@@ -247,7 +247,7 @@ button#solution-subscribe-button {
 }
 
 // Mobile responsiveness for subscribe button - hide long text on smaller screens
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
   #solution-subscribe-button .mobile-hidden {
     display: none !important;
   }
