@@ -57,11 +57,11 @@ export default apiInitializer("0.11.1", (api) => {
     // Hide parent <li> elements that contain category/tag dropdowns (but NEVER hide Solutions)
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
-      // NEVER hide the Solutions dropdown - check multiple identifiers
+      // NEVER hide the Solutions dropdown or custom topic list dropdown - check multiple identifiers
       const hasCustomList = li.querySelector('.custom-list-dropdown');
       const isCustomListItem = li.classList.contains('custom-list-item');
-      const hasCustomTopicList = li.querySelector('[data-name*="Solution"], [data-name*="Custom"], .tag-drop');
-      const hasDropdownContent = li.textContent && (li.textContent.includes('Solution') || li.textContent.includes('Custom'));
+      const hasCustomTopicList = li.querySelector('[data-name*="Solution"], [data-name*="Custom"], .tag-drop, .tag-drop-header');
+      const hasDropdownContent = li.textContent && (li.textContent.includes('Solution') || li.textContent.includes('Custom') || li.textContent.includes('DSPM') || li.textContent.includes('Data Security'));
       
       // Only hide if it's in the first two positions AND doesn't have any Solutions-related content
       if (index < 2 && !hasCustomList && !isCustomListItem && !hasCustomTopicList && !hasDropdownContent) {
@@ -331,7 +331,7 @@ export default apiInitializer("0.11.1", (api) => {
         subtext.style.fontSize = "17px";
         subtext.style.color = "var(--primary-high)";
         subtext.style.lineHeight = "1.6";
-        subtext.style.maxWidth = "950px";
+        subtext.style.maxWidth = "1000px";
         subtext.style.margin = "0px auto";
         subtext.style.textAlign = "center";
       }
