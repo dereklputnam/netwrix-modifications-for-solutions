@@ -296,13 +296,13 @@ export default apiInitializer("0.11.1", (api) => {
       header.style.visibility = 'visible';
       header.classList.add("header-styled");
 
-      // Style the contents wrapper - 20px padding all around
+      // Style the contents wrapper - increased width to allow subtext expansion
       const contents = header.querySelector(".category-title-contents");
       if (contents) {
         contents.style.padding = "20px";
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
-        contents.style.maxWidth = "850px";
+        contents.style.maxWidth = "1100px";
         contents.style.textAlign = "center";
         contents.style.visibility = "visible";
       }
