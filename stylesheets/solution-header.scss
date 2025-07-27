@@ -143,9 +143,16 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Subscribe button wrapper styling - matches staging approach
+// Subscribe button wrapper styling - matches staging approach with debug
 #solution-subscribe-wrapper {
-  margin-left: auto;
+  margin-left: auto !important;
+  background: red !important; // Debug: temporary red background to see wrapper
+  padding: 2px !important; // Debug: small padding to make wrapper visible
+}
+
+// Debug: make navigation controls visible
+.navigation-controls {
+  border: 2px solid blue !important; // Debug: show navigation container
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles
