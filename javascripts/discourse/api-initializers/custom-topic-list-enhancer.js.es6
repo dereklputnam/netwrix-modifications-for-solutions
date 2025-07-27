@@ -343,30 +343,27 @@ export default apiInitializer("0.11.1", (api) => {
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        // Remove subscribe button and wrapper if not on solution page
+        // Remove subscribe button if not on solution page
         const existingButton = document.querySelector("#solution-subscribe-button");
         if (existingButton) existingButton.remove();
-        const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-        if (existingWrapper) existingWrapper.remove();
         return;
       }
       
-      // Remove existing button and wrapper
+      // Remove existing button
       const existingButton = document.querySelector("#solution-subscribe-button");
       if (existingButton) existingButton.remove();
-      const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-      if (existingWrapper) existingWrapper.remove();
       
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      // Find the breadcrumb container to position button relative to it
-      const breadcrumb = document.querySelector(".category-breadcrumb");
-      if (!breadcrumb) return;
-      
-      // Create wrapper element for proper positioning
-      const wrapper = document.createElement("li");
-      wrapper.id = "solution-subscribe-wrapper";
+      // Try multiple container options to find the best placement
+      let container = document.querySelector(".navigation-controls");
+      let containerType = "navigation-controls";
+      if (!container) {
+        container = document.querySelector(".navigation-container");
+        containerType = "navigation-container";
+      }
+      if (!container) return;
       
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button";
@@ -374,16 +371,6 @@ export default apiInitializer("0.11.1", (api) => {
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
       btn.innerHTML = isSubscribed ? `✅ Subscribed&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>` : `${bellIcon} Subscribe&nbsp;<span class="mobile-hidden">To All News & Security Advisories</span>`;
       if (isSubscribed) btn.classList.add("subscribed");
-      
-      // Apply inline styles for proper flexbox positioning
-      wrapper.style.cssText = `
-        order: 999 !important;
-        margin-left: auto !important;
-        flex-shrink: 0 !important;
-        list-style: none !important;
-      `;
-      
-      wrapper.appendChild(btn);
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
         btn.disabled = true;
@@ -444,8 +431,12 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      // Append the wrapper to the breadcrumb container
-      breadcrumb.appendChild(wrapper);
+      // Add simple right alignment styles
+      btn.style.marginLeft = "auto";
+      btn.style.float = "right";
+      
+      // Append to container
+      container.appendChild(btn);
       
       // Add responsive text handling with ultra-narrow support
       function updateButtonText() {

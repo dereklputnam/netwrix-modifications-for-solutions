@@ -143,22 +143,10 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-// Make breadcrumb container flex to position subscribe button on far right
-body[class*="/lists/"] .category-breadcrumb,
-body[class*="lists-"] .category-breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-}
-
-// Position subscribe button wrapper to the far right
-body[class*="/lists/"] .category-breadcrumb #solution-subscribe-wrapper,
-body[class*="lists-"] .category-breadcrumb #solution-subscribe-wrapper {
-  order: 999 !important;
+// Simple right alignment for subscribe button
+#solution-subscribe-button {
+  float: right !important;
   margin-left: auto !important;
-  flex-shrink: 0 !important;
-  list-style: none !important;
 }
 
 // Enhanced styling for solution subscribe button - override all Discourse button styles
