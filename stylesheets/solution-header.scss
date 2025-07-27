@@ -186,25 +186,19 @@ button#solution-subscribe-button,
   box-shadow: 0 0 15px red !important;
 }
 
-// NUCLEAR: Responsive breakpoint testing - target everything possible
+// SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint
 @media (max-width: 1500px) {
-  html body.ember-application div.ember-view section.navigation-container div.navigation-controls,
-  body section.navigation-container div.navigation-controls,
-  section.navigation-container .navigation-controls,
-  div.navigation-controls,
   .navigation-controls {
-    border-color: red !important; // RED border in problem zone
-    background: rgba(255,0,0,0.5) !important; // More visible red background
-    background-color: rgba(255,0,0,0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
   }
   
-  html body div#solution-subscribe-wrapper,
-  body div#solution-subscribe-wrapper,
-  div#solution-subscribe-wrapper,
   #solution-subscribe-wrapper {
-    background: magenta !important; // MAGENTA wrapper in problem zone
-    background-color: magenta !important;
-    border-color: lime !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    order: 999 !important;
   }
 }
 
