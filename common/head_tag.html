@@ -54,7 +54,11 @@
         opacity: 0 !important;
       }
       
-      /* Hide responsive line breaks by default */
+      /* Hide responsive line breaks by default and prevent natural wrapping */
+      .category-title {
+        white-space: nowrap !important;
+      }
+      
       .category-title .break-medium,
       .category-title .break-small,
       .category-title .break-medium br,
@@ -64,6 +68,10 @@
       
       /* Show breaks on medium screens */
       @media (max-width: 1200px) {
+        .category-title {
+          white-space: normal !important;
+        }
+        
         .category-title .break-medium,
         .category-title .break-medium br {
           display: inline !important;
@@ -72,6 +80,10 @@
       
       /* Show breaks on small screens */
       @media (max-width: 768px) {
+        .category-title {
+          white-space: normal !important;
+        }
+        
         .category-title .break-small,
         .category-title .break-small br {
           display: inline !important;
