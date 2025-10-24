@@ -49,7 +49,6 @@ body.custom-lists .category-breadcrumb li:first-child,
 body.custom-lists .category-breadcrumb li:nth-child(2),
 .lists-page .category-breadcrumb li:first-child,
 .lists-page .category-breadcrumb li:nth-child(2) {
-  // Only hide if they don't contain the Solutions dropdown
   &:not(:has(.custom-list-dropdown)) {
     display: none !important;
     visibility: hidden !important;
@@ -75,22 +74,20 @@ body.custom-lists .category-breadcrumb li:nth-child(2),
 body[class*="lists"] .category-breadcrumb > li,
 body.custom-lists .category-breadcrumb > li,
 .lists-page .category-breadcrumb > li {
-  // Show only if it contains the Solutions dropdown
   &:not(:has(.custom-list-dropdown)) {
     display: none !important;
     visibility: hidden !important;
   }
 }
 
-// Ensure Solutions dropdown remains visible
-[data-discourse-route*="lists"] .category-breadcrumb .custom-list-dropdown,
-body[class*="lists"] .category-breadcrumb .custom-list-dropdown,
-body.custom-lists .category-breadcrumb .custom-list-dropdown,
-.lists-page .category-breadcrumb .custom-list-dropdown,
-[data-discourse-route*="lists"] .category-breadcrumb li:has(.custom-list-dropdown),
-body[class*="lists"] .category-breadcrumb li:has(.custom-list-dropdown),
-body.custom-lists .category-breadcrumb li:has(.custom-list-dropdown),
-.lists-page .category-breadcrumb li:has(.custom-list-dropdown) {
-  display: block !important;
-  visibility: visible !important;
+// MODIFIED: Hide custom-list-dropdown (Solutions dropdown) globally across entire site
+// Removed the previous section that made it visible
+.custom-list-dropdown,
+li.custom-list-item:has(.custom-list-dropdown),
+li.custom-list-item .custom-list-dropdown,
+details.custom-list-dropdown,
+.category-breadcrumb .custom-list-dropdown,
+.category-breadcrumb li:has(.custom-list-dropdown) {
+  display: none !important;
+  visibility: hidden !important;
 }
