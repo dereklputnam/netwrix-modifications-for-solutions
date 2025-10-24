@@ -80,14 +80,7 @@ body.custom-lists .category-breadcrumb > li,
   }
 }
 
-// MODIFIED: Hide custom-list-dropdown (Solutions dropdown) globally across entire site
-// Removed the previous section that made it visible
-.custom-list-dropdown,
-li.custom-list-item:has(.custom-list-dropdown),
-li.custom-list-item .custom-list-dropdown,
-details.custom-list-dropdown,
-.category-breadcrumb .custom-list-dropdown,
-.category-breadcrumb li:has(.custom-list-dropdown) {
-  display: none !important;
-  visibility: hidden !important;
-}
+// Note: Custom Lists dropdown hiding is now controlled by the "hide_custom_lists_dropdown"
+// theme setting. When enabled, JavaScript will remove the dropdown from the DOM.
+// This prevents gaps in navigation and allows the Custom Lists plugin to remain active
+// for direct URL access.
