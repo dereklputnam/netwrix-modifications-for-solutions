@@ -331,7 +331,10 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Find the header to insert after it
       const header = document.querySelector(".category-title-header");
-      if (!header) return;
+      if (!header) {
+        console.log("Header not found for description box");
+        return;
+      }
 
       // Remove existing description box if present
       const existingBox = document.querySelector("#solution-description-box");
@@ -450,8 +453,37 @@ export default apiInitializer("0.11.1", (api) => {
         descBox.appendChild(btn);
       }
 
-      // Insert after header
-      header.parentNode.insertBefore(descBox, header.nextSibling);
+      // Find the best insertion point - try multiple strategies
+      // Strategy 1: Insert after header in the main outlet
+      const mainOutlet = document.querySelector("#main-outlet");
+      if (mainOutlet) {
+        // Find where the header is in relation to main-outlet
+        const headerParent = header.parentElement;
+        if (headerParent && mainOutlet.contains(header)) {
+          // Insert after the header's parent container or after header itself
+          if (header.nextSibling) {
+            headerParent.insertBefore(descBox, header.nextSibling);
+          } else {
+            headerParent.appendChild(descBox);
+          }
+          console.log("Description box inserted after header");
+          return;
+        }
+      }
+
+      // Strategy 2: Fallback - insert before the list-controls if it exists
+      const listControls = document.querySelector(".list-controls");
+      if (listControls && listControls.parentElement) {
+        listControls.parentElement.insertBefore(descBox, listControls);
+        console.log("Description box inserted before list-controls");
+        return;
+      }
+
+      // Strategy 3: Last resort - append to header's parent
+      if (header.parentNode) {
+        header.parentNode.insertBefore(descBox, header.nextSibling);
+        console.log("Description box inserted using fallback method");
+      }
     }
 
     // Clean up any old subscribe buttons from navigation (no longer used)
