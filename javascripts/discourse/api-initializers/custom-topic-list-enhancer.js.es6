@@ -118,31 +118,44 @@ export default apiInitializer("0.11.1", (api) => {
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
-    const slugMatch = currentPath.match(/^\/lists\/([^\/?#]+)/);
-    if (!slugMatch) return null;
+    console.log("🔍 getCurrentSolutionConfig - currentPath:", currentPath);
 
-    const slug = slugMatch[1];
-    
-    // First try to get from theme settings (has subscription fields)
-    let solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
-    
-    // If not found in theme settings, try plugin data as fallback
-    if (!solutionConfig) {
-      const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-      solutionConfig = customTopicLists.find(list => list.slug === slug);
-    }
-    
-    if (!solutionConfig) {
-      if (isAdmin || isDevelopment) {
-        console.log(`No solution configuration found for slug: ${slug}`);
-        console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
-        const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-        console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
-      }
+    // Match both /lists/ and /community/lists/ patterns
+    const slugMatch = currentPath.match(/\/lists\/([^\/?#]+)/);
+    console.log("🔍 Slug match result:", slugMatch);
+
+    if (!slugMatch) {
+      console.log("❌ No slug match found in URL");
       return null;
     }
 
-    // Reduced logging for cleaner console
+    const slug = slugMatch[1];
+    console.log("✅ Extracted slug:", slug);
+
+    // First try to get from theme settings (has subscription fields)
+    console.log("🔍 Checking theme settings...");
+    console.log("Available settings:", settings.netwrix_solutions);
+    let solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
+    console.log("Theme config result:", solutionConfig);
+
+    // If not found in theme settings, try plugin data as fallback
+    if (!solutionConfig) {
+      console.log("🔍 Theme settings not found, checking plugin...");
+      const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
+      console.log("Available plugin lists:", customTopicLists);
+      solutionConfig = customTopicLists.find(list => list.slug === slug);
+      console.log("Plugin config result:", solutionConfig);
+    }
+
+    if (!solutionConfig) {
+      console.error(`❌ No solution configuration found for slug: ${slug}`);
+      console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
+      const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
+      console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
+      return null;
+    }
+
+    console.log("✅ Found solution config:", { slug, solutionConfig });
     return { slug, solutionConfig };
   }
 
