@@ -2,6 +2,17 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
+  // DEBUG: Very obvious marker that this code is running
+  console.log("🔥🔥🔥 CUSTOM TOPIC LIST ENHANCER LOADED - VERSION 2024-12-02-DEBUG 🔥🔥🔥");
+  console.log("Current URL:", window.location.pathname);
+
+  // Show alert ONLY on lists pages to confirm code is running
+  if (window.location.pathname.includes('/lists/')) {
+    console.log("🎯 ON A LISTS PAGE - Code should be active!");
+    // Uncomment the next line if you want a visual alert (commented to avoid annoying popup)
+    // alert("DEBUG: Custom Topic List Enhancer is loaded and active!");
+  }
+
   // ULTRA-AGGRESSIVE navigation hiding with JavaScript fallback and persistent enforcement
   const aggressiveHideNavElements = () => {
     // Only hide elements if we're on a /lists/ page  
