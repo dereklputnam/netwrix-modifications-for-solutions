@@ -251,10 +251,17 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Header styling function for reuse
     function styleHeader(header, forceUpdate = false) {
-      if (!header) return;
+      console.log("styleHeader called, forceUpdate:", forceUpdate);
+      if (!header) {
+        console.log("No header element found");
+        return;
+      }
 
       const currentConfig = getCurrentSolutionConfig();
-      if (!currentConfig) return;
+      if (!currentConfig) {
+        console.log("No current config found");
+        return;
+      }
 
       // If forcing update, clear the styled flag and previous slug
       if (forceUpdate) {
@@ -264,12 +271,16 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Check if we need to update content (different solution)
       if (header.dataset.currentSlug && header.dataset.currentSlug === currentConfig.slug && !forceUpdate) {
+        console.log("Same solution, skipping update");
         return; // Same solution, no need to update
       }
 
       const config = currentConfig.solutionConfig;
       const title = config.subtitle || config.name || config.title || 'Solution';
       const desc = config.description || '';
+
+      console.log("Styling header with title:", title);
+      console.log("Description:", desc);
 
       header.innerHTML = `
         <div class="category-title-contents">
@@ -321,24 +332,37 @@ export default apiInitializer("0.11.1", (api) => {
       header.dataset.currentSlug = currentConfig.slug;
 
       // Create or update the description box with subscribe button below the header
+      console.log("About to call createDescriptionBox");
       createDescriptionBox(desc);
+      console.log("createDescriptionBox call completed");
     }
 
     // Function to create description box with subscribe button
     function createDescriptionBox(description) {
+      console.log("=== createDescriptionBox called ===");
+      console.log("Description text:", description);
+
       const currentConfig = getCurrentSolutionConfig();
-      if (!currentConfig) return;
+      if (!currentConfig) {
+        console.log("ERROR: No current config in createDescriptionBox");
+        return;
+      }
+      console.log("Current config:", currentConfig);
 
       // Find the header to insert after it
       const header = document.querySelector(".category-title-header");
       if (!header) {
-        console.log("Header not found for description box");
+        console.log("ERROR: Header not found for description box");
         return;
       }
+      console.log("Header found:", header);
 
       // Remove existing description box if present
       const existingBox = document.querySelector("#solution-description-box");
-      if (existingBox) existingBox.remove();
+      if (existingBox) {
+        console.log("Removing existing description box");
+        existingBox.remove();
+      }
 
       // Create the description box
       const descBox = document.createElement("div");
