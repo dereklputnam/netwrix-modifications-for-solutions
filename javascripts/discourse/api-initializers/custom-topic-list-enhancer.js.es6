@@ -308,7 +308,7 @@ export default apiInitializer("0.11.1", (api) => {
 
       header.innerHTML = `
         <div class="category-title-contents">
-          <h1 class="category-title">${title}</h1>
+          <h1 class="category-title">${title}<br>News & Security Advisories</h1>
           <div class="category-description">${desc}</div>
         </div>
       `;
