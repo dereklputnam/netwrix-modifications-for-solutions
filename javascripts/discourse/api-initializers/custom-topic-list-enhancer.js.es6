@@ -252,54 +252,49 @@ export default apiInitializer("0.11.1", (api) => {
     // Header styling function for reuse
     function styleHeader(header, forceUpdate = false) {
       if (!header) return;
-      
+
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) return;
-      
+
       // If forcing update, clear the styled flag and previous slug
       if (forceUpdate) {
         delete header.dataset.styled;
         delete header.dataset.currentSlug;
       }
-      
+
       // Check if we need to update content (different solution)
       if (header.dataset.currentSlug && header.dataset.currentSlug === currentConfig.slug && !forceUpdate) {
         return; // Same solution, no need to update
       }
-      
+
       const config = currentConfig.solutionConfig;
       const title = config.subtitle || config.name || config.title || 'Solution';
       const desc = config.description || '';
-      
+
       header.innerHTML = `
         <div class="category-title-contents">
-          <h1 class="category-title">${title}<br>News & Security Advisories</h1>
-          <div class="category-title-description">
-            <div class="solution-subtext">
-              ${desc}
-            </div>
-          </div>
+          <h1 class="category-title">${title}</h1>
         </div>
       `;
 
-      // Apply header container styling - match staging exactly
+      // Apply header container styling - white box with border
       header.style.background = "var(--secondary)";
-      header.style.borderTop = "6px solid var(--tertiary)";
-      header.style.borderRadius = "6px";
-      header.style.padding = "0px";
-      header.style.marginBottom = "20px";
+      header.style.border = "1px solid var(--primary-low)";
+      header.style.borderRadius = "8px";
+      header.style.padding = "20px";
+      header.style.marginBottom = "12px";
       header.style.display = "flex";
       header.style.justifyContent = "center";
       header.style.visibility = "visible";
-      
+
       // Show header after styling is complete
       header.style.visibility = 'visible';
       header.classList.add("header-styled");
 
-      // Style the contents wrapper - increased width to allow subtext expansion
+      // Style the contents wrapper
       const contents = header.querySelector(".category-title-contents");
       if (contents) {
-        contents.style.padding = "20px";
+        contents.style.padding = "0";
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
         contents.style.maxWidth = "1100px";
@@ -307,7 +302,7 @@ export default apiInitializer("0.11.1", (api) => {
         contents.style.visibility = "visible";
       }
 
-      // Style the title - match staging exactly
+      // Style the title
       const titleEl = header.querySelector(".category-title");
       if (titleEl) {
         titleEl.style.fontSize = "clamp(22px, 3vw, 30px)";
@@ -315,205 +310,154 @@ export default apiInitializer("0.11.1", (api) => {
         titleEl.style.color = "var(--primary)";
         titleEl.style.lineHeight = "1.2";
         titleEl.style.maxWidth = "850px";
-        titleEl.style.margin = "0px auto 16px";
+        titleEl.style.margin = "0";
         titleEl.style.textAlign = "center";
         titleEl.style.display = "block";
         titleEl.style.width = "100%";
       }
 
-      // Style the description - expanded width for two-line layout
-      const subtext = header.querySelector(".solution-subtext");
-      if (subtext) {
-        subtext.style.fontSize = "17px";
-        subtext.style.color = "var(--primary-high)";
-        subtext.style.lineHeight = "1.6";
-        subtext.style.maxWidth = "1000px";
-        subtext.style.margin = "0px auto";
-        subtext.style.textAlign = "center";
-      }
-      
       // Mark as styled and remember current solution
       header.dataset.styled = 'true';
       header.dataset.currentSlug = currentConfig.slug;
+
+      // Create or update the description box with subscribe button below the header
+      createDescriptionBox(desc);
     }
 
-    // Function to update subscribe button for current solution
-    function updateSubscribeButton() {
-      const nav = document.querySelector(".navigation-controls");
-      if (!nav || !currentUser) return; // Only show subscribe button if user is logged in
-
+    // Function to create description box with subscribe button
+    function createDescriptionBox(description) {
       const currentConfig = getCurrentSolutionConfig();
-      if (!currentConfig) {
-        // Remove subscribe button if not on solution page
-        const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-        if (existingWrapper) existingWrapper.remove();
-        return;
+      if (!currentConfig) return;
+
+      // Find the header to insert after it
+      const header = document.querySelector(".category-title-header");
+      if (!header) return;
+
+      // Remove existing description box if present
+      const existingBox = document.querySelector("#solution-description-box");
+      if (existingBox) existingBox.remove();
+
+      // Create the description box
+      const descBox = document.createElement("div");
+      descBox.id = "solution-description-box";
+      descBox.style.background = "var(--secondary)";
+      descBox.style.border = "1px solid var(--primary-low)";
+      descBox.style.borderRadius = "8px";
+      descBox.style.padding = "20px";
+      descBox.style.marginBottom = "20px";
+      descBox.style.display = "flex";
+      descBox.style.flexDirection = "column";
+      descBox.style.alignItems = "center";
+      descBox.style.textAlign = "center";
+
+      // Add description text
+      const descText = document.createElement("div");
+      descText.className = "solution-description-text";
+      descText.textContent = description;
+      descText.style.fontSize = "15px";
+      descText.style.color = "var(--primary)";
+      descText.style.lineHeight = "1.6";
+      descText.style.marginBottom = "16px";
+      descText.style.maxWidth = "800px";
+
+      descBox.appendChild(descText);
+
+      // Add subscribe button if user is logged in
+      if (currentUser) {
+        const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
+        const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
+
+        const btn = document.createElement("button");
+        btn.id = "solution-subscribe-button-inline";
+        btn.className = "btn btn-primary";
+
+        const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
+
+        function updateInlineButtonText() {
+          const isCurrentlySubscribed = btn.classList.contains("subscribed");
+          if (isCurrentlySubscribed) {
+            btn.innerHTML = `✅ Subscribed To All News & Security Advisories`;
+          } else {
+            btn.innerHTML = `${bellIcon} Subscribe To All News & Security Advisories`;
+          }
+        }
+
+        updateInlineButtonText();
+
+        if (isSubscribed) btn.classList.add("subscribed");
+
+        btn.style.padding = "10px 20px";
+        btn.style.fontSize = "15px";
+        btn.style.fontWeight = "500";
+        btn.style.borderRadius = "4px";
+        btn.style.cursor = "pointer";
+        btn.style.whiteSpace = "nowrap";
+
+        if (level4Ids.length === 0 && level3Ids.length === 0) {
+          btn.disabled = true;
+          btn.textContent = "No valid categories configured";
+          btn.title = "Check console for available category IDs";
+        }
+
+        btn.addEventListener("click", () => {
+          if (btn.disabled) return;
+
+          const subscribing = !btn.classList.contains("subscribed");
+          const allUpdates = [];
+
+          level4Ids.forEach((id) => {
+            allUpdates.push(
+              ajax(`/category/${id}/notifications`, {
+                type: "POST",
+                data: { notification_level: subscribing ? 4 : 1 },
+              })
+            );
+          });
+
+          level3Ids.forEach((id) => {
+            allUpdates.push(
+              ajax(`/category/${id}/notifications`, {
+                type: "POST",
+                data: { notification_level: subscribing ? 3 : 1 },
+              })
+            );
+          });
+
+          btn.disabled = true;
+          btn.innerHTML = subscribing ? "⏳ Subscribing..." : "⏳ Unsubscribing...";
+
+          Promise.all(allUpdates)
+            .then(() => {
+              if (subscribing) {
+                btn.classList.add("subscribed");
+              } else {
+                btn.classList.remove("subscribed");
+              }
+              updateInlineButtonText();
+            })
+            .catch((error) => {
+              console.error("Failed to update subscriptions:", error);
+              btn.innerHTML = "❌ Error - Try again";
+              setTimeout(() => {
+                updateInlineButtonText();
+              }, 3000);
+            })
+            .finally(() => {
+              btn.disabled = false;
+            });
+        });
+
+        descBox.appendChild(btn);
       }
-      
-      // Remove existing button
+
+      // Insert after header
+      header.parentNode.insertBefore(descBox, header.nextSibling);
+    }
+
+    // Clean up any old subscribe buttons from navigation (no longer used)
+    function removeOldSubscribeButton() {
       const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
       if (existingWrapper) existingWrapper.remove();
-      
-      const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
-      const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
-
-      nav.style.display = "flex";
-      nav.style.alignItems = "center";
-
-      const wrapper = document.createElement("div");
-      wrapper.id = "solution-subscribe-wrapper";
-      wrapper.style.marginLeft = "auto";
-
-      const btn = document.createElement("button");
-      btn.id = "solution-subscribe-button";
-      btn.className = "btn btn-default";
-      const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-      
-      // Dynamic button text based on window width with ultra-compact mode
-      function updateButtonText() {
-        const windowWidth = window.innerWidth;
-        const isCurrentlySubscribed = btn.classList.contains("subscribed");
-        
-        if (windowWidth > 1200) {
-          // Full text mode - above 1200px
-          if (isCurrentlySubscribed) {
-            btn.innerHTML = `✅ Subscribed&nbsp;To All News & Security Advisories`;
-          } else {
-            btn.innerHTML = `${bellIcon} Subscribe&nbsp;To All News & Security Advisories`;
-          }
-        } else if (windowWidth > 800) {
-          // Truncated text mode - 800px to 1200px
-          if (isCurrentlySubscribed) {
-            btn.innerHTML = `✅ Subscribed`;
-          } else {
-            btn.innerHTML = `${bellIcon} Subscribe`;
-          }
-        } else {
-          // Ultra-compact mode - below 800px (just icon)
-          if (isCurrentlySubscribed) {
-            btn.innerHTML = `✅`;
-            btn.title = "Subscribed To All News & Security Advisories";
-          } else {
-            btn.innerHTML = bellIcon;
-            btn.title = "Subscribe To All News & Security Advisories";
-          }
-        }
-      }
-      
-      // Set initial text
-      updateButtonText();
-      
-      // Update text on window resize
-      const resizeHandler = () => updateButtonText();
-      window.addEventListener('resize', resizeHandler);
-      if (isSubscribed) btn.classList.add("subscribed");
-      
-      // FORCE navigation alignment with JavaScript since CSS isn't working
-      function forceNavigationAlignment() {
-        // Target the full container hierarchy
-        const listControls = document.querySelector('.list-controls');
-        const container = listControls?.querySelector('.container');
-        const navigationContainer = container?.querySelector('.navigation-container');
-        const categoryBreadcrumb = navigationContainer?.querySelector('.category-breadcrumb');
-        const navigationControls = navigationContainer?.querySelector('.navigation-controls');
-        const subscribeWrapper = navigationControls?.querySelector('#solution-subscribe-wrapper');
-        
-        if (listControls) {
-          listControls.style.width = '100%';
-        }
-        
-        if (container) {
-          container.style.width = '100%';
-          container.style.maxWidth = 'none';
-        }
-        
-        if (navigationContainer) {
-          navigationContainer.style.display = 'flex';
-          navigationContainer.style.justifyContent = 'space-between';
-          navigationContainer.style.alignItems = 'center';
-          navigationContainer.style.width = '100%';
-        }
-        
-        if (categoryBreadcrumb) {
-          categoryBreadcrumb.style.display = 'flex';
-          categoryBreadcrumb.style.alignItems = 'center';
-          categoryBreadcrumb.style.flexGrow = '1';
-        }
-        
-        if (navigationControls) {
-          navigationControls.style.display = 'flex';
-          navigationControls.style.alignItems = 'center';
-          navigationControls.style.marginLeft = 'auto';
-          navigationControls.style.flexShrink = '0';
-        }
-        
-        if (subscribeWrapper) {
-          subscribeWrapper.style.marginLeft = 'auto';
-          subscribeWrapper.style.flexShrink = '0';
-        }
-      }
-      
-      // Apply alignment immediately and on resize
-      forceNavigationAlignment();
-      window.addEventListener('resize', forceNavigationAlignment);
-
-      if (level4Ids.length === 0 && level3Ids.length === 0) {
-        btn.disabled = true;
-        btn.textContent = "No valid categories configured";
-        btn.title = "Check console for available category IDs";
-      }
-
-      btn.addEventListener("click", () => {
-        if (btn.disabled) return;
-        
-        const subscribing = !btn.classList.contains("subscribed");
-        const allUpdates = [];
-
-        level4Ids.forEach((id) => {
-          allUpdates.push(
-            ajax(`/category/${id}/notifications`, {
-              type: "POST",
-              data: { notification_level: subscribing ? 4 : 1 },
-            })
-          );
-        });
-
-        level3Ids.forEach((id) => {
-          allUpdates.push(
-            ajax(`/category/${id}/notifications`, {
-              type: "POST",
-              data: { notification_level: subscribing ? 3 : 1 },
-            })
-          );
-        });
-
-        btn.disabled = true;
-        btn.innerHTML = subscribing ? "⏳ Subscribing..." : "⏳ Unsubscribing...";
-
-        Promise.all(allUpdates)
-          .then(() => {
-            // Update subscription status and refresh button text
-            if (subscribing) {
-              btn.classList.add("subscribed");
-            } else {
-              btn.classList.remove("subscribed");
-            }
-            updateButtonText(); // Use the dynamic text function
-          })
-          .catch((error) => {
-            console.error("Failed to update subscriptions:", error);
-            btn.innerHTML = "❌ Error - Try again";
-            setTimeout(() => {
-              updateButtonText(); // Use the dynamic text function
-            }, 3000);
-          })
-          .finally(() => {
-            btn.disabled = false;
-          });
-      });
-
-      wrapper.appendChild(btn);
-      nav.appendChild(wrapper);
     }
 
     // Handler for applying styles to current page
@@ -522,7 +466,7 @@ export default apiInitializer("0.11.1", (api) => {
       if (header) {
         styleHeader(header, true); // Force update to handle page navigation
       }
-      updateSubscribeButton();
+      removeOldSubscribeButton(); // Clean up any old navigation buttons
       updateDropdownText();
     }
 
