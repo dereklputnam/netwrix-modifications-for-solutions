@@ -309,6 +309,7 @@ export default apiInitializer("0.11.1", (api) => {
       header.innerHTML = `
         <div class="category-title-contents">
           <h1 class="category-title">${title}</h1>
+          <div class="category-description">${desc}</div>
         </div>
       `;
 
@@ -346,172 +347,170 @@ export default apiInitializer("0.11.1", (api) => {
         titleEl.style.color = "var(--primary)";
         titleEl.style.lineHeight = "1.2";
         titleEl.style.maxWidth = "850px";
-        titleEl.style.margin = "0";
+        titleEl.style.margin = "0 auto 16px";
         titleEl.style.textAlign = "center";
         titleEl.style.display = "block";
         titleEl.style.width = "100%";
+      }
+
+      // Style the description
+      const descEl = header.querySelector(".category-description");
+      if (descEl) {
+        descEl.style.fontSize = "15px";
+        descEl.style.color = "var(--primary)";
+        descEl.style.lineHeight = "1.6";
+        descEl.style.maxWidth = "850px";
+        descEl.style.margin = "0 auto";
+        descEl.style.textAlign = "center";
       }
 
       // Mark as styled and remember current solution
       header.dataset.styled = 'true';
       header.dataset.currentSlug = currentConfig.slug;
 
-      // Create or update the description box with subscribe button below the header
-      console.log("About to call createDescriptionBox");
-      createDescriptionBox(desc);
-      console.log("createDescriptionBox call completed");
+      // Create or update the subscribe button box below the header
+      console.log("About to call createSubscribeButtonBox");
+      createSubscribeButtonBox();
+      console.log("createSubscribeButtonBox call completed");
     }
 
-    // Function to create description box with subscribe button
-    function createDescriptionBox(description) {
-      console.log("=== createDescriptionBox called ===");
-      console.log("Description text:", description);
+    // Function to create subscribe button box (no description text)
+    function createSubscribeButtonBox() {
+      console.log("=== createSubscribeButtonBox called ===");
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        console.log("ERROR: No current config in createDescriptionBox");
+        console.log("ERROR: No current config in createSubscribeButtonBox");
         return;
       }
-      console.log("Current config:", currentConfig);
+
+      // Only show button if user is logged in
+      if (!currentUser) {
+        console.log("User not logged in, skipping subscribe button");
+        return;
+      }
 
       // Find the header to insert after it
       const header = document.querySelector(".category-title-header");
       if (!header) {
-        console.log("ERROR: Header not found for description box");
+        console.log("ERROR: Header not found for button box");
         return;
       }
-      console.log("Header found:", header);
 
-      // Remove existing description box if present
-      const existingBox = document.querySelector("#solution-description-box");
+      // Remove existing button box if present
+      const existingBox = document.querySelector("#solution-subscribe-button-box");
       if (existingBox) {
-        console.log("Removing existing description box");
+        console.log("Removing existing button box");
         existingBox.remove();
       }
 
-      // Create the description box
-      const descBox = document.createElement("div");
-      descBox.id = "solution-description-box";
-      descBox.style.background = "var(--secondary)";
-      descBox.style.border = "1px solid var(--primary-low)";
-      descBox.style.borderRadius = "8px";
-      descBox.style.padding = "20px";
-      descBox.style.marginBottom = "20px";
-      descBox.style.display = "flex";
-      descBox.style.flexDirection = "column";
-      descBox.style.alignItems = "center";
-      descBox.style.textAlign = "center";
+      // Create the button box (no description text, just the button)
+      const buttonBox = document.createElement("div");
+      buttonBox.id = "solution-subscribe-button-box";
+      buttonBox.style.background = "var(--secondary)";
+      buttonBox.style.border = "1px solid var(--primary-low)";
+      buttonBox.style.borderRadius = "8px";
+      buttonBox.style.padding = "20px";
+      buttonBox.style.marginBottom = "20px";
+      buttonBox.style.display = "flex";
+      buttonBox.style.justifyContent = "center";
+      buttonBox.style.alignItems = "center";
+      buttonBox.style.textAlign = "center";
 
-      // Add description text
-      const descText = document.createElement("div");
-      descText.className = "solution-description-text";
-      descText.textContent = description;
-      descText.style.fontSize = "15px";
-      descText.style.color = "var(--primary)";
-      descText.style.lineHeight = "1.6";
-      descText.style.marginBottom = "16px";
-      descText.style.maxWidth = "800px";
+      // Create subscribe button
+      const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
+      const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      descBox.appendChild(descText);
+      const btn = document.createElement("button");
+      btn.id = "solution-subscribe-button-inline";
+      btn.className = "btn btn-primary";
 
-      // Add subscribe button if user is logged in
-      if (currentUser) {
-        const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
-        const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
+      const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
 
-        const btn = document.createElement("button");
-        btn.id = "solution-subscribe-button-inline";
-        btn.className = "btn btn-primary";
-
-        const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-
-        function updateInlineButtonText() {
-          const isCurrentlySubscribed = btn.classList.contains("subscribed");
-          if (isCurrentlySubscribed) {
-            btn.innerHTML = `✅ Subscribed To All News & Security Advisories`;
-          } else {
-            btn.innerHTML = `${bellIcon} Subscribe To All News & Security Advisories`;
-          }
+      function updateInlineButtonText() {
+        const isCurrentlySubscribed = btn.classList.contains("subscribed");
+        if (isCurrentlySubscribed) {
+          btn.innerHTML = `✅ Subscribed To All News & Security Advisories`;
+        } else {
+          btn.innerHTML = `${bellIcon} Subscribe To All News & Security Advisories`;
         }
-
-        updateInlineButtonText();
-
-        if (isSubscribed) btn.classList.add("subscribed");
-
-        btn.style.padding = "10px 20px";
-        btn.style.fontSize = "15px";
-        btn.style.fontWeight = "500";
-        btn.style.borderRadius = "4px";
-        btn.style.cursor = "pointer";
-        btn.style.whiteSpace = "nowrap";
-
-        if (level4Ids.length === 0 && level3Ids.length === 0) {
-          btn.disabled = true;
-          btn.textContent = "No valid categories configured";
-          btn.title = "Check console for available category IDs";
-        }
-
-        btn.addEventListener("click", () => {
-          if (btn.disabled) return;
-
-          const subscribing = !btn.classList.contains("subscribed");
-          const allUpdates = [];
-
-          level4Ids.forEach((id) => {
-            allUpdates.push(
-              ajax(`/category/${id}/notifications`, {
-                type: "POST",
-                data: { notification_level: subscribing ? 4 : 1 },
-              })
-            );
-          });
-
-          level3Ids.forEach((id) => {
-            allUpdates.push(
-              ajax(`/category/${id}/notifications`, {
-                type: "POST",
-                data: { notification_level: subscribing ? 3 : 1 },
-              })
-            );
-          });
-
-          btn.disabled = true;
-          btn.innerHTML = subscribing ? "⏳ Subscribing..." : "⏳ Unsubscribing...";
-
-          Promise.all(allUpdates)
-            .then(() => {
-              if (subscribing) {
-                btn.classList.add("subscribed");
-              } else {
-                btn.classList.remove("subscribed");
-              }
-              updateInlineButtonText();
-            })
-            .catch((error) => {
-              console.error("Failed to update subscriptions:", error);
-              btn.innerHTML = "❌ Error - Try again";
-              setTimeout(() => {
-                updateInlineButtonText();
-              }, 3000);
-            })
-            .finally(() => {
-              btn.disabled = false;
-            });
-        });
-
-        descBox.appendChild(btn);
       }
 
-      // Insert the description box directly after the header element
-      // This ensures it appears right below the title box
+      updateInlineButtonText();
+
+      if (isSubscribed) btn.classList.add("subscribed");
+
+      btn.style.padding = "10px 20px";
+      btn.style.fontSize = "15px";
+      btn.style.fontWeight = "500";
+      btn.style.borderRadius = "4px";
+      btn.style.cursor = "pointer";
+      btn.style.whiteSpace = "nowrap";
+
+      if (level4Ids.length === 0 && level3Ids.length === 0) {
+        btn.disabled = true;
+        btn.textContent = "No valid categories configured";
+        btn.title = "Check console for available category IDs";
+      }
+
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+
+        const subscribing = !btn.classList.contains("subscribed");
+        const allUpdates = [];
+
+        level4Ids.forEach((id) => {
+          allUpdates.push(
+            ajax(`/category/${id}/notifications`, {
+              type: "POST",
+              data: { notification_level: subscribing ? 4 : 1 },
+            })
+          );
+        });
+
+        level3Ids.forEach((id) => {
+          allUpdates.push(
+            ajax(`/category/${id}/notifications`, {
+              type: "POST",
+              data: { notification_level: subscribing ? 3 : 1 },
+            })
+          );
+        });
+
+        btn.disabled = true;
+        btn.innerHTML = subscribing ? "⏳ Subscribing..." : "⏳ Unsubscribing...";
+
+        Promise.all(allUpdates)
+          .then(() => {
+            if (subscribing) {
+              btn.classList.add("subscribed");
+            } else {
+              btn.classList.remove("subscribed");
+            }
+            updateInlineButtonText();
+          })
+          .catch((error) => {
+            console.error("Failed to update subscriptions:", error);
+            btn.innerHTML = "❌ Error - Try again";
+            setTimeout(() => {
+              updateInlineButtonText();
+            }, 3000);
+          })
+          .finally(() => {
+            btn.disabled = false;
+          });
+      });
+
+      buttonBox.appendChild(btn);
+
+      // Insert the button box directly after the header element
       if (header.parentNode) {
-        // Insert right after the header in the DOM
         if (header.nextSibling) {
-          header.parentNode.insertBefore(descBox, header.nextSibling);
+          header.parentNode.insertBefore(buttonBox, header.nextSibling);
         } else {
-          header.parentNode.appendChild(descBox);
+          header.parentNode.appendChild(buttonBox);
         }
-        console.log("✅ Description box inserted after header");
+        console.log("✅ Subscribe button box inserted after header");
       } else {
         console.log("❌ ERROR: Could not find header parent for insertion");
       }
