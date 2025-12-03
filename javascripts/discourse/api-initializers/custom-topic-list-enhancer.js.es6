@@ -414,7 +414,7 @@ export default apiInitializer("0.11.1", (api) => {
 
       const btn = document.createElement("button");
       btn.id = "solution-subscribe-button-inline";
-      btn.className = "btn btn-primary";
+      btn.className = "btn btn-default";
 
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
 
