@@ -517,6 +517,11 @@ export default apiInitializer("0.11.1", (api) => {
 
       console.log("✅ Subscribe button added to navigation controls");
 
+      // DEBUG: Log body classes to understand CSS selector matching
+      console.log("🔍 Body classes:", document.body.className);
+      console.log("🔍 Nav classes:", nav.className);
+      console.log("🔍 Nav parent classes:", nav.parentElement?.className);
+
       // DEBUG: Log navigation controls computed styles BEFORE
       const navStylesBefore = window.getComputedStyle(nav);
       console.log("🔍 Navigation controls computed styles (BEFORE):", {
@@ -526,16 +531,16 @@ export default apiInitializer("0.11.1", (api) => {
         alignItems: navStylesBefore.alignItems
       });
 
-      // FORCE styles via JavaScript since CSS isn't matching
-      nav.style.display = "flex";
-      nav.style.flexWrap = "nowrap";
-      nav.style.alignItems = "center";
-      nav.style.justifyContent = "flex-start";
-      nav.style.gap = "0.5em";
+      // FORCE styles via JavaScript with !important priority
+      nav.style.setProperty("display", "flex", "important");
+      nav.style.setProperty("flex-wrap", "nowrap", "important");
+      nav.style.setProperty("align-items", "center", "important");
+      nav.style.setProperty("justify-content", "flex-start", "important");
+      nav.style.setProperty("gap", "0.5em", "important");
 
-      wrapper.style.marginLeft = "auto";
-      wrapper.style.order = "999";
-      wrapper.style.flexShrink = "0";
+      wrapper.style.setProperty("margin-left", "auto", "important");
+      wrapper.style.setProperty("order", "999", "important");
+      wrapper.style.setProperty("flex-shrink", "0", "important");
 
       // DEBUG: Log styles AFTER forcing them
       const navStylesAfter = window.getComputedStyle(nav);
