@@ -323,6 +323,9 @@ export default apiInitializer("0.11.1", (api) => {
       header.style.display = "flex";
       header.style.justifyContent = "center";
       header.style.visibility = "visible";
+      header.style.boxSizing = "border-box";
+      header.style.width = "100%";
+      header.style.maxWidth = "100%";
 
       // Show header after styling is complete
       header.style.visibility = 'visible';
