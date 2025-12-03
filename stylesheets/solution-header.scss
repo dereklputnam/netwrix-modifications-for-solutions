@@ -99,14 +99,8 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-.category-title {
-  font-size: clamp(26px, 4vw, 32px) !important;
-  font-weight: 700 !important;
-  color: var(--primary) !important;
-  line-height: 1.2 !important;
-  max-width: 850px !important;
-  margin: 0 auto !important;
-}
+// Category title styling removed - now inherits from theme
+// Only text-align override is applied via JavaScript
 
 // Subscribe button wrapper positioning
 #solution-subscribe-wrapper {

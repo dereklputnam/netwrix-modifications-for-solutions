@@ -342,18 +342,12 @@ export default apiInitializer("0.11.1", (api) => {
         contents.style.visibility = "visible";
       }
 
-      // Style the title
+      // Style the title - let it inherit theme styles, only override text alignment
       const titleEl = header.querySelector(".category-title");
       if (titleEl) {
-        titleEl.style.fontSize = "clamp(22px, 3vw, 30px)";
-        titleEl.style.fontWeight = "700";
-        titleEl.style.color = "var(--primary)";
-        titleEl.style.lineHeight = "1.2";
-        titleEl.style.maxWidth = "850px";
-        titleEl.style.margin = "0 auto 16px";
+        // Keep center alignment override, let everything else inherit from theme
         titleEl.style.textAlign = "center";
-        titleEl.style.display = "block";
-        titleEl.style.width = "100%";
+        titleEl.style.margin = "0 auto 16px";
       }
 
       // Style the description to match community style
