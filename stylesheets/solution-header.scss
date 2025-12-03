@@ -118,22 +118,19 @@ body[class*="lists-"] .category-title-header {
 body[class*="/lists/"] .navigation-controls,
 body[class*="lists-"] .navigation-controls {
   padding-right: 0.5em;
+  // Force flexbox on navigation controls for solution pages
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
 }
 
-// Force proper flexbox behavior to keep button on right
-@media (max-width: 1500px) {
-  .navigation-controls {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    flex-wrap: nowrap !important;
-  }
-
-  #solution-subscribe-wrapper {
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
-    order: 999 !important;
-  }
+// Force button to stay on right side
+body[class*="/lists/"] #solution-subscribe-wrapper,
+body[class*="lists-"] #solution-subscribe-wrapper {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  order: 999 !important;
 }
 
 // Hide dropdown text until JavaScript replacement is complete - same approach as banner
