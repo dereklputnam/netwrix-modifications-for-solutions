@@ -516,6 +516,27 @@ export default apiInitializer("0.11.1", (api) => {
       nav.appendChild(wrapper);
 
       console.log("✅ Subscribe button added to navigation controls");
+
+      // DEBUG: Log navigation controls computed styles
+      const navStyles = window.getComputedStyle(nav);
+      console.log("🔍 Navigation controls computed styles:", {
+        display: navStyles.display,
+        flexWrap: navStyles.flexWrap,
+        justifyContent: navStyles.justifyContent,
+        alignItems: navStyles.alignItems
+      });
+
+      // DEBUG: Add visual indicator to navigation controls
+      nav.style.outline = "2px solid red";
+      nav.setAttribute("data-solution-debug", "styled");
+
+      // DEBUG: Log wrapper computed styles
+      const wrapperStyles = window.getComputedStyle(wrapper);
+      console.log("🔍 Wrapper computed styles:", {
+        marginLeft: wrapperStyles.marginLeft,
+        order: wrapperStyles.order,
+        flexShrink: wrapperStyles.flexShrink
+      });
     }
 
     // Handler for applying styles to current page
