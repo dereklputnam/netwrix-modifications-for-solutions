@@ -368,19 +368,19 @@ export default apiInitializer("0.11.1", (api) => {
       header.dataset.styled = 'true';
       header.dataset.currentSlug = currentConfig.slug;
 
-      // Create or update the subscribe button box below the header
-      console.log("About to call createSubscribeButtonBox");
-      createSubscribeButtonBox();
-      console.log("createSubscribeButtonBox call completed");
+      // Add subscribe button to navigation controls
+      console.log("About to call addSubscribeButtonToNav");
+      addSubscribeButtonToNav();
+      console.log("addSubscribeButtonToNav call completed");
     }
 
-    // Function to create subscribe button box (no description text)
-    function createSubscribeButtonBox() {
-      console.log("=== createSubscribeButtonBox called ===");
+    // Function to add subscribe button to navigation controls
+    function addSubscribeButtonToNav() {
+      console.log("=== addSubscribeButtonToNav called ===");
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        console.log("ERROR: No current config in createSubscribeButtonBox");
+        console.log("ERROR: No current config in addSubscribeButtonToNav");
         return;
       }
 
@@ -390,32 +390,24 @@ export default apiInitializer("0.11.1", (api) => {
         return;
       }
 
-      // Find the header to insert after it
-      const header = document.querySelector(".category-title-header");
-      if (!header) {
-        console.log("ERROR: Header not found for button box");
+      // Find the navigation controls (the white box on the right)
+      const nav = document.querySelector(".navigation-controls");
+      if (!nav) {
+        console.log("ERROR: Navigation controls not found");
         return;
       }
 
-      // Remove existing button box if present
-      const existingBox = document.querySelector("#solution-subscribe-button-box");
-      if (existingBox) {
-        console.log("Removing existing button box");
-        existingBox.remove();
+      // Remove existing button wrapper if present
+      const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
+      if (existingWrapper) {
+        console.log("Removing existing button wrapper");
+        existingWrapper.remove();
       }
 
-      // Create the button box (no description text, just the button)
-      const buttonBox = document.createElement("div");
-      buttonBox.id = "solution-subscribe-button-box";
-      buttonBox.style.background = "var(--secondary)";
-      buttonBox.style.border = "1px solid var(--primary-low)";
-      buttonBox.style.borderRadius = "8px";
-      buttonBox.style.padding = "20px";
-      buttonBox.style.marginBottom = "20px";
-      buttonBox.style.display = "flex";
-      buttonBox.style.justifyContent = "center";
-      buttonBox.style.alignItems = "center";
-      buttonBox.style.textAlign = "center";
+      // Create wrapper for the button
+      const wrapper = document.createElement("div");
+      wrapper.id = "solution-subscribe-wrapper";
+      wrapper.style.marginLeft = "auto";
 
       // Create subscribe button
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
@@ -528,25 +520,10 @@ export default apiInitializer("0.11.1", (api) => {
           });
       });
 
-      buttonBox.appendChild(btn);
+      wrapper.appendChild(btn);
+      nav.appendChild(wrapper);
 
-      // Insert the button box directly after the header element
-      if (header.parentNode) {
-        if (header.nextSibling) {
-          header.parentNode.insertBefore(buttonBox, header.nextSibling);
-        } else {
-          header.parentNode.appendChild(buttonBox);
-        }
-        console.log("✅ Subscribe button box inserted after header");
-      } else {
-        console.log("❌ ERROR: Could not find header parent for insertion");
-      }
-    }
-
-    // Clean up any old subscribe buttons from navigation (no longer used)
-    function removeOldSubscribeButton() {
-      const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-      if (existingWrapper) existingWrapper.remove();
+      console.log("✅ Subscribe button added to navigation controls");
     }
 
     // Handler for applying styles to current page
@@ -555,7 +532,6 @@ export default apiInitializer("0.11.1", (api) => {
       if (header) {
         styleHeader(header, true); // Force update to handle page navigation
       }
-      removeOldSubscribeButton(); // Clean up any old navigation buttons
       updateDropdownText();
     }
 
