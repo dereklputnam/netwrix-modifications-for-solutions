@@ -115,9 +115,12 @@ body[class*="lists-"] .category-title-header {
 }
 
 // Adjust navigation controls padding when on solution pages
-body[class*="/lists/"] .navigation-controls,
-body[class*="lists-"] .navigation-controls,
-.list-controls .navigation-controls {
+body[class*="/lists/"] .navigation-container .navigation-controls,
+body[class*="lists-"] .navigation-container .navigation-controls,
+body[class*="/lists/"] .list-controls .navigation-controls,
+body[class*="lists-"] .list-controls .navigation-controls,
+.list-controls .navigation-controls,
+.navigation-container .navigation-controls {
   padding-right: 0.5em !important;
   // Force flexbox on navigation controls for solution pages
   display: flex !important;
