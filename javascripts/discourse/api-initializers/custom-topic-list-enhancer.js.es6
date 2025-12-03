@@ -338,13 +338,14 @@ export default apiInitializer("0.11.1", (api) => {
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
         contents.style.maxWidth = "1100px";
+        contents.style.textAlign = "center";
         contents.style.visibility = "visible";
       }
 
-      // Style the title - let it inherit theme styles completely (including left alignment)
+      // Style the title - inherit theme styles but override alignment to center
       const titleEl = header.querySelector(".category-title");
       if (titleEl) {
-        // Only set bottom margin for spacing, everything else inherits from theme
+        titleEl.style.textAlign = "center";
         titleEl.style.marginBottom = "16px";
       }
 
@@ -355,7 +356,8 @@ export default apiInitializer("0.11.1", (api) => {
         descEl.style.color = "var(--primary-high)";
         descEl.style.lineHeight = "1.6";
         descEl.style.maxWidth = "1000px";
-        descEl.style.margin = "0";
+        descEl.style.margin = "0 auto";
+        descEl.style.textAlign = "center";
       }
 
       // Mark as styled and remember current solution
