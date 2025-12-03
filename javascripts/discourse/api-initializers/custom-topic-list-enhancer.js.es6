@@ -517,26 +517,45 @@ export default apiInitializer("0.11.1", (api) => {
 
       console.log("✅ Subscribe button added to navigation controls");
 
-      // DEBUG: Log navigation controls computed styles
-      const navStyles = window.getComputedStyle(nav);
-      console.log("🔍 Navigation controls computed styles:", {
-        display: navStyles.display,
-        flexWrap: navStyles.flexWrap,
-        justifyContent: navStyles.justifyContent,
-        alignItems: navStyles.alignItems
+      // DEBUG: Log navigation controls computed styles BEFORE
+      const navStylesBefore = window.getComputedStyle(nav);
+      console.log("🔍 Navigation controls computed styles (BEFORE):", {
+        display: navStylesBefore.display,
+        flexWrap: navStylesBefore.flexWrap,
+        justifyContent: navStylesBefore.justifyContent,
+        alignItems: navStylesBefore.alignItems
       });
 
-      // DEBUG: Add visual indicator to navigation controls
+      // FORCE styles via JavaScript since CSS isn't matching
+      nav.style.display = "flex";
+      nav.style.flexWrap = "nowrap";
+      nav.style.alignItems = "center";
+      nav.style.justifyContent = "flex-start";
+      nav.style.gap = "0.5em";
+
+      wrapper.style.marginLeft = "auto";
+      wrapper.style.order = "999";
+      wrapper.style.flexShrink = "0";
+
+      // DEBUG: Log styles AFTER forcing them
+      const navStylesAfter = window.getComputedStyle(nav);
+      console.log("🔍 Navigation controls computed styles (AFTER):", {
+        display: navStylesAfter.display,
+        flexWrap: navStylesAfter.flexWrap,
+        justifyContent: navStylesAfter.justifyContent,
+        alignItems: navStylesAfter.alignItems
+      });
+
+      const wrapperStylesAfter = window.getComputedStyle(wrapper);
+      console.log("🔍 Wrapper computed styles (AFTER):", {
+        marginLeft: wrapperStylesAfter.marginLeft,
+        order: wrapperStylesAfter.order,
+        flexShrink: wrapperStylesAfter.flexShrink
+      });
+
+      // DEBUG: Add visual indicator
       nav.style.outline = "2px solid red";
       nav.setAttribute("data-solution-debug", "styled");
-
-      // DEBUG: Log wrapper computed styles
-      const wrapperStyles = window.getComputedStyle(wrapper);
-      console.log("🔍 Wrapper computed styles:", {
-        marginLeft: wrapperStyles.marginLeft,
-        order: wrapperStyles.order,
-        flexShrink: wrapperStyles.flexShrink
-      });
     }
 
     // Handler for applying styles to current page
