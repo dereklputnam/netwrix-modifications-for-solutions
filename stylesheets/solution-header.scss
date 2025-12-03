@@ -114,6 +114,12 @@ body[class*="lists-"] .category-title-header {
   flex-shrink: 0;
 }
 
+// Adjust navigation controls padding when on solution pages
+body[class*="/lists/"] .navigation-controls,
+body[class*="lists-"] .navigation-controls {
+  padding-right: 0.5em;
+}
+
 // Hide dropdown text until JavaScript replacement is complete - same approach as banner
 .custom-list-dropdown {
   .select-kit-selected-name .name,
