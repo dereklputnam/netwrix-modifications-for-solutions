@@ -116,21 +116,25 @@ body[class*="lists-"] .category-title-header {
 
 // Adjust navigation controls padding when on solution pages
 body[class*="/lists/"] .navigation-controls,
-body[class*="lists-"] .navigation-controls {
-  padding-right: 0.5em;
+body[class*="lists-"] .navigation-controls,
+.list-controls .navigation-controls {
+  padding-right: 0.5em !important;
   // Force flexbox on navigation controls for solution pages
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
   flex-wrap: nowrap !important;
+  gap: 0.5em !important;
 }
 
 // Force button to stay on right side
 body[class*="/lists/"] #solution-subscribe-wrapper,
-body[class*="lists-"] #solution-subscribe-wrapper {
+body[class*="lists-"] #solution-subscribe-wrapper,
+.list-controls #solution-subscribe-wrapper {
   margin-left: auto !important;
   flex-shrink: 0 !important;
   order: 999 !important;
+  display: flex !important;
 }
 
 // Hide dropdown text until JavaScript replacement is complete - same approach as banner
