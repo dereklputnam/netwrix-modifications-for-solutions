@@ -108,51 +108,11 @@ body[class*="lists-"] .category-title-header {
   margin: 0 auto !important;
 }
 
-// Solution description box styling
-#solution-description-box {
-  background: var(--secondary) !important;
-  border: 1px solid var(--primary-low) !important;
-  border-radius: 8px !important;
-  padding: 20px !important;
-  margin-bottom: 20px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  text-align: center !important;
-
-  .solution-description-text {
-    font-size: 15px !important;
-    color: var(--primary) !important;
-    line-height: 1.6 !important;
-    margin-bottom: 16px !important;
-    max-width: 800px !important;
-  }
-
-  #solution-subscribe-button-inline {
-    padding: 10px 20px !important;
-    font-size: 15px !important;
-    font-weight: 500 !important;
-    border-radius: 4px !important;
-    cursor: pointer !important;
-    white-space: nowrap !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-
-    &.subscribed {
-      background-color: var(--success) !important;
-      color: var(--secondary) !important;
-      border-color: var(--success) !important;
-    }
-
-    svg {
-      width: 16px !important;
-      height: 16px !important;
-    }
-  }
+// Subscribe button wrapper positioning
+#solution-subscribe-wrapper {
+  margin-left: auto;
+  flex-shrink: 0;
 }
-
-// Old subscribe button styles removed - button is now inline in description box
 
 // Hide dropdown text until JavaScript replacement is complete - same approach as banner
 .custom-list-dropdown {

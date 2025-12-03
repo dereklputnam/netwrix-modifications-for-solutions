@@ -407,7 +407,6 @@ export default apiInitializer("0.11.1", (api) => {
       // Create wrapper for the button
       const wrapper = document.createElement("div");
       wrapper.id = "solution-subscribe-wrapper";
-      wrapper.style.marginLeft = "auto";
 
       // Create subscribe button
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
@@ -458,13 +457,6 @@ export default apiInitializer("0.11.1", (api) => {
       window.addEventListener('resize', resizeHandler);
 
       if (isSubscribed) btn.classList.add("subscribed");
-
-      btn.style.padding = "10px 20px";
-      btn.style.fontSize = "15px";
-      btn.style.fontWeight = "500";
-      btn.style.borderRadius = "4px";
-      btn.style.cursor = "pointer";
-      btn.style.whiteSpace = "nowrap";
 
       if (level4Ids.length === 0 && level3Ids.length === 0) {
         btn.disabled = true;
