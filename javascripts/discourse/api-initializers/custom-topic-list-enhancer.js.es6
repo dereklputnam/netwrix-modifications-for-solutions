@@ -517,34 +517,54 @@ export default apiInitializer("0.11.1", (api) => {
 
       console.log("✅ Subscribe button added to navigation controls");
 
-      // DEBUG: Log body classes to understand CSS selector matching
-      console.log("🔍 Body classes:", document.body.className);
-      console.log("🔍 Nav classes:", nav.className);
-      console.log("🔍 Nav parent classes:", nav.parentElement?.className);
+      // Apply the working alignment solution from original repo
+      function forceNavigationAlignment() {
+        // Target the full container hierarchy
+        const listControls = document.querySelector('.list-controls');
+        const container = listControls?.querySelector('.container');
+        const navigationContainer = container?.querySelector('.navigation-container');
+        const categoryBreadcrumb = navigationContainer?.querySelector('.category-breadcrumb');
+        const navigationControls = navigationContainer?.querySelector('.navigation-controls');
+        const subscribeWrapper = navigationControls?.querySelector('#solution-subscribe-wrapper');
 
-      // DEBUG: Log navigation controls computed styles BEFORE
-      const navStylesBefore = window.getComputedStyle(nav);
-      console.log("🔍 Navigation controls computed styles (BEFORE):", {
-        display: navStylesBefore.display,
-        flexWrap: navStylesBefore.flexWrap,
-        justifyContent: navStylesBefore.justifyContent,
-        alignItems: navStylesBefore.alignItems
-      });
+        if (listControls) {
+          listControls.style.width = '100%';
+        }
 
-      // FORCE styles via JavaScript with !important priority
-      nav.style.setProperty("display", "flex", "important");
-      nav.style.setProperty("flex-wrap", "nowrap", "important");
-      nav.style.setProperty("align-items", "center", "important");
-      nav.style.setProperty("justify-content", "flex-start", "important");
-      nav.style.setProperty("gap", "0.5em", "important");
+        if (container) {
+          container.style.width = '100%';
+          container.style.maxWidth = 'none';
+        }
 
-      wrapper.style.setProperty("display", "flex", "important");
-      wrapper.style.setProperty("margin-left", "auto", "important");
-      wrapper.style.setProperty("order", "999", "important");
-      wrapper.style.setProperty("flex-shrink", "0", "important");
+        if (navigationContainer) {
+          navigationContainer.style.display = 'flex';
+          navigationContainer.style.justifyContent = 'space-between';
+          navigationContainer.style.alignItems = 'center';
+          navigationContainer.style.width = '100%';
+        }
 
-      // Also try adding a minimum width to ensure it takes space
-      wrapper.style.setProperty("min-width", "fit-content", "important");
+        if (categoryBreadcrumb) {
+          categoryBreadcrumb.style.display = 'flex';
+          categoryBreadcrumb.style.alignItems = 'center';
+          categoryBreadcrumb.style.flexGrow = '1';
+        }
+
+        if (navigationControls) {
+          navigationControls.style.display = 'flex';
+          navigationControls.style.alignItems = 'center';
+          navigationControls.style.marginLeft = 'auto';
+          navigationControls.style.flexShrink = '0';
+        }
+
+        if (subscribeWrapper) {
+          subscribeWrapper.style.marginLeft = 'auto';
+          subscribeWrapper.style.flexShrink = '0';
+        }
+      }
+
+      // Apply alignment immediately and on resize
+      forceNavigationAlignment();
+      window.addEventListener('resize', forceNavigationAlignment);
 
       // DEBUG: Log styles AFTER forcing them
       const navStylesAfter = window.getComputedStyle(nav);
