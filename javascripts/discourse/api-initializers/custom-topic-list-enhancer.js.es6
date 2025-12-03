@@ -538,9 +538,13 @@ export default apiInitializer("0.11.1", (api) => {
       nav.style.setProperty("justify-content", "flex-start", "important");
       nav.style.setProperty("gap", "0.5em", "important");
 
+      wrapper.style.setProperty("display", "flex", "important");
       wrapper.style.setProperty("margin-left", "auto", "important");
       wrapper.style.setProperty("order", "999", "important");
       wrapper.style.setProperty("flex-shrink", "0", "important");
+
+      // Also try adding a minimum width to ensure it takes space
+      wrapper.style.setProperty("min-width", "fit-content", "important");
 
       // DEBUG: Log styles AFTER forcing them
       const navStylesAfter = window.getComputedStyle(nav);
