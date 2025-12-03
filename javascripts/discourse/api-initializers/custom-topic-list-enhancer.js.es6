@@ -338,16 +338,14 @@ export default apiInitializer("0.11.1", (api) => {
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
         contents.style.maxWidth = "1100px";
-        contents.style.textAlign = "center";
         contents.style.visibility = "visible";
       }
 
-      // Style the title - let it inherit theme styles, only override text alignment
+      // Style the title - let it inherit theme styles completely (including left alignment)
       const titleEl = header.querySelector(".category-title");
       if (titleEl) {
-        // Keep center alignment override, let everything else inherit from theme
-        titleEl.style.textAlign = "center";
-        titleEl.style.margin = "0 auto 16px";
+        // Only set bottom margin for spacing, everything else inherits from theme
+        titleEl.style.marginBottom = "16px";
       }
 
       // Style the description to match community style
@@ -357,8 +355,7 @@ export default apiInitializer("0.11.1", (api) => {
         descEl.style.color = "var(--primary-high)";
         descEl.style.lineHeight = "1.6";
         descEl.style.maxWidth = "1000px";
-        descEl.style.margin = "0 auto";
-        descEl.style.textAlign = "center";
+        descEl.style.margin = "0";
       }
 
       // Mark as styled and remember current solution
