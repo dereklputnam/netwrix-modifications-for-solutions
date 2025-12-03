@@ -345,8 +345,10 @@ export default apiInitializer("0.11.1", (api) => {
       // Style the title - inherit theme styles but override alignment to center
       const titleEl = header.querySelector(".category-title");
       if (titleEl) {
+        titleEl.style.display = "block";
         titleEl.style.textAlign = "center";
         titleEl.style.marginBottom = "16px";
+        titleEl.style.width = "100%";
       }
 
       // Style the description to match community style
