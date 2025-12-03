@@ -114,12 +114,6 @@ body[class*="lists-"] .category-title-header {
   flex-shrink: 0;
 }
 
-// DEBUG: Visual indicator that our CSS is loading
-body[class*="/lists/"] .navigation-container,
-body[class*="lists-"] .navigation-container {
-  border-top: 3px solid lime !important;
-}
-
 // Adjust navigation controls padding when on solution pages
 body[class*="/lists/"] .navigation-container .navigation-controls,
 body[class*="lists-"] .navigation-container .navigation-controls,
@@ -134,8 +128,6 @@ body[class*="lists-"] .list-controls .navigation-controls,
   justify-content: flex-start !important;
   flex-wrap: nowrap !important;
   gap: 0.5em !important;
-  // DEBUG: Visual marker
-  border-bottom: 3px solid cyan !important;
 }
 
 // Force button to stay on right side

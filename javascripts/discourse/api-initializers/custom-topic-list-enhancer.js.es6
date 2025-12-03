@@ -315,9 +315,9 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Apply header container styling - white box with purple top border
       header.style.background = "var(--secondary)";
-      header.style.border = "1px solid var(--primary-low)";
+      header.style.border = "1px solid var(--primary)";
       header.style.borderTop = "6px solid var(--tertiary)"; // Purple top border
-      header.style.borderRadius = "8px";
+      header.style.borderRadius = "0";
       header.style.padding = "30px 20px";
       header.style.marginBottom = "12px";
       header.style.display = "flex";
@@ -353,13 +353,13 @@ export default apiInitializer("0.11.1", (api) => {
         titleEl.style.width = "100%";
       }
 
-      // Style the description
+      // Style the description to match community style
       const descEl = header.querySelector(".category-description");
       if (descEl) {
-        descEl.style.fontSize = "15px";
-        descEl.style.color = "var(--primary)";
+        descEl.style.fontSize = "17px";
+        descEl.style.color = "var(--primary-high)";
         descEl.style.lineHeight = "1.6";
-        descEl.style.maxWidth = "850px";
+        descEl.style.maxWidth = "1000px";
         descEl.style.margin = "0 auto";
         descEl.style.textAlign = "center";
       }
@@ -565,26 +565,6 @@ export default apiInitializer("0.11.1", (api) => {
       // Apply alignment immediately and on resize
       forceNavigationAlignment();
       window.addEventListener('resize', forceNavigationAlignment);
-
-      // DEBUG: Log styles AFTER forcing them
-      const navStylesAfter = window.getComputedStyle(nav);
-      console.log("🔍 Navigation controls computed styles (AFTER):", {
-        display: navStylesAfter.display,
-        flexWrap: navStylesAfter.flexWrap,
-        justifyContent: navStylesAfter.justifyContent,
-        alignItems: navStylesAfter.alignItems
-      });
-
-      const wrapperStylesAfter = window.getComputedStyle(wrapper);
-      console.log("🔍 Wrapper computed styles (AFTER):", {
-        marginLeft: wrapperStylesAfter.marginLeft,
-        order: wrapperStylesAfter.order,
-        flexShrink: wrapperStylesAfter.flexShrink
-      });
-
-      // DEBUG: Add visual indicator
-      nav.style.outline = "2px solid red";
-      nav.setAttribute("data-solution-debug", "styled");
     }
 
     // Handler for applying styles to current page
