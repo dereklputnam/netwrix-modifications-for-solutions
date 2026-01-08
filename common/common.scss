@@ -1,30 +1,8 @@
 // STAGING APPROACH: Minimal CSS - complex rules moved to solution-header.scss
 
-// Default: Show Solutions dropdown everywhere (when hide_custom_lists_dropdown is NOT enabled)
+// Ensure Solutions dropdown remains visible with higher specificity
 .category-breadcrumb .custom-list-dropdown,
 .category-breadcrumb li:has(.custom-list-dropdown) {
   display: inline-block !important;
   visibility: visible !important;
-}
-
-// When hide_custom_lists_dropdown is enabled: hide dropdown everywhere EXCEPT /lists/ pages
-body.hide-custom-lists-dropdown {
-  // Hide on all pages by default
-  .category-breadcrumb .custom-list-dropdown,
-  .category-breadcrumb li:has(.custom-list-dropdown) {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
-  // BUT always show on /lists/ pages regardless of setting
-  &[data-discourse-route*="lists"],
-  &[class*="lists"],
-  &.custom-lists,
-  &.lists-page {
-    .category-breadcrumb .custom-list-dropdown,
-    .category-breadcrumb li:has(.custom-list-dropdown) {
-      display: inline-block !important;
-      visibility: visible !important;
-    }
-  }
 }

@@ -2,10 +2,6 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // Apply hide-custom-lists-dropdown class to body if setting is enabled
-  if (settings.hide_custom_lists_dropdown) {
-    document.body.classList.add('hide-custom-lists-dropdown');
-  }
 
   // ULTRA-AGGRESSIVE navigation hiding with JavaScript fallback and persistent enforcement
   const aggressiveHideNavElements = () => {
