@@ -2,13 +2,14 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
+
   // ULTRA-AGGRESSIVE navigation hiding with JavaScript fallback and persistent enforcement
   const aggressiveHideNavElements = () => {
-    // Only hide elements if we're on a /lists/ page
+    // Only hide elements if we're on a /lists/ page  
     if (!window.location.pathname.includes('/lists/') && !window.location.pathname.includes('/community/lists/')) {
       return;
     }
-
+    
     // Ultra-aggressive JavaScript hiding with multiple properties - MAIN NAVIGATION
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => {
@@ -24,7 +25,7 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('hidden', 'true');
       item.setAttribute('aria-hidden', 'true');
     });
-
+    
     // Ultra-aggressive JavaScript hiding - SORTING NAVIGATION ELEMENTS
     const sortingElements = document.querySelectorAll('.navigation-controls .nav-pills .nav-item, .topic-list-header .sortable, .period-chooser, .list-controls .nav-pills');
     sortingElements.forEach(item => {
@@ -40,7 +41,7 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('hidden', 'true');
       item.setAttribute('aria-hidden', 'true');
     });
-
+    
     // Hide category and tag filter dropdowns with aggressive properties
     const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
     filterDropdowns.forEach(item => {
@@ -56,7 +57,7 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('hidden', 'true');
       item.setAttribute('aria-hidden', 'true');
     });
-
+    
     // Hide parent <li> elements that contain category/tag dropdowns (but not custom lists) - match staging exactly
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
@@ -111,40 +112,39 @@ export default apiInitializer("0.11.1", (api) => {
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
-    const slugMatch = currentPath.match(/^\/lists\/([^\/?#]+)/);
-    if (!slugMatch) return null;
+
+    // Match both /lists/ and /community/lists/ patterns
+    const slugMatch = currentPath.match(/\/lists\/([^\/?#]+)/);
+
+    if (!slugMatch) {
+      return null;
+    }
 
     const slug = slugMatch[1];
-    
+
     // First try to get from theme settings (has subscription fields)
     let solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
-    
+
     // If not found in theme settings, try plugin data as fallback
     if (!solutionConfig) {
       const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
       solutionConfig = customTopicLists.find(list => list.slug === slug);
     }
-    
+
     if (!solutionConfig) {
-      if (isAdmin || isDevelopment) {
-        console.log(`No solution configuration found for slug: ${slug}`);
-        console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
-        const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-        console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
-      }
+      console.error(`❌ No solution configuration found for slug: ${slug}`);
+      const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
+      console.error(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
+      console.error(`Available in plugin:`, customTopicLists?.map(s => s.slug));
       return null;
     }
 
-    // Reduced logging for cleaner console
     return { slug, solutionConfig };
   }
 
   // Check if we're on a solution page initially
   const initialConfig = getCurrentSolutionConfig();
-  if (!initialConfig && (isAdmin || isDevelopment)) {
-    console.log("Not on a solution page. Navigate to /lists/[slug] to test subscription functionality.");
-    // Don't return here - continue to setup page change handlers
-  }
+  // Don't return here - continue to setup page change handlers
 
   // Function to get category IDs for current solution
   function getCategoryIds(solutionConfig) {
@@ -185,10 +185,6 @@ export default apiInitializer("0.11.1", (api) => {
       if (invalidLevel3.length > 0 && (isAdmin || isDevelopment)) {
         console.error(`❌ Invalid Level 3 category IDs for ${configTitle}: ${invalidLevel3.join(', ')}`);
       }
-
-      const validLevel4Names = level4Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
-      const validLevel3Names = level3Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
-
     }
 
     // Initial validation only in development/admin mode
@@ -259,10 +255,14 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Header styling function for reuse
     function styleHeader(header, forceUpdate = false) {
-      if (!header) return;
+      if (!header) {
+        return;
+      }
 
       const currentConfig = getCurrentSolutionConfig();
-      if (!currentConfig || !currentConfig.solutionConfig) return;
+      if (!currentConfig || !currentConfig.solutionConfig) {
+        return;
+      }
 
       // If forcing update, clear the styled flag and previous slug
       if (forceUpdate && header.dataset) {
@@ -282,24 +282,24 @@ export default apiInitializer("0.11.1", (api) => {
       header.innerHTML = `
         <div class="category-title-contents">
           <h1 class="category-title">${title}<br>News & Security Advisories</h1>
-          <div class="category-title-description">
-            <div class="solution-subtext">
-              ${desc}
-            </div>
-          </div>
+          <div class="category-description">${desc}</div>
         </div>
       `;
 
-      // Apply header container styling - match staging exactly
+      // Apply header container styling - white box with purple top border
       if (header.style) {
         header.style.background = "var(--secondary)";
-        header.style.borderTop = "6px solid var(--tertiary)";
-        header.style.borderRadius = "6px";
-        header.style.padding = "0px";
-        header.style.marginBottom = "20px";
+        header.style.border = "1px solid var(--primary)";
+        header.style.borderTop = "6px solid var(--tertiary)"; // Purple top border
+        header.style.borderRadius = "0";
+        header.style.padding = "30px 20px";
+        header.style.marginBottom = "12px";
         header.style.display = "flex";
         header.style.justifyContent = "center";
         header.style.visibility = "visible";
+        header.style.boxSizing = "border-box";
+        header.style.width = "100%";
+        header.style.maxWidth = "100%";
       }
 
       // Show header after styling is complete
@@ -310,10 +310,10 @@ export default apiInitializer("0.11.1", (api) => {
         header.classList.add("header-styled");
       }
 
-      // Style the contents wrapper - increased width to allow subtext expansion
+      // Style the contents wrapper
       const contents = header.querySelector(".category-title-contents");
       if (contents && contents.style) {
-        contents.style.padding = "20px";
+        contents.style.padding = "0";
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
         contents.style.maxWidth = "1100px";
@@ -321,29 +321,24 @@ export default apiInitializer("0.11.1", (api) => {
         contents.style.visibility = "visible";
       }
 
-      // Style the title - match staging exactly
+      // Style the title - inherit theme styles but override alignment to center
       const titleEl = header.querySelector(".category-title");
       if (titleEl && titleEl.style) {
-        titleEl.style.fontSize = "clamp(22px, 3vw, 30px)";
-        titleEl.style.fontWeight = "700";
-        titleEl.style.color = "var(--primary)";
-        titleEl.style.lineHeight = "1.2";
-        titleEl.style.maxWidth = "850px";
-        titleEl.style.margin = "0px auto 16px";
-        titleEl.style.textAlign = "center";
         titleEl.style.display = "block";
+        titleEl.style.textAlign = "center";
+        titleEl.style.marginBottom = "16px";
         titleEl.style.width = "100%";
       }
 
-      // Style the description - expanded width for two-line layout
-      const subtext = header.querySelector(".solution-subtext");
-      if (subtext && subtext.style) {
-        subtext.style.fontSize = "17px";
-        subtext.style.color = "var(--primary-high)";
-        subtext.style.lineHeight = "1.6";
-        subtext.style.maxWidth = "1000px";
-        subtext.style.margin = "0px auto";
-        subtext.style.textAlign = "center";
+      // Style the description to match community style
+      const descEl = header.querySelector(".category-description");
+      if (descEl && descEl.style) {
+        descEl.style.fontSize = "17px";
+        descEl.style.color = "var(--primary-high)";
+        descEl.style.lineHeight = "1.6";
+        descEl.style.maxWidth = "1000px";
+        descEl.style.margin = "0 auto";
+        descEl.style.textAlign = "center";
       }
 
       // Mark as styled and remember current solution
@@ -351,45 +346,54 @@ export default apiInitializer("0.11.1", (api) => {
         header.dataset.styled = 'true';
         header.dataset.currentSlug = currentConfig.slug;
       }
+
+      // Add subscribe button to navigation controls
+      addSubscribeButtonToNav();
     }
 
-    // Function to update subscribe button for current solution
-    function updateSubscribeButton() {
-      const nav = document.querySelector(".navigation-controls");
-      if (!nav || !currentUser) return; // Only show subscribe button if user is logged in
-
+    // Function to add subscribe button to navigation controls
+    function addSubscribeButtonToNav() {
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        // Remove subscribe button if not on solution page
-        const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-        if (existingWrapper) existingWrapper.remove();
         return;
       }
-      
-      // Remove existing button
+
+      // Only show button if user is logged in
+      if (!currentUser) {
+        return;
+      }
+
+      // Find the navigation controls (the white box on the right)
+      const nav = document.querySelector(".navigation-controls");
+      if (!nav) {
+        return;
+      }
+
+      // Remove existing button wrapper if present
       const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
-      if (existingWrapper) existingWrapper.remove();
-      
+      if (existingWrapper) {
+        existingWrapper.remove();
+      }
+
+      // Create wrapper for the button
+      const wrapper = document.createElement("div");
+      wrapper.id = "solution-subscribe-wrapper";
+
+      // Create subscribe button
       const { level4Ids, level3Ids } = getCategoryIds(currentConfig.solutionConfig);
       const isSubscribed = isSubscribedToSolution(currentConfig.solutionConfig);
 
-      nav.style.display = "flex";
-      nav.style.alignItems = "center";
-
-      const wrapper = document.createElement("div");
-      wrapper.id = "solution-subscribe-wrapper";
-      wrapper.style.marginLeft = "auto";
-
       const btn = document.createElement("button");
-      btn.id = "solution-subscribe-button";
+      btn.id = "solution-subscribe-button-inline";
       btn.className = "btn btn-default";
+
       const bellIcon = '<svg class="fa d-icon d-icon-d-regular svg-icon svg-string" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><use href="#far-bell"></use></svg>';
-      
-      // Dynamic button text based on window width with ultra-compact mode
-      function updateButtonText() {
+
+      // Dynamic button text based on window width with responsive breakpoints
+      function updateInlineButtonText() {
         const windowWidth = window.innerWidth;
         const isCurrentlySubscribed = btn.classList.contains("subscribed");
-        
+
         if (windowWidth > 1200) {
           // Full text mode - above 1200px
           if (isCurrentlySubscribed) {
@@ -415,16 +419,74 @@ export default apiInitializer("0.11.1", (api) => {
           }
         }
       }
-      
+
       // Set initial text
-      updateButtonText();
-      
+      updateInlineButtonText();
+
       // Update text on window resize
-      const resizeHandler = () => updateButtonText();
+      const resizeHandler = () => updateInlineButtonText();
       window.addEventListener('resize', resizeHandler);
+
       if (isSubscribed) btn.classList.add("subscribed");
-      
-      // FORCE navigation alignment with JavaScript since CSS isn't working
+
+      if (level4Ids.length === 0 && level3Ids.length === 0) {
+        btn.disabled = true;
+        btn.textContent = "No valid categories configured";
+        btn.title = "Check console for available category IDs";
+      }
+
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+
+        const subscribing = !btn.classList.contains("subscribed");
+        const allUpdates = [];
+
+        level4Ids.forEach((id) => {
+          allUpdates.push(
+            ajax(`/category/${id}/notifications`, {
+              type: "POST",
+              data: { notification_level: subscribing ? 4 : 1 },
+            })
+          );
+        });
+
+        level3Ids.forEach((id) => {
+          allUpdates.push(
+            ajax(`/category/${id}/notifications`, {
+              type: "POST",
+              data: { notification_level: subscribing ? 3 : 1 },
+            })
+          );
+        });
+
+        btn.disabled = true;
+        btn.innerHTML = subscribing ? "⏳ Subscribing..." : "⏳ Unsubscribing...";
+
+        Promise.all(allUpdates)
+          .then(() => {
+            if (subscribing) {
+              btn.classList.add("subscribed");
+            } else {
+              btn.classList.remove("subscribed");
+            }
+            updateInlineButtonText();
+          })
+          .catch((error) => {
+            console.error("Failed to update subscriptions:", error);
+            btn.innerHTML = "❌ Error - Try again";
+            setTimeout(() => {
+              updateInlineButtonText();
+            }, 3000);
+          })
+          .finally(() => {
+            btn.disabled = false;
+          });
+      });
+
+      wrapper.appendChild(btn);
+      nav.appendChild(wrapper);
+
+      // Apply the working alignment solution from original repo
       function forceNavigationAlignment() {
         // Target the full container hierarchy
         const listControls = document.querySelector('.list-controls');
@@ -468,68 +530,10 @@ export default apiInitializer("0.11.1", (api) => {
           subscribeWrapper.style.flexShrink = '0';
         }
       }
-      
+
       // Apply alignment immediately and on resize
       forceNavigationAlignment();
       window.addEventListener('resize', forceNavigationAlignment);
-
-      if (level4Ids.length === 0 && level3Ids.length === 0) {
-        btn.disabled = true;
-        btn.textContent = "No valid categories configured";
-        btn.title = "Check console for available category IDs";
-      }
-
-      btn.addEventListener("click", () => {
-        if (btn.disabled) return;
-        
-        const subscribing = !btn.classList.contains("subscribed");
-        const allUpdates = [];
-
-        level4Ids.forEach((id) => {
-          allUpdates.push(
-            ajax(`/category/${id}/notifications`, {
-              type: "POST",
-              data: { notification_level: subscribing ? 4 : 1 },
-            })
-          );
-        });
-
-        level3Ids.forEach((id) => {
-          allUpdates.push(
-            ajax(`/category/${id}/notifications`, {
-              type: "POST",
-              data: { notification_level: subscribing ? 3 : 1 },
-            })
-          );
-        });
-
-        btn.disabled = true;
-        btn.innerHTML = subscribing ? "⏳ Subscribing..." : "⏳ Unsubscribing...";
-
-        Promise.all(allUpdates)
-          .then(() => {
-            // Update subscription status and refresh button text
-            if (subscribing) {
-              btn.classList.add("subscribed");
-            } else {
-              btn.classList.remove("subscribed");
-            }
-            updateButtonText(); // Use the dynamic text function
-          })
-          .catch((error) => {
-            console.error("Failed to update subscriptions:", error);
-            btn.innerHTML = "❌ Error - Try again";
-            setTimeout(() => {
-              updateButtonText(); // Use the dynamic text function
-            }, 3000);
-          })
-          .finally(() => {
-            btn.disabled = false;
-          });
-      });
-
-      wrapper.appendChild(btn);
-      nav.appendChild(wrapper);
     }
 
     // Handler for applying styles to current page
@@ -538,7 +542,6 @@ export default apiInitializer("0.11.1", (api) => {
       if (header) {
         styleHeader(header, true); // Force update to handle page navigation
       }
-      updateSubscribeButton();
       updateDropdownText();
     }
 
@@ -570,12 +573,10 @@ export default apiInitializer("0.11.1", (api) => {
       // Also run with multiple timeouts for persistent enforcement
       setTimeout(() => {
         aggressiveHideNavElements();
-        
+
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();
           if (currentConfig) {
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            // Reduced logging for cleaner console
             applyCurrentPageStyles();
           }
         }
@@ -644,13 +645,13 @@ export default apiInitializer("0.11.1", (api) => {
           }
         }
       });
-
+      
       if (shouldUpdate) {
         setTimeout(() => {
           applyCurrentPageStyles();
         }, 10); // Faster response
       }
-
+      
       if (shouldHideNav) {
         // Immediate hiding when navigation elements are detected
         aggressiveHideNavElements();

@@ -63,3 +63,8 @@ netwrix_solutions:
       level_3_categories:
         type: string
         description: "Comma-separated category IDs for 'Watching' notifications (e.g., '3,7,15')"
+
+hide_custom_lists_dropdown:
+  type: bool
+  default: false
+  description: "Hide the Custom Lists dropdown from the navigation breadcrumb. Enable this if you want to remove the dropdown but keep the Custom Lists plugin active for direct URL access."

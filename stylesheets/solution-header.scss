@@ -90,8 +90,8 @@ body[data-current-path*="/lists/"] .category-breadcrumb li:nth-child(2):not(:has
 body[class*="/lists/"] .category-title-header,
 body[class*="lists-"] .category-title-header {
   visibility: hidden;
-  min-height: 150px; // Reserve space to prevent layout shift
-  
+  min-height: 80px; // Reserve space to prevent layout shift
+
   &.header-styled {
     visibility: visible;
     opacity: 1;
@@ -99,143 +99,39 @@ body[class*="lists-"] .category-title-header {
   }
 }
 
-  .category-title {
-    font-size: clamp(26px, 4vw, 32px) !important;
-    font-weight: 700 !important;
-    color: var(--primary) !important;
-    line-height: 1.2 !important;
-    max-width: 850px !important;
-    margin: 0 auto 16px !important;
-  }
+// Category title styling removed - now inherits from theme
+// Only text-align override is applied via JavaScript
 
-  .category-title-description .solution-subtext {
-    font-size: 17px !important;
-    color: var(--primary-high) !important;
-    line-height: 1.6 !important;
-    max-width: 1000px !important; // Expanded to 1000px for two-line layout
-    margin: 0 auto !important;
-    
-    strong {
-      color: var(--primary) !important;
-      font-weight: 600 !important;
-    }
-  }
-}
-
-// Subscribe button styling
-.subscribe-wrapper {
+// Subscribe button wrapper positioning
+#solution-subscribe-wrapper {
   margin-left: auto;
-
-  .subscribe-btn {
-    all: unset;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 8px 12px;
-    background: var(--tertiary);
-    color: var(--secondary);
-    border-radius: 4px;
-    white-space: nowrap;
-
-    &.subscribed {
-      background: var(--success);
-      color: var(--success-contrast);
-    }
-  }
+  flex-shrink: 0;
 }
 
-// Navigation alignment now handled by JavaScript instead of CSS
-
-// SURGICAL FIX: Force proper flexbox behavior at 1500px breakpoint
-@media (max-width: 1500px) {
-  .navigation-controls {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    flex-wrap: nowrap !important;
-  }
-  
-  #solution-subscribe-wrapper {
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
-    order: 999 !important;
-  }
-}
-
-// Match custom topic list dropdown styling exactly
-#solution-subscribe-button,
-#solution-subscribe-button.btn,
-#solution-subscribe-button.btn-default,
-#solution-subscribe-button.btn-primary,
-button#solution-subscribe-button {
-  // Match dropdown dimensions and layout exactly
+// Adjust navigation controls padding when on solution pages
+body[class*="/lists/"] .navigation-container .navigation-controls,
+body[class*="lists-"] .navigation-container .navigation-controls,
+body[class*="/lists/"] .list-controls .navigation-controls,
+body[class*="lists-"] .list-controls .navigation-controls,
+.list-controls .navigation-controls,
+.navigation-container .navigation-controls {
+  padding-right: 0.5em !important;
+  // Force flexbox on navigation controls for solution pages
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  height: 86px !important;
-  min-width: 120px !important;
-  padding: 8px !important;
-  
-  // Match dropdown styling exactly
-  font-family: "Open Sans", Arial, sans-serif !important;
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  line-height: normal !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-  
-  // Match dropdown colors and borders exactly
-  background: rgb(255, 255, 255) !important;
-  background-color: rgb(255, 255, 255) !important;
-  background-image: none !important;
-  border: 2px solid rgb(0, 104, 218) !important;
-  border-radius: 8px !important;
-  color: rgb(0, 104, 218) !important;
-  
-  // Remove any conflicting styles
-  box-shadow: none !important;
-  text-shadow: none !important;
-  overflow: hidden !important;
-  
-  &:hover,
-  &:focus,
-  &:active {
-    background: rgba(0, 104, 218, 0.1) !important;
-    background-color: rgba(0, 104, 218, 0.1) !important;
-    border-color: rgb(0, 104, 218) !important;
-    color: rgb(0, 104, 218) !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
-  &.subscribed {
-    border-color: #28a745 !important;
-    color: #28a745 !important;
-    
-    &:hover,
-    &:focus,
-    &:active {
-      background: rgba(40, 167, 69, 0.1) !important;
-      background-color: rgba(40, 167, 69, 0.1) !important;
-      border-color: #28a745 !important;
-      color: #28a745 !important;
-      box-shadow: none !important;
-      text-shadow: none !important;
-    }
-  }
+  justify-content: flex-start !important;
+  flex-wrap: nowrap !important;
+  gap: 0.5em !important;
 }
 
-// Responsive line breaks for titles - match staging behavior exactly
-// In staging, breaks are visible by default and controlled by their own responsive logic
-
-// Subscribe button truncation now handled by JavaScript instead of CSS
-
-// Ultra-narrow screens - compact button with minimal padding
-@media (max-width: 500px) {
-  #solution-subscribe-button {
-    padding: 0.4em 0.5em !important; // Reduced padding for icon-only mode
-    min-width: auto !important;
-    font-size: 0.9em !important; // Slightly smaller for ultra-narrow
-  }
+// Force button to stay on right side
+body[class*="/lists/"] #solution-subscribe-wrapper,
+body[class*="lists-"] #solution-subscribe-wrapper,
+.list-controls #solution-subscribe-wrapper {
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  order: 999 !important;
+  display: flex !important;
 }
 
 // Hide dropdown text until JavaScript replacement is complete - same approach as banner
