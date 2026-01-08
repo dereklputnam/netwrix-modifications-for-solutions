@@ -109,6 +109,20 @@ export default apiInitializer("0.11.1", (api) => {
   const isAdmin = currentUser?.admin || currentUser?.moderator;
   const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname.includes('dev');
 
+  // Debug: Check if dropdown exists and log body classes (only for admins/dev)
+  if (isAdmin || isDevelopment) {
+    setTimeout(() => {
+      const dropdown = document.querySelector('.custom-list-dropdown');
+      const bodyClasses = document.body.className;
+      console.error('🔍 Dropdown Debug Info:');
+      console.error('  - Dropdown element exists:', !!dropdown);
+      console.error('  - Dropdown element:', dropdown);
+      console.error('  - Body classes:', bodyClasses);
+      console.error('  - hide_custom_lists_dropdown setting:', settings.hide_custom_lists_dropdown);
+      console.error('  - Current path:', window.location.pathname);
+    }, 1000);
+  }
+
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
