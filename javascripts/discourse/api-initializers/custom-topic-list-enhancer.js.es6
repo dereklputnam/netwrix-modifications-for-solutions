@@ -4,14 +4,15 @@ import { ajax } from "discourse/lib/ajax";
 export default apiInitializer("0.11.1", (api) => {
   // ULTRA-AGGRESSIVE navigation hiding with JavaScript fallback and persistent enforcement
   const aggressiveHideNavElements = () => {
-    // Only hide elements if we're on a /lists/ page  
+    // Only hide elements if we're on a /lists/ page
     if (!window.location.pathname.includes('/lists/') && !window.location.pathname.includes('/community/lists/')) {
       return;
     }
-    
+
     // Ultra-aggressive JavaScript hiding with multiple properties - MAIN NAVIGATION
     const navItems = document.querySelectorAll('#navigation-bar .nav-item_categories, #navigation-bar .nav-item_latest, #navigation-bar .nav-item_new, #navigation-bar .nav-item_top, #navigation-bar .nav-item_unread');
     navItems.forEach(item => {
+      if (!item || !item.style) return;
       item.style.display = 'none';
       item.style.visibility = 'hidden';
       item.style.opacity = '0';
@@ -23,10 +24,11 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('hidden', 'true');
       item.setAttribute('aria-hidden', 'true');
     });
-    
+
     // Ultra-aggressive JavaScript hiding - SORTING NAVIGATION ELEMENTS
     const sortingElements = document.querySelectorAll('.navigation-controls .nav-pills .nav-item, .topic-list-header .sortable, .period-chooser, .list-controls .nav-pills');
     sortingElements.forEach(item => {
+      if (!item || !item.style) return;
       item.style.display = 'none';
       item.style.visibility = 'hidden';
       item.style.opacity = '0';
@@ -38,10 +40,11 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('hidden', 'true');
       item.setAttribute('aria-hidden', 'true');
     });
-    
+
     // Hide category and tag filter dropdowns with aggressive properties
     const filterDropdowns = document.querySelectorAll('.category-breadcrumb .category-drop, .category-breadcrumb .tag-drop:not(.custom-list-dropdown)');
     filterDropdowns.forEach(item => {
+      if (!item || !item.style) return;
       item.style.display = 'none';
       item.style.visibility = 'hidden';
       item.style.opacity = '0';
@@ -53,10 +56,11 @@ export default apiInitializer("0.11.1", (api) => {
       item.setAttribute('hidden', 'true');
       item.setAttribute('aria-hidden', 'true');
     });
-    
+
     // Hide parent <li> elements that contain category/tag dropdowns (but not custom lists) - match staging exactly
     const breadcrumbItems = document.querySelectorAll('.category-breadcrumb li');
     breadcrumbItems.forEach((li, index) => {
+      if (!li || !li.style) return;
       if (index < 2) { // Hide first two <li> elements (categories and tags)
         const hasCustomList = li.querySelector('.custom-list-dropdown');
         if (!hasCustomList) {
@@ -196,24 +200,26 @@ export default apiInitializer("0.11.1", (api) => {
     function updateDropdownText() {
       // Update the main dropdown text
       const dropdown = document.querySelector('.custom-list-dropdown .select-kit-selected-name .name');
-      if (dropdown && dropdown.textContent.trim() === 'Custom lists') {
+      if (dropdown && dropdown.textContent && dropdown.textContent.trim() === 'Custom lists') {
         dropdown.textContent = 'Solutions';
       }
-      
+
       // Also find dropdowns by data-name attribute in case the class isn't there
       const dropdownsByName = document.querySelectorAll('.select-kit-selected-name .name');
       dropdownsByName.forEach(nameEl => {
-        if (nameEl.textContent.trim() === 'Custom lists') {
+        if (nameEl && nameEl.textContent && nameEl.textContent.trim() === 'Custom lists') {
           nameEl.textContent = 'Solutions';
         }
       });
-      
+
       // Update the aria-label and title attributes for the header
       const headers = document.querySelectorAll('.select-kit-header');
       headers.forEach(header => {
+        if (!header) return;
+
         const ariaLabel = header.getAttribute('aria-label');
         const dataName = header.getAttribute('data-name');
-        
+
         if (ariaLabel && ariaLabel.includes('Custom lists')) {
           header.setAttribute('aria-label', ariaLabel.replace('Custom lists', 'Solutions'));
         }
@@ -221,13 +227,15 @@ export default apiInitializer("0.11.1", (api) => {
           header.setAttribute('data-name', 'Solutions');
         }
       });
-      
+
       // Update selected choice elements
       const selectedChoices = document.querySelectorAll('.selected-name.choice');
       selectedChoices.forEach(selectedChoice => {
+        if (!selectedChoice) return;
+
         const title = selectedChoice.getAttribute('title');
         const dataName = selectedChoice.getAttribute('data-name');
-        
+
         if (title === 'Custom lists') {
           selectedChoice.setAttribute('title', 'Solutions');
         }
@@ -252,25 +260,25 @@ export default apiInitializer("0.11.1", (api) => {
     // Header styling function for reuse
     function styleHeader(header, forceUpdate = false) {
       if (!header) return;
-      
+
       const currentConfig = getCurrentSolutionConfig();
-      if (!currentConfig) return;
-      
+      if (!currentConfig || !currentConfig.solutionConfig) return;
+
       // If forcing update, clear the styled flag and previous slug
-      if (forceUpdate) {
+      if (forceUpdate && header.dataset) {
         delete header.dataset.styled;
         delete header.dataset.currentSlug;
       }
-      
+
       // Check if we need to update content (different solution)
-      if (header.dataset.currentSlug && header.dataset.currentSlug === currentConfig.slug && !forceUpdate) {
+      if (header.dataset && header.dataset.currentSlug && header.dataset.currentSlug === currentConfig.slug && !forceUpdate) {
         return; // Same solution, no need to update
       }
-      
+
       const config = currentConfig.solutionConfig;
       const title = config.subtitle || config.name || config.title || 'Solution';
       const desc = config.description || '';
-      
+
       header.innerHTML = `
         <div class="category-title-contents">
           <h1 class="category-title">${title}<br>News & Security Advisories</h1>
@@ -283,22 +291,28 @@ export default apiInitializer("0.11.1", (api) => {
       `;
 
       // Apply header container styling - match staging exactly
-      header.style.background = "var(--secondary)";
-      header.style.borderTop = "6px solid var(--tertiary)";
-      header.style.borderRadius = "6px";
-      header.style.padding = "0px";
-      header.style.marginBottom = "20px";
-      header.style.display = "flex";
-      header.style.justifyContent = "center";
-      header.style.visibility = "visible";
-      
+      if (header.style) {
+        header.style.background = "var(--secondary)";
+        header.style.borderTop = "6px solid var(--tertiary)";
+        header.style.borderRadius = "6px";
+        header.style.padding = "0px";
+        header.style.marginBottom = "20px";
+        header.style.display = "flex";
+        header.style.justifyContent = "center";
+        header.style.visibility = "visible";
+      }
+
       // Show header after styling is complete
-      header.style.visibility = 'visible';
-      header.classList.add("header-styled");
+      if (header.style) {
+        header.style.visibility = 'visible';
+      }
+      if (header.classList) {
+        header.classList.add("header-styled");
+      }
 
       // Style the contents wrapper - increased width to allow subtext expansion
       const contents = header.querySelector(".category-title-contents");
-      if (contents) {
+      if (contents && contents.style) {
         contents.style.padding = "20px";
         contents.style.margin = "0px auto";
         contents.style.width = "100%";
@@ -309,7 +323,7 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Style the title - match staging exactly
       const titleEl = header.querySelector(".category-title");
-      if (titleEl) {
+      if (titleEl && titleEl.style) {
         titleEl.style.fontSize = "clamp(22px, 3vw, 30px)";
         titleEl.style.fontWeight = "700";
         titleEl.style.color = "var(--primary)";
@@ -323,7 +337,7 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Style the description - expanded width for two-line layout
       const subtext = header.querySelector(".solution-subtext");
-      if (subtext) {
+      if (subtext && subtext.style) {
         subtext.style.fontSize = "17px";
         subtext.style.color = "var(--primary-high)";
         subtext.style.lineHeight = "1.6";
@@ -331,10 +345,12 @@ export default apiInitializer("0.11.1", (api) => {
         subtext.style.margin = "0px auto";
         subtext.style.textAlign = "center";
       }
-      
+
       // Mark as styled and remember current solution
-      header.dataset.styled = 'true';
-      header.dataset.currentSlug = currentConfig.slug;
+      if (header.dataset) {
+        header.dataset.styled = 'true';
+        header.dataset.currentSlug = currentConfig.slug;
+      }
     }
 
     // Function to update subscribe button for current solution
@@ -417,37 +433,37 @@ export default apiInitializer("0.11.1", (api) => {
         const categoryBreadcrumb = navigationContainer?.querySelector('.category-breadcrumb');
         const navigationControls = navigationContainer?.querySelector('.navigation-controls');
         const subscribeWrapper = navigationControls?.querySelector('#solution-subscribe-wrapper');
-        
-        if (listControls) {
+
+        if (listControls && listControls.style) {
           listControls.style.width = '100%';
         }
-        
-        if (container) {
+
+        if (container && container.style) {
           container.style.width = '100%';
           container.style.maxWidth = 'none';
         }
-        
-        if (navigationContainer) {
+
+        if (navigationContainer && navigationContainer.style) {
           navigationContainer.style.display = 'flex';
           navigationContainer.style.justifyContent = 'space-between';
           navigationContainer.style.alignItems = 'center';
           navigationContainer.style.width = '100%';
         }
-        
-        if (categoryBreadcrumb) {
+
+        if (categoryBreadcrumb && categoryBreadcrumb.style) {
           categoryBreadcrumb.style.display = 'flex';
           categoryBreadcrumb.style.alignItems = 'center';
           categoryBreadcrumb.style.flexGrow = '1';
         }
-        
-        if (navigationControls) {
+
+        if (navigationControls && navigationControls.style) {
           navigationControls.style.display = 'flex';
           navigationControls.style.alignItems = 'center';
           navigationControls.style.marginLeft = 'auto';
           navigationControls.style.flexShrink = '0';
         }
-        
-        if (subscribeWrapper) {
+
+        if (subscribeWrapper && subscribeWrapper.style) {
           subscribeWrapper.style.marginLeft = 'auto';
           subscribeWrapper.style.flexShrink = '0';
         }
@@ -588,49 +604,53 @@ export default apiInitializer("0.11.1", (api) => {
     const observer = new MutationObserver((mutations) => {
       let shouldUpdate = false;
       let shouldHideNav = false;
-      
+
       mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
+        if (mutation.type === 'childList' && mutation.addedNodes) {
           const addedNodes = Array.from(mutation.addedNodes);
-          
+
           // Check for header changes
-          const hasHeader = addedNodes.some(node => 
-            node.nodeType === 1 && (
-              node.classList?.contains('category-title-header') ||
-              node.querySelector?.('.category-title-header')
+          const hasHeader = addedNodes.some(node =>
+            node && node.nodeType === 1 && (
+              (node.classList && node.classList.contains('category-title-header')) ||
+              (node.querySelector && node.querySelector('.category-title-header'))
             )
           );
-          
+
           // Check for navigation elements that need hiding
-          const hasNavElements = addedNodes.some(node => 
-            node.nodeType === 1 && (
-              node.classList?.contains('nav-item_categories') ||
-              node.classList?.contains('nav-item_latest') ||
-              node.classList?.contains('nav-item_top') ||
-              node.classList?.contains('nav-item_new') ||
-              node.classList?.contains('nav-item_unread') ||
-              node.classList?.contains('navigation-controls') ||
-              node.querySelector?.('.nav-item_categories, .nav-item_latest, .nav-item_top, .nav-item_new, .nav-item_unread') ||
-              node.querySelector?.('.navigation-controls .nav-pills, .topic-list-header .sortable, .period-chooser')
+          const hasNavElements = addedNodes.some(node =>
+            node && node.nodeType === 1 && (
+              (node.classList && (
+                node.classList.contains('nav-item_categories') ||
+                node.classList.contains('nav-item_latest') ||
+                node.classList.contains('nav-item_top') ||
+                node.classList.contains('nav-item_new') ||
+                node.classList.contains('nav-item_unread') ||
+                node.classList.contains('navigation-controls')
+              )) ||
+              (node.querySelector && (
+                node.querySelector('.nav-item_categories, .nav-item_latest, .nav-item_top, .nav-item_new, .nav-item_unread') ||
+                node.querySelector('.navigation-controls .nav-pills, .topic-list-header .sortable, .period-chooser')
+              ))
             )
           );
-          
+
           if (hasHeader) {
             shouldUpdate = true;
           }
-          
+
           if (hasNavElements) {
             shouldHideNav = true;
           }
         }
       });
-      
+
       if (shouldUpdate) {
         setTimeout(() => {
           applyCurrentPageStyles();
         }, 10); // Faster response
       }
-      
+
       if (shouldHideNav) {
         // Immediate hiding when navigation elements are detected
         aggressiveHideNavElements();
