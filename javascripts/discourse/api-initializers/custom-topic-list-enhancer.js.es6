@@ -2,16 +2,6 @@ import { apiInitializer } from "discourse/lib/api";
 import { ajax } from "discourse/lib/ajax";
 
 export default apiInitializer("0.11.1", (api) => {
-  // DEBUG: Very obvious marker that this code is running
-  console.log("🔥🔥🔥 CUSTOM TOPIC LIST ENHANCER LOADED - VERSION 2024-12-02-DEBUG 🔥🔥🔥");
-  console.log("Current URL:", window.location.pathname);
-
-  // Show alert ONLY on lists pages to confirm code is running
-  if (window.location.pathname.includes('/lists/')) {
-    console.log("🎯 ON A LISTS PAGE - Code should be active!");
-    // Uncomment the next line if you want a visual alert (commented to avoid annoying popup)
-    // alert("DEBUG: Custom Topic List Enhancer is loaded and active!");
-  }
 
   // ULTRA-AGGRESSIVE navigation hiding with JavaScript fallback and persistent enforcement
   const aggressiveHideNavElements = () => {
@@ -118,53 +108,39 @@ export default apiInitializer("0.11.1", (api) => {
   // Function to get current solution config
   function getCurrentSolutionConfig() {
     const currentPath = window.location.pathname;
-    console.log("🔍 getCurrentSolutionConfig - currentPath:", currentPath);
 
     // Match both /lists/ and /community/lists/ patterns
     const slugMatch = currentPath.match(/\/lists\/([^\/?#]+)/);
-    console.log("🔍 Slug match result:", slugMatch);
 
     if (!slugMatch) {
-      console.log("❌ No slug match found in URL");
       return null;
     }
 
     const slug = slugMatch[1];
-    console.log("✅ Extracted slug:", slug);
 
     // First try to get from theme settings (has subscription fields)
-    console.log("🔍 Checking theme settings...");
-    console.log("Available settings:", settings.netwrix_solutions);
     let solutionConfig = settings.netwrix_solutions?.find(solution => solution.slug === slug);
-    console.log("Theme config result:", solutionConfig);
 
     // If not found in theme settings, try plugin data as fallback
     if (!solutionConfig) {
-      console.log("🔍 Theme settings not found, checking plugin...");
       const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-      console.log("Available plugin lists:", customTopicLists);
       solutionConfig = customTopicLists.find(list => list.slug === slug);
-      console.log("Plugin config result:", solutionConfig);
     }
 
     if (!solutionConfig) {
       console.error(`❌ No solution configuration found for slug: ${slug}`);
-      console.log(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
       const customTopicLists = api.container.lookup("service:site")?.custom_topic_lists || [];
-      console.log(`Available in plugin:`, customTopicLists?.map(s => s.slug));
+      console.error(`Available in theme:`, settings.netwrix_solutions?.map(s => s.slug));
+      console.error(`Available in plugin:`, customTopicLists?.map(s => s.slug));
       return null;
     }
 
-    console.log("✅ Found solution config:", { slug, solutionConfig });
     return { slug, solutionConfig };
   }
 
   // Check if we're on a solution page initially
   const initialConfig = getCurrentSolutionConfig();
-  if (!initialConfig && (isAdmin || isDevelopment)) {
-    console.log("Not on a solution page. Navigate to /lists/[slug] to test subscription functionality.");
-    // Don't return here - continue to setup page change handlers
-  }
+  // Don't return here - continue to setup page change handlers
 
   // Function to get category IDs for current solution
   function getCategoryIds(solutionConfig) {
@@ -205,10 +181,6 @@ export default apiInitializer("0.11.1", (api) => {
       if (invalidLevel3.length > 0 && (isAdmin || isDevelopment)) {
         console.error(`❌ Invalid Level 3 category IDs for ${configTitle}: ${invalidLevel3.join(', ')}`);
       }
-
-      const validLevel4Names = level4Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
-      const validLevel3Names = level3Ids.filter(id => idToCategory[id]).map(id => idToCategory[id].name);
-
     }
 
     // Initial validation only in development/admin mode
@@ -275,15 +247,12 @@ export default apiInitializer("0.11.1", (api) => {
 
     // Header styling function for reuse
     function styleHeader(header, forceUpdate = false) {
-      console.log("styleHeader called, forceUpdate:", forceUpdate);
       if (!header) {
-        console.log("No header element found");
         return;
       }
 
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        console.log("No current config found");
         return;
       }
 
@@ -295,16 +264,12 @@ export default apiInitializer("0.11.1", (api) => {
 
       // Check if we need to update content (different solution)
       if (header.dataset.currentSlug && header.dataset.currentSlug === currentConfig.slug && !forceUpdate) {
-        console.log("Same solution, skipping update");
         return; // Same solution, no need to update
       }
 
       const config = currentConfig.solutionConfig;
       const title = config.subtitle || config.name || config.title || 'Solution';
       const desc = config.description || '';
-
-      console.log("Styling header with title:", title);
-      console.log("Description:", desc);
 
       header.innerHTML = `
         <div class="category-title-contents">
@@ -367,38 +332,30 @@ export default apiInitializer("0.11.1", (api) => {
       header.dataset.currentSlug = currentConfig.slug;
 
       // Add subscribe button to navigation controls
-      console.log("About to call addSubscribeButtonToNav");
       addSubscribeButtonToNav();
-      console.log("addSubscribeButtonToNav call completed");
     }
 
     // Function to add subscribe button to navigation controls
     function addSubscribeButtonToNav() {
-      console.log("=== addSubscribeButtonToNav called ===");
-
       const currentConfig = getCurrentSolutionConfig();
       if (!currentConfig) {
-        console.log("ERROR: No current config in addSubscribeButtonToNav");
         return;
       }
 
       // Only show button if user is logged in
       if (!currentUser) {
-        console.log("User not logged in, skipping subscribe button");
         return;
       }
 
       // Find the navigation controls (the white box on the right)
       const nav = document.querySelector(".navigation-controls");
       if (!nav) {
-        console.log("ERROR: Navigation controls not found");
         return;
       }
 
       // Remove existing button wrapper if present
       const existingWrapper = document.querySelector("#solution-subscribe-wrapper");
       if (existingWrapper) {
-        console.log("Removing existing button wrapper");
         existingWrapper.remove();
       }
 
@@ -513,8 +470,6 @@ export default apiInitializer("0.11.1", (api) => {
       wrapper.appendChild(btn);
       nav.appendChild(wrapper);
 
-      console.log("✅ Subscribe button added to navigation controls");
-
       // Apply the working alignment solution from original repo
       function forceNavigationAlignment() {
         // Target the full container hierarchy
@@ -602,12 +557,10 @@ export default apiInitializer("0.11.1", (api) => {
       // Also run with multiple timeouts for persistent enforcement
       setTimeout(() => {
         aggressiveHideNavElements();
-        
+
         if (isListsPage) {
           const currentConfig = getCurrentSolutionConfig();
           if (currentConfig) {
-            const configTitle = currentConfig.solutionConfig.title || currentConfig.solutionConfig.name || 'Solution';
-            // Reduced logging for cleaner console
             applyCurrentPageStyles();
           }
         }
