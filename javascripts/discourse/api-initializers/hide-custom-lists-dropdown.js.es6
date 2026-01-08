@@ -10,7 +10,14 @@ export default apiInitializer("1.8.0", (api) => {
   }
 
   // Function to remove custom lists dropdown from navigation
+  // BUT: Always keep it visible on /lists/ pages
   const removeCustomListsDropdown = function() {
+    // Don't remove dropdown if we're on a /lists/ page
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/lists/') || currentPath.includes('/community/lists/')) {
+      return; // Keep the dropdown on lists pages
+    }
+
     const customListItems = document.querySelectorAll('.category-breadcrumb li.custom-list-item, li.custom-list-item');
     customListItems.forEach(function(item) {
       if (item.parentNode) {
