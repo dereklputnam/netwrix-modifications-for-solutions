@@ -249,12 +249,12 @@
         const nameElements = element.querySelectorAll('.name, .selected-name, .select-kit-selected-name');
         nameElements.forEach(nameEl => {
           // Skip if this element is inside ANY dropdown body content
-          if (nameEl.closest('.select-kit-body') || 
+          if (nameEl.closest('.select-kit-body') ||
               nameEl.closest('.select-kit-collection') ||
               nameEl.closest('.select-kit-row') ||
               nameEl.closest('.select-kit-item') ||
               nameEl.hasAttribute('data-value') ||
-              nameEl.parentElement.hasAttribute('data-value')) {
+              (nameEl.parentElement && nameEl.parentElement.hasAttribute('data-value'))) {
             return;
           }
           
