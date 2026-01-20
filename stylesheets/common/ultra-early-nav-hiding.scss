@@ -1,0 +1,107 @@
+// Ultra-aggressive navigation hiding on /lists/ pages
+body[class*="/lists/"],
+body[class*="lists-"],
+body.lists-show,
+body[data-page*="lists"] {
+  /* Main navigation items */
+  #navigation-bar .nav-item_categories,
+  #navigation-bar .nav-item_latest,
+  #navigation-bar .nav-item_new,
+  #navigation-bar .nav-item_top,
+  #navigation-bar .nav-item_unread {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+  }
+
+  /* Sorting navigation elements */
+  .navigation-controls .nav-pills .nav-item,
+  .topic-list-header .sortable,
+  .period-chooser,
+  .list-controls .nav-pills {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+  }
+
+  /* Category and tag dropdowns */
+  .category-breadcrumb .category-drop,
+  .category-breadcrumb .tag-drop:not(.custom-list-dropdown) {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+  }
+
+  /* Parent li elements */
+  .category-breadcrumb li:first-child:not(:has(.custom-list-dropdown)),
+  .category-breadcrumb li:nth-child(2):not(:has(.custom-list-dropdown)) {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+  }
+}
+
+/* Hide responsive line breaks by default and prevent natural wrapping */
+.category-title {
+  white-space: nowrap !important;
+}
+
+.category-title .break-medium,
+.category-title .break-small,
+.category-title .break-medium br,
+.category-title .break-small br {
+  display: none !important;
+}
+
+/* Show breaks on medium screens */
+@media (max-width: 1200px) {
+  .category-title {
+    white-space: normal !important;
+  }
+
+  .category-title .break-medium,
+  .category-title .break-medium br {
+    display: inline !important;
+  }
+}
+
+/* Show breaks on small screens */
+@media (max-width: 768px) {
+  .category-title {
+    white-space: normal !important;
+  }
+
+  .category-title .break-small,
+  .category-title .break-small br {
+    display: inline !important;
+  }
+}
+
+/* Text replacement visibility control */
+.tag-drop-header[data-name="Custom lists"] .name,
+.select-kit-header[data-name="Custom lists"] .name {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.custom-list-dropdown.solutions-ready .select-kit-selected-name .name,
+.custom-list-dropdown.solutions-ready .selected-name .name,
+.custom-list-dropdown.solutions-ready .name,
+.tag-drop-header[data-name*="Solutions"] .name,
+.select-kit-header[data-name*="Solutions"] .name,
+.solutions-ready .name {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
