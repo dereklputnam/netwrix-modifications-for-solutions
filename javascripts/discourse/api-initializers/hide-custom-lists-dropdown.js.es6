@@ -1,7 +1,6 @@
 import { apiInitializer } from "discourse/lib/api";
 
 export default apiInitializer("1.8.0", (api) => {
-  const siteSettings = api.container.lookup("site-settings:main");
   const themeSettings = settings;
 
   // Only run if the setting is enabled
